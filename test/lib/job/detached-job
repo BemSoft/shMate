@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+_test_detached_job() {
+    test -z "${_SHMATE_GUARDIAN_PID}"
+    shmate_assert "_SHMATE_GUARDIAN_PID must be empty, but is \"${_SHMATE_GUARDIAN_PID}\"" || return $?
+
+    test -z "${_SHMATE_PID_FILE}"
+    shmate_assert "_SHMATE_PID_FILE must be empty, but is \"${_SHMATE_PID_FILE}\"" || return $?
+
+    test -z "${_SHMATE_JOB_NAME}"
+    shmate_assert "_SHMATE_JOB_NAME must be empty, but is \"${_SHMATE_JOB_NAME}\"" || return $?
+
+    test -z "${_SHMATE_JOB_RUN_DIR}"
+    shmate_assert "_SHMATE_JOB_RUN_DIR must be empty, but is \"${_SHMATE_JOB_RUN_DIR}\"" || return $?
+
+    shmate_log_info "Hello, I'm a detached job and I don't know my name"
+
+    return 0
+}
+
+_test_detached_job "$@"

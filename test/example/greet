@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#> >>> greet
+#>
+#> Prints greeting message for every given name.
+#>
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} [-g <greeting>] [-ux] [<name> ...]
+
+        Prints greeting message for every <name>.
+
+        Options:
+            -g <greeting>
+                Uses <greeting> instead of default \"Hello\".
+            -u
+                Prints message in uppercase.
+            -x
+                Prints exclamation mark at the end of each greeting.
+                Can be given multiple times to print more exclamation marks.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+job_greet() {
+    local suffix=
+    local name=
+
+    for name in "$@"; do
+        echo "${arg_greet} ${name}${arg_name_suffix}"
+        shmate_assert "Printing greeting for \"${name}\"" || return $?
+    done
+
+    return 0
+}
+
+job_greet_uppercase() {
+    job_greet "$@" | tr '[:lower:]' '[:upper:]'
+    shmate_assert 'Printing greetings in uppercase' || return $?
+
+    return 0
+}
+
+main() {
+    local arg_greet='Hello'
+    local arg_uppercase=false
+    local arg_name_suffix=''
+
+    while shmate_getopts 'g:ux' "$@"; do
+        case ${shmate_getopts_option} in
+            g)
+                if [ -n "${OPTARG}" ]; then
+                    arg_greet="${OPTARG}"
+                fi
+                ;;
+            u)
+                arg_uppercase=true
+                ;;
+            x)
+                arg_name_suffix="${arg_name_suffix}!"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    if ${arg_uppercase}; then
+        job_greet_uppercase "$@"
+    else
+        job_greet "$@"
+    fi
+}
+
+shmate_main "$@"

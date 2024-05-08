@@ -1,0 +1,3419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 2.0.18">
+<title>shMate</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
+/* Uncomment the following line when using as a custom stylesheet */
+/* @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700"; */
+html{font-family:sans-serif;-webkit-text-size-adjust:100%}
+a{background:none}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+b,strong{font-weight:bold}
+abbr{font-size:.9em}
+abbr[title]{cursor:help;border-bottom:1px dotted #dddddf;text-decoration:none}
+dfn{font-style:italic}
+hr{height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+audio,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type=button],input[type=reset],input[type=submit]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type=checkbox],input[type=radio]{padding:0}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,::before,::after{box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;line-height:1;position:relative;cursor:auto;-moz-tab-size:4;-o-tab-size:4;tab-size:4;word-wrap:anywhere;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:0}
+p{line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #dddddf;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.square{list-style-type:square}
+ul.circle ul:not([class]),ul.disc ul:not([class]),ul.square ul:not([class]){list-style:inherit}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:1px solid #dedede;word-wrap:normal}
+table thead,table tfoot{background:#f7f8f7}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt{background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.center{margin-left:auto;margin-right:auto}
+.stretch{width:100%}
+.clearfix::before,.clearfix::after,.float-group::before,.float-group::after{content:" ";display:table}
+.clearfix::after,.float-group::after{clear:both}
+:not(pre).nobreak{word-wrap:normal}
+:not(pre).nowrap{white-space:nowrap}
+:not(pre).pre-wrap{white-space:pre-wrap}
+:not(pre):not([class^=L])>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background:#f7f7f8;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre{color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;line-height:1.45;text-rendering:optimizeSpeed}
+pre code,pre pre{color:inherit;font-size:inherit;line-height:inherit}
+pre>code{display:block}
+pre.nowrap,pre.nowrap pre{white-space:pre;word-wrap:normal}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background:#f7f7f7;border:1px solid #ccc;border-radius:3px;box-shadow:0 1px 0 rgba(0,0,0,.2),inset 0 0 0 .1em #fff;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button::before,b.button::after{position:relative;top:-1px;font-weight:400}
+b.button::before{content:"[";padding:0 3px 0 2px}
+b.button::after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin:0 auto;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header::before,#header::after,#content::before,#content::after,#footnotes::before,#footnotes::after,#footer::before,#footer::after{content:" ";display:table}
+#header::after,#content::after,#footnotes::after,#footer::after{clear:both}
+#content{margin-top:1.25em}
+#content::before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #dddddf}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #dddddf;padding-bottom:8px}
+#header .details{border-bottom:1px solid #dddddf;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:flex;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span::before{content:"\00a0\2013\00a0"}
+#header .details br+span.author::before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark::before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber::after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #dddddf;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #e7e7e9;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #e7e7e9;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #e7e7e9;left:auto;right:0}}
+@media screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border:1px solid #e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:none;background:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:hsla(0,0%,100%,.8);line-height:1.44}
+#content{margin-bottom:.625em}
+.sect1{padding-bottom:.625em}
+@media screen and (min-width:768px){#content{margin-bottom:1.25em}
+.sect1{padding-bottom:1.25em}}
+.sect1:last-child{padding-bottom:0}
+.sect1+.sect1{border-top:1px solid #e7e7e9}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor::before,h2>a.anchor::before,h3>a.anchor::before,#toctitle>a.anchor::before,.sidebarblock>.content>.title>a.anchor::before,h4>a.anchor::before,h5>a.anchor::before,h6>a.anchor::before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+details,.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+details{margin-left:1.25rem}
+details>summary{cursor:pointer;display:block;position:relative;line-height:1.6;margin-bottom:.625rem;outline:none;-webkit-tap-highlight-color:transparent}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:"";border:solid transparent;border-left:solid;border-width:.3em 0 .3em .5em;position:absolute;top:.5em;left:-1.25rem;transform:translateX(15%)}
+details[open]>summary::before{border:solid transparent;border-top:solid;border-width:.5em .3em 0;transform:translateY(15%)}
+details>summary::after{content:"";width:1.25rem;height:1em;position:absolute;top:.3em;left:-1.25rem}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock.fit-content>caption.title{white-space:nowrap;width:0}
+.paragraph.lead>p,#preamble>.sectionbody>[class=paragraph]:first-of-type p{font-size:1.21875em;line-height:1.6;color:rgba(0,0,0,.85)}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #dddddf;color:rgba(0,0,0,.6);word-wrap:anywhere}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border:1px solid #e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border:1px solid #dbdbd6;margin-bottom:1.25em;padding:1.25em;background:#f3f3f2;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock>.content>pre{border-radius:4px;overflow-x:auto;padding:1em;font-size:.8125em}
+@media screen and (min-width:768px){.literalblock pre,.listingblock>.content>pre{font-size:.90625em}}
+@media screen and (min-width:1280px){.literalblock pre,.listingblock>.content>pre{font-size:1em}}
+.literalblock pre,.listingblock>.content>pre:not(.highlight),.listingblock>.content>pre[class=highlight],.listingblock>.content>pre[class^="highlight "]{background:#f7f7f8}
+.literalblock.output pre{color:#f7f7f8;background:rgba(0,0,0,.9)}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]::before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:inherit;opacity:.5}
+.listingblock:hover code[data-lang]::before{display:block}
+.listingblock.terminal pre .command::before{content:attr(data-prompt);padding-right:.5em;color:inherit;opacity:.5}
+.listingblock.terminal pre .command:not([data-prompt])::before{content:"$"}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.prettyprint{background:#f7f7f8}
+pre.prettyprint .linenums{line-height:1.45;margin-left:2em}
+pre.prettyprint li{background:none;list-style-type:inherit;padding-left:0}
+pre.prettyprint li code[data-lang]::before{opacity:1}
+pre.prettyprint li:not(:first-child) code[data-lang]::before{display:none}
+table.linenotable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.linenotable td[class]{color:inherit;vertical-align:top;padding:0;line-height:inherit;white-space:normal}
+table.linenotable td.code{padding-left:.75em}
+table.linenotable td.linenos,pre.pygments .linenos{border-right:1px solid;opacity:.35;padding-right:.5em;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}
+pre.pygments span.linenos{display:inline-block;margin-right:.75em}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock:not(.excerpt)>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote::before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.75em;margin-right:.5ex;text-align:right}
+.verseblock{margin:0 1em 1.25em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans-serif;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract blockquote::before,.quoteblock.excerpt blockquote::before,.quoteblock .quoteblock blockquote::before{display:none}
+.quoteblock.abstract blockquote,.quoteblock.abstract p,.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{line-height:1.6;word-spacing:0}
+.quoteblock.abstract{margin:0 1em 1.25em;display:block}
+.quoteblock.abstract>.title{margin:0 0 .375em;font-size:1.15em;text-align:center}
+.quoteblock.excerpt>blockquote,.quoteblock .quoteblock{padding:0 0 .25em 1em;border-left:.25em solid #dddddf}
+.quoteblock.excerpt,.quoteblock .quoteblock{margin-left:0}
+.quoteblock.excerpt blockquote,.quoteblock.excerpt p,.quoteblock .quoteblock blockquote,.quoteblock .quoteblock p{color:inherit;font-size:1.0625rem}
+.quoteblock.excerpt .attribution,.quoteblock .quoteblock .attribution{color:inherit;font-size:.85rem;text-align:left;margin-right:0}
+p.tableblock:last-child{margin-bottom:0}
+td.tableblock>.content{margin-bottom:1.25em;word-wrap:anywhere}
+td.tableblock>.content>:last-child{margin-bottom:-1.25em}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>*>tr>*{border-width:1px}
+table.grid-cols>*>tr>*{border-width:0 1px}
+table.grid-rows>*>tr>*{border-width:1px 0}
+table.frame-all{border-width:1px}
+table.frame-ends{border-width:1px 0}
+table.frame-sides{border-width:0 1px}
+table.frame-none>colgroup+*>:first-child>*,table.frame-sides>colgroup+*>:first-child>*{border-top-width:0}
+table.frame-none>:last-child>:last-child>*,table.frame-sides>:last-child>:last-child>*{border-bottom-width:0}
+table.frame-none>*>tr>:first-child,table.frame-ends>*>tr>:first-child{border-left-width:0}
+table.frame-none>*>tr>:last-child,table.frame-ends>*>tr>:last-child{border-right-width:0}
+table.stripes-all>*>tr,table.stripes-odd>*>tr:nth-of-type(odd),table.stripes-even>*>tr:nth-of-type(even),table.stripes-hover>*>tr:hover{background:#f8f8f7}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+li>p:empty:only-child::before{content:"";display:inline-block}
+ul.checklist>li>p:first-child{margin-left:-1em}
+ul.checklist>li>p:first-child>.fa-square-o:first-child,ul.checklist>li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist>li>p:first-child>input[type=checkbox]:first-child{margin-right:.25em}
+ul.inline{display:flex;flex-flow:row wrap;list-style:none;margin:0 0 .625em -1.25em}
+ul.inline>li{margin-left:1.25em}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+td.hdlist2{word-wrap:anywhere}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist td:not([class]):first-child{padding:.4em .75em 0;line-height:1;vertical-align:top}
+.colist td:not([class]):first-child img{max-width:none}
+.colist td:not([class]):last-child{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:4px solid #fff;box-shadow:0 0 0 1px #ddd}
+.imageblock.left{margin:.25em .625em 1.25em 0}
+.imageblock.right{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em;border-width:1px 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none;margin-left:-1.05em}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background:#00fafa}
+.black{color:#000}
+.black-background{background:#000}
+.blue{color:#0000bf}
+.blue-background{background:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background:#fa00fa}
+.gray{color:#606060}
+.gray-background{background:#7d7d7d}
+.green{color:#006000}
+.green-background{background:#007d00}
+.lime{color:#00bf00}
+.lime-background{background:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background:#7d0000}
+.navy{color:#000060}
+.navy-background{background:#00007d}
+.olive{color:#606000}
+.olive-background{background:#7d7d00}
+.purple{color:#600060}
+.purple-background{background:#7d007d}
+.red{color:#bf0000}
+.red-background{background:#fa0000}
+.silver{color:#909090}
+.silver-background{background:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background:rgba(0,0,0,.8);border-radius:50%;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]::after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt,summary{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt,summary{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background:#fffef7;border-color:#e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@page{margin:1.25cm .75cm}
+@media print{*{box-shadow:none!important;text-shadow:none!important}
+html{font-size:80%}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare)::after,a[href^="https:"]:not(.bare)::after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]{border-bottom:1px dotted}
+abbr[title]::after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#header,#content,#footnotes,#footer{max-width:none}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #dddddf!important;padding-bottom:0!important}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span::before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]::before{display:block}
+#footer{padding:0 .9375em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+@media amzn-kf8,print{#header>h1:first-child{margin-top:1.25rem}
+.sect1{padding:0!important}
+.sect1+.sect1{border:0}
+#footer{background:none}
+#footer-text{color:rgba(0,0,0,.6);font-size:.9em}}
+@media amzn-kf8{#header,#content,#footnotes,#footer{padding:0}}
+</style>
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>shMate</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">1. Introduction</a></li>
+<li><a href="#_core_features">2. Core features</a></li>
+<li><a href="#user-content-src_Executables-reference">3. Executables reference</a>
+<ul class="sectlevel2">
+<li><a href="#user-content-src_bin_shmate-adoc">3.1. shmate-adoc</a></li>
+<li><a href="#user-content-src_bin_shmate-artifact">3.2. shmate-artifact</a>
+<ul class="sectlevel3">
+<li><a href="#user-content-src_src_bin_shmate-artifact_-h_check">3.2.1. check</a></li>
+<li><a href="#user-content-src_src_bin_shmate-artifact_-h_fetch">3.2.2. fetch</a></li>
+</ul>
+</li>
+<li><a href="#user-content-src_bin_shmate-test">3.3. shmate-test</a></li>
+</ul>
+</li>
+<li><a href="#user-content-src_Libraries-reference">4. Libraries reference</a>
+<ul class="sectlevel2">
+<li><a href="#user-content-src_lib_shmate_assert">4.1. assert.sh</a>
+<ul class="sectlevel3">
+<li><a href="#user-content-src_lib_shmate_assert-Dependencies">4.1.1. Dependencies</a></li>
+<li><a href="#user-content-src_lib_shmate_assert-Environment">4.1.2. Environment</a></li>
+<li><a href="#user-content-src_lib_shmate_assert-Debugging-log-levels">4.1.3. Debugging log levels</a></li>
+<li><a href="#user-content-src_lib_shmate_assert-Informational-log-levels">4.1.4. Informational log levels</a></li>
+<li><a href="#user-content-src_lib_shmate_assert-Internal-symbols">4.1.5. Internal symbols</a></li>
+<li><a href="#user-content-src_lib_shmate_assert-Variables">4.1.6. Variables</a></li>
+<li><a href="#user-content-src_lib_shmate_assert-Functions">4.1.7. Functions</a></li>
+</ul>
+</li>
+<li><a href="#user-content-src_lib_shmate_base">4.2. base.sh</a>
+<ul class="sectlevel3">
+<li><a href="#user-content-src_lib_shmate_base-Shell-options">4.2.1. Shell options</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Environment">4.2.2. Environment</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Internal-symbols">4.2.3. Internal symbols</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Variables">4.2.4. Variables</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Functions">4.2.5. Functions</a></li>
+</ul>
+</li>
+<li><a href="#user-content-src_lib_shmate_dependency">4.3. dependency.sh</a>
+<ul class="sectlevel3">
+<li><a href="#user-content-src_lib_shmate_dependency-Internal-symbols">4.3.1. Internal symbols</a></li>
+<li><a href="#user-content-src_lib_shmate_dependency-Functions">4.3.2. Functions</a></li>
+</ul>
+</li>
+<li><a href="#user-content-src_lib_shmate_-deprecated">4.4. _deprecated.sh</a></li>
+<li><a href="#user-content-src_lib_shmate_job">4.5. job.sh</a>
+<ul class="sectlevel3">
+<li><a href="#user-content-src_lib_shmate_job-Dependencies">4.5.1. Dependencies</a></li>
+<li><a href="#user-content-src_lib_shmate_job-Environment">4.5.2. Environment</a></li>
+<li><a href="#user-content-src_lib_shmate_job-Internal-symbols">4.5.3. Internal symbols</a></li>
+<li><a href="#user-content-src_lib_shmate_job-Functions">4.5.4. Functions</a></li>
+</ul>
+</li>
+<li><a href="#user-content-src_lib_shmate_workdir">4.6. workdir.sh</a>
+<ul class="sectlevel3">
+<li><a href="#user-content-src_lib_shmate_workdir-Dependencies">4.6.1. Dependencies</a></li>
+<li><a href="#user-content-src_lib_shmate_workdir-Environment">4.6.2. Environment</a></li>
+<li><a href="#user-content-src_lib_shmate_workdir-Internal-symbols">4.6.3. Internal symbols</a></li>
+<li><a href="#user-content-src_lib_shmate_workdir-Variables">4.6.4. Variables</a></li>
+<li><a href="#user-content-src_lib_shmate_workdir-Functions">4.6.5. Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction">1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>shMate</em> is a POSIX-like shell library and toolset aiming to help and encourage shell script developers to follow principles usually attributed to high-level programming languages and <em>Unix</em> tools in general.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Here POSIX-like shell means POSIX compatible shell with additional keywords, most notably <code>local</code> command without which reusable scripts are very prone to errors.
+</td>
+</tr>
+</table>
+</div>
+<!-- toc disabled -->
+</div>
+</div>
+<div class="sect1">
+<h2 id="_core_features">2. Core features</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Developer friendly</dt>
+<dd>
+<p>The main goal of <em>shMate</em> is to make reading and writing shell scripts easy even for inexperienced shell developers.
+Following <em>shMate</em> principles will make the scripts friendly also to end-users.</p>
+</dd>
+<dt class="hdlist1">Versatility</dt>
+<dd>
+<p>The <em>shMate</em> based script is not only dedicated for developers and end-users.
+It is a perfect candidate for <strong>Docker</strong> container <code>ENTRYPOINT</code>.
+Often the same script can be used by end-user and inside a container in production environment.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<em>shMate</em>'s first use case was to integrate legacy "do-not-modify-at-any-circumstances" projects written in many "not-known-to-anyone-still-alive" languages into modern CI infrastructure and <em>Kubernetes</em> deployment.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">Testing</dt>
+<dd>
+<p><em>shMate</em> comes with <a href="#user-content-src_bin_shmate-test">bin/shmate-test</a> utility to execute test suites similarly to high-level test frameworks like <em>JUnit</em>.
+The result is a report in <em>JUnit</em> compatible XML format.
+One of the most important goals of <em>shMate</em> is to have good test coverage on its own as well as to encourage <em>shMate</em> users to follow up the same principle.</p>
+</dd>
+<dt class="hdlist1">Inline documentation</dt>
+<dd>
+<p><em>shMate</em>'s documentation is placed in the code, conceptually similar to <em>JavaDoc</em>.
+Special utility <a href="#user-content-src_bin_shmate-adoc">bin/shmate-adoc</a> is used to produce <a href="#user-content-src_Executables-reference">executables</a> and <a href="#user-content-src_Libraries-reference">libraries</a> reference in <em>AsciiDoc</em> format with strong emphasis on <em>permanent anchor</em> generation.<br>
+Scripts using <em>shMate</em> can be documented the same way.</p>
+</dd>
+<dt class="hdlist1">Logging</dt>
+<dd>
+<p><em>shMate</em> clearly distinguishes between printing to <em>stdout</em> and <em>stderr</em>.
+The former is used only to produce the script&#8217;s result, often later used as an input to another program, while the latter is used only for logging.
+Logging to console supports colors and can be accompanied by separate log file.
+Many <a href="#user-content-src_lib_shmate_assert-Informational-log-levels">informational</a> and <a href="#user-content-src_lib_shmate_assert-Debugging-log-levels">debugging</a> log levels are available.</p>
+</dd>
+<dt class="hdlist1">Clean code</dt>
+<dd>
+<p>Due to their nature, shell scripts are hard to create following <em>clean code</em> principles.
+<em>shMate</em> can&#8217;t do much about it, but it encourages developers to use command <em>assertions</em> similarly to testing frameworks.
+This approach reduces <em>cyclomatic complexity</em> and transforms code comments into useful error/debug log messages while self-documenting the script at the same time.</p>
+</dd>
+<dt class="hdlist1">Error handling</dt>
+<dd>
+<p>Error handling is usually second to worst implemented feature in a shell script. <em>shMate</em> takes special care for error handling and reporting by using <em>assertions</em> and <code>pipefail</code> option enabled by default.
+<em>shMate</em> always performs cleanup on exit and provides cleanup handlers to script creators.
+Script creators are also encouraged to perform "late exit" common to high-level programming languages.</p>
+</dd>
+<dt class="hdlist1">Signal handling</dt>
+<dd>
+<p>Signal handling is usually the worst implemented feature in a shell script. <em>shMate</em> aims to change that by providing signal handlers.
+They can be implemented by the script creator, but usually more than often their default implementation (i.e. logging and cleanup) is sufficient.
+Asynchronous signal handling can also be easily enabled.</p>
+</dd>
+<dt class="hdlist1">Temporary working directory</dt>
+<dd>
+<p><em>shMate</em> based scripts can easily enable their own private temporary working directory (unrelated to <code>PWD</code>).
+This directory automatically is cleaned up on exit, unless deliberately requested otherwise.</p>
+</dd>
+<dt class="hdlist1">Parallel jobs</dt>
+<dd>
+<p><em>shMate</em> makes managing parallel jobs (processes) easy.
+The jobs can be operated in groups and as a group they can be waited for or terminated with single command.
+<em>shMate</em> ensures no <em>zombies</em> are left after exit, making it ideal library for both user scripts and service managers.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user-content-src_Executables-reference">3. Executables reference</h2>
+<div class="sectionbody">
+<hr>
+<div class="sect2">
+<h3 id="user-content-src_bin_shmate-adoc">3.1. shmate-adoc</h3>
+<div class="paragraph">
+<p>Generates AsciiDoc from shell executables and libraries.</p>
+</div>
+<div class="literalblock">
+<div class="title">Usage</div>
+<div class="content">
+<pre>Usage: shmate-adoc [-C &lt;directory&gt;]
+
+        Prints AsciiDoc from shell executables and libraries in current directory.
+        Each line of the source file beginning with '#&gt;' is extracted and treated as AsciiDoc.
+
+        To reduce boilerplate code special markers can be used to describe source file (i.e. '&gt;&gt;&gt;') and function within
+        (i.e. '&gt;&gt;&gt;&gt;&gt;'). They will take care of anchors and add additional styling.
+
+        Additionally, generates AsciiDoc using executable's '-h' option.
+        If a function 'help_&lt;task&gt;' is found within executable, AsciiDoc from '-h &lt;task&gt;' option is also generated.
+
+        The current directory must belong to a Git repository. Special directories (i.e. dot-directories, Git
+        submodules, 'test', 'target', 'docker', 'ci') are excluded from the search.
+
+        Options:
+            -C &lt;directory&gt;
+                Changes current directory to &lt;directory&gt; before execution.
+
+Usage: shmate-adoc -h
+
+        Prints this help message.</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="user-content-src_bin_shmate-artifact">3.2. shmate-artifact</h3>
+<div class="paragraph">
+<p>Artifact repository client. Can be used to integrate with various Maven 2 style repositories.</p>
+</div>
+<div class="literalblock">
+<div class="title">Usage</div>
+<div class="content">
+<pre>Usage: shmate-artifact &lt;task&gt; [&lt;task_arg&gt; ...]
+
+        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+
+        Uses Gradle style &lt;artifact_descriptor&gt;, i.e.
+            &lt;group_id&gt;:&lt;artifact_id&gt;:&lt;version&gt;[:&lt;classifier&gt;]@&lt;packaging&gt;
+        e.g.
+            org.slf4j:slf4j-api:2.0.12@jar
+
+        Tasks:
+            check [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+
+Usage: shmate-artifact &lt;task&gt; -h
+
+        Prints &lt;task&gt; related help message.
+
+Usage: shmate-artifact -h
+
+        Prints this help message.</pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_src_bin_shmate-artifact_-h_check">3.2.1. check</h4>
+<div class="literalblock">
+<div class="title">Usage</div>
+<div class="content">
+<pre>Usage: shmate-artifact &lt;task&gt; [&lt;task_arg&gt; ...]
+
+        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+
+        Uses Gradle style &lt;artifact_descriptor&gt;, i.e.
+            &lt;group_id&gt;:&lt;artifact_id&gt;:&lt;version&gt;[:&lt;classifier&gt;]@&lt;packaging&gt;
+        e.g.
+            org.slf4j:slf4j-api:2.0.12@jar
+
+        Tasks:
+            check [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+
+Usage: shmate-artifact &lt;task&gt; -h
+
+        Prints &lt;task&gt; related help message.
+
+Usage: shmate-artifact -h
+
+        Prints this help message.</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_src_bin_shmate-artifact_-h_fetch">3.2.2. fetch</h4>
+<div class="literalblock">
+<div class="title">Usage</div>
+<div class="content">
+<pre>Usage: shmate-artifact &lt;task&gt; [&lt;task_arg&gt; ...]
+
+        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+
+        Uses Gradle style &lt;artifact_descriptor&gt;, i.e.
+            &lt;group_id&gt;:&lt;artifact_id&gt;:&lt;version&gt;[:&lt;classifier&gt;]@&lt;packaging&gt;
+        e.g.
+            org.slf4j:slf4j-api:2.0.12@jar
+
+        Tasks:
+            check [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+
+Usage: shmate-artifact &lt;task&gt; -h
+
+        Prints &lt;task&gt; related help message.
+
+Usage: shmate-artifact -h
+
+        Prints this help message.</pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-content-src_bin_shmate-test">3.3. shmate-test</h3>
+<div class="paragraph">
+<p>Runs all test cases in current directory and prints results in JUnit format.
+The 'test case' is just a function named 'test_*' in any of the libraries, i.e. non-executable '.sh' files called 'test suites'.</p>
+</div>
+<details>
+<summary class="title">Example test suite <code>test/lib/workdir.sh</code></summary>
+<div class="content">
+<div class="listingblock">
+<div class="title">Test suite</div>
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">#!/usr/bin/env bash
+
+# shellcheck source=src/lib/shmate/workdir.sh
+. "${SHMATE_SOURCE_DIR}/src/lib/shmate/workdir.sh"
+
+_test_path_in_work_dir() {
+    local path="$1"
+
+    local is_in_work_dir=false
+    case "${path}" in
+        "${shmate_work_dir}/"*)
+            is_in_work_dir=true
+            ;;
+    esac
+
+    ${is_in_work_dir}
+    shmate_assert "Path \"${path}\" must be within working directory \"${shmate_work_dir}\"" || return $?
+
+    return 0
+}
+
+_test_directory() {
+    local path="$1"
+    local found_path=
+
+    test -n "${path}"
+    shmate_assert 'Path must not be empty' || return $?
+
+    test -d "${path}"
+    shmate_assert "Path \"${path}\" must be a directory" || return $?
+
+    _test_path_in_work_dir "${path}" || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -perm -u=rwx) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Path \"${path}\" must have all user permissions" || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -empty) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Directory \"${path}\" must be empty" || return $?
+
+    return 0
+}
+
+_test_file() {
+    local path="$1"
+    local found_path=
+
+    test -n "${path}"
+    shmate_assert 'Path must not be empty' || return $?
+
+    test -f "${path}"
+    shmate_assert "Path \"${path}\" must be a file" || return $?
+
+    _test_path_in_work_dir "${path}" || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -perm -u=rw) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Path \"${path}\" must have read/write user permissions" || return $?
+
+    test ! -s "${path}"
+    shmate_assert "File \"${path}\" must be empty" || return $?
+
+    return 0
+}
+
+_test_fifo() {
+    local path="$1"
+    local found_path=
+
+    test -n "${path}"
+    shmate_assert 'Path must not be empty' || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -type p) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Path \"${path}\" must be a fifo" || return $?
+
+    _test_path_in_work_dir "${path}" || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -perm -u=rw) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Path \"${path}\" must have read/write user permissions" || return $?
+
+    return 0
+}
+
+test_shmate_work_dir() {
+    local found_dir=
+
+    test -n "${shmate_work_dir}"
+    shmate_assert "\"shmate_work_dir\" global variable must not be empty" || return $?
+
+    test -d "${shmate_work_dir}"
+    shmate_assert "Path \"${shmate_work_dir}\" must be a directory" || return $?
+
+    found_dir=$(shmate_audit find "${shmate_work_dir}" -maxdepth 0 ! -perm +g=rwx) || return $?
+    test "${found_dir}" = "${shmate_work_dir}"
+    shmate_assert "Working directory \"${shmate_work_dir}\" must not have any group permissions" || return $?
+
+    found_dir=$(shmate_audit find "${shmate_work_dir}" -maxdepth 0 ! -perm +o=rwx) || return $?
+    test "${found_dir}" = "${shmate_work_dir}"
+    shmate_assert "Working directory \"${shmate_work_dir}\" must not have any other user permissions" || return $?
+
+    found_dir=$(shmate_audit find "${shmate_work_dir}" -maxdepth 0 -perm -u=rwx) || return $?
+    test "${found_dir}" = "${shmate_work_dir}"
+    shmate_assert "Working directory \"${shmate_work_dir}\" must have all user permissions" || return $?
+
+    return 0
+}
+
+test_shmate_create_tmp_dir() {
+    local name='foobar'
+    local tmp_dir_1= tmp_dir_2=
+
+    tmp_dir_1=$(shmate_create_tmp_dir "${name}")
+    shmate_assert "Creating first temporary directory \"${name}\"" || return $?
+
+    _test_directory "${tmp_dir_1}" || return $?
+
+    tmp_dir_2=$(shmate_create_tmp_dir "${name}")
+    shmate_assert "Creating second temporary directory \"${name}\"" || return $?
+
+    _test_directory "${tmp_dir_2}" || return $?
+
+    test "${tmp_dir_1}" != "${tmp_dir_2}"
+    shmate_assert "First directory path \"${tmp_dir_1}\" must not equal to second directory path \"${tmp_dir_2}\"" || return $?
+
+    return 0
+}
+
+test_shmate_create_tmp_file() {
+    local name='foobar'
+    local tmp_file_1= tmp_file_2=
+
+    tmp_file_1=$(shmate_create_tmp_file "${name}")
+    shmate_assert "Creating first temporary file \"${name}\"" || return $?
+
+    _test_file "${tmp_file_1}" || return $?
+
+    tmp_file_2=$(shmate_create_tmp_file "${name}")
+    shmate_assert "Creating second temporary file \"${name}\"" || return $?
+
+    _test_file "${tmp_file_2}" || return $?
+
+    test "${tmp_file_1}" != "${tmp_file_2}"
+    shmate_assert "First file path \"${tmp_file_1}\" must not equal to second file path \"${tmp_file_2}\"" || return $?
+
+    return 0
+}
+
+test_shmate_create_tmp_fifo() {
+    local name='foobar'
+    local tmp_fifo_1= tmp_fifo_2=
+
+    tmp_fifo_1=$(shmate_create_tmp_fifo "${name}")
+    shmate_assert "Creating first temporary fifo \"${name}\"" || return $?
+
+    _test_fifo "${tmp_fifo_1}" || return $?
+
+    tmp_fifo_2=$(shmate_create_tmp_fifo "${name}")
+    shmate_assert "Creating second temporary fifo \"${name}\"" || return $?
+
+    _test_fifo "${tmp_fifo_2}" || return $?
+
+    test "${tmp_fifo_1}" != "${tmp_fifo_2}"
+    shmate_assert "First fifo path \"${tmp_fifo_1}\" must not equal to second fifo path \"${tmp_fifo_2}\"" || return $?
+
+    return 0
+}</code></pre>
+</div>
+</div>
+</div>
+</details>
+<div class="literalblock">
+<div class="title">Usage</div>
+<div class="content">
+<pre>Usage: shmate-test [-C &lt;test_dir&gt;] [-O &lt;output_dir&gt;] [-s &lt;source_dir&gt;] [-p &lt;test_prefix&gt;]
+
+        Runs all test cases in current directory and prints results in JUnit format.
+        The 'test case' is just a function named 'test_*' in any of the libraries, i.e. non-executable '.sh' files
+        called 'test suites'.
+
+        Test suite environment:
+            SHMATE_SOURCE_DIR
+                Directory specified with '-s' option.
+            SHMATE_TEST_DIR
+                Directory where the test suite is run from. Can be used to access data files.
+            SHMATE_WORK_DIR
+                Directory where the test suite can store temporary files.
+
+        Test case environment:
+            SHMATE_TEST_SUITE
+                Name of the test suite being run. Can be used for example to access test suite data directory
+                "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}" if needed.
+            SHMATE_TEST_CASE
+                Name of the test case being run. Can be used for example to create unique test case working directory
+                "${SHMATE_WORK_DIR}/${SHMATE_TEST_CASE}" if needed.
+
+        Options:
+            -C &lt;test_dir&gt;
+                Changes current directory to &lt;directory&gt; before execution.
+            -O &lt;output_dir&gt;
+                Saves intermediate test results in &lt;output_dir&gt; for posterity.
+            -s &lt;source_dir&gt;
+                Directory with sources passed to test function. Can be anything.
+                Uses 'git' for auto detection by default.
+            -p &lt;test_prefix&gt;
+                Prefix used by test case functions, i.e. '&lt;test_prefix&gt;_*'. Defaults to 'test'.
+                It is highly recommended to use the default if possible.
+
+Usage: shmate-test -h
+
+        Prints this help message.</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="user-content-src_Libraries-reference">4. Libraries reference</h2>
+<div class="sectionbody">
+<hr>
+<div class="sect2">
+<h3 id="user-content-src_lib_shmate_assert">4.1. assert.sh</h3>
+<div class="paragraph">
+<p>Base library for every other <em>shMate</em> based library or executable needing logging or assertions.
+Adds logging and assertion related functions. Detects color support.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Log messages are always printed to <em>stderr</em>.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_assert-Dependencies">4.1.1. Dependencies</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#user-content-src_lib_shmate_base">lib/shmate/base.sh</a></p>
+</li>
+<li>
+<p><a href="#user-content-src_lib_shmate_-deprecated">lib/shmate/_deprecated.sh</a></p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_assert-Environment">4.1.2. Environment</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-SHMATE_DEBUG_LEVEL">SHMATE_DEBUG_LEVEL</h5>
+<div class="paragraph">
+<p>Integer value of current debug level. Defaults to 0.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">0</dt>
+<dd>
+<p>Print informational log messages only.</p>
+</dd>
+<dt class="hdlist1">1</dt>
+<dd>
+<p>Print informational log messages + <em>AUDIT</em> log messages.</p>
+</dd>
+<dt class="hdlist1">2</dt>
+<dd>
+<p>Print informational log messages + <em>AUDIT</em> + <em>DEBUG</em> log messages.</p>
+</dd>
+<dt class="hdlist1">3</dt>
+<dd>
+<p>Print informational log messages + <em>AUDIT</em> + <em>DEBUG</em> + <em>ASSERT</em> log messages.</p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-SHMATE_COLORS">SHMATE_COLORS</h5>
+<div class="paragraph">
+<p>Integer controlling colorful logging. Not set by default i.e. auto detect.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">0</dt>
+<dd>
+<p>disabled</p>
+</dd>
+<dt class="hdlist1">greater than 0</dt>
+<dd>
+<p>enabled</p>
+</dd>
+<dt class="hdlist1">not set</dt>
+<dd>
+<p>auto detect</p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_FORMAT">SHMATE_TIMESTAMP_FORMAT</h5>
+<div class="paragraph">
+<p>Timestamp format accepted by <em>date</em> command. Defaults to '%H:%M:%S'.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-SHMATE_LOG">SHMATE_LOG</h5>
+<div class="paragraph">
+<p>Path to log file. If set, console log will be duplicated to the log file.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-SHMATE_LOG_ANSI_ESCAPE">SHMATE_LOG_ANSI_ESCAPE</h5>
+<div class="paragraph">
+<p>Setting this to positive integer indicates the log message contains <a href="https://en.wikipedia.org/wiki/ANSI_escape_code"><em>ANSI escape sequences</em></a>
+needed to be processed when logging to console or needed to be removed if logging to file. Should be used on demand as <code>local</code> variable.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-SHMATE_LOG_IN_PLACE">SHMATE_LOG_IN_PLACE</h5>
+<div class="paragraph">
+<p>Setting this to positive integer disables logging to file and final <em>CRLF</em> sequence in console log is replaced with single carriage return.
+Useful for logging progress messages. The message should be one-liner. Should be used on demand as <code>local</code> variable.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_assert-Debugging-log-levels">4.1.3. Debugging log levels</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">ASSERT</dt>
+<dd>
+<p>TODO</p>
+</dd>
+<dt class="hdlist1">DEBUG</dt>
+<dd>
+<p>TODO</p>
+</dd>
+<dt class="hdlist1">AUDIT</dt>
+<dd>
+<p>TODO</p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_assert-Informational-log-levels">4.1.4. Informational log levels</h4>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">INFO</dt>
+<dd>
+<p>TODO</p>
+</dd>
+<dt class="hdlist1">WARNING</dt>
+<dd>
+<p>TODO</p>
+</dd>
+<dt class="hdlist1">ERROR</dt>
+<dd>
+<p>TODO</p>
+</dd>
+<dt class="hdlist1">PENDING</dt>
+<dd>
+<p>TODO</p>
+</dd>
+<dt class="hdlist1">SUCCESS</dt>
+<dd>
+<p>TODO</p>
+</dd>
+<dt class="hdlist1">FAILURE</dt>
+<dd>
+<p>TODO</p>
+</dd>
+</dl>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_assert-Internal-symbols">4.1.5. Internal symbols</h4>
+<details>
+<summary class="title">Variables</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_SHMATE_PID</p>
+</li>
+<li>
+<p>_SHMATE_PID_FILE</p>
+</li>
+<li>
+<p>_shmate_log_label_assert</p>
+</li>
+<li>
+<p>_shmate_log_label_debug</p>
+</li>
+<li>
+<p>_shmate_log_label_audit</p>
+</li>
+<li>
+<p>_shmate_log_label_info</p>
+</li>
+<li>
+<p>_shmate_log_label_warning</p>
+</li>
+<li>
+<p>_shmate_log_label_error</p>
+</li>
+<li>
+<p>_shmate_log_label_pending</p>
+</li>
+<li>
+<p>_shmate_log_label_success</p>
+</li>
+<li>
+<p>_shmate_log_label_failure</p>
+</li>
+<li>
+<p>_shmate_console_label_assert</p>
+</li>
+<li>
+<p>_shmate_console_label_debug</p>
+</li>
+<li>
+<p>_shmate_console_label_audit</p>
+</li>
+<li>
+<p>_shmate_console_label_info</p>
+</li>
+<li>
+<p>_shmate_console_label_warning</p>
+</li>
+<li>
+<p>_shmate_console_label_error</p>
+</li>
+<li>
+<p>_shmate_console_label_pending</p>
+</li>
+<li>
+<p>_shmate_console_label_success</p>
+</li>
+<li>
+<p>_shmate_console_label_failure</p>
+</li>
+<li>
+<p>_shmate_assert_message</p>
+</li>
+<li>
+<p>_shmate_assert_message_stack</p>
+</li>
+<li>
+<p>_shmate_log_audit_format</p>
+</li>
+<li>
+<p>_shmate_log_audit_args</p>
+</li>
+<li>
+<p>_shmate_console_audit_format</p>
+</li>
+<li>
+<p>_shmate_console_audit_args</p>
+</li>
+<li>
+<p>_shmate_log_audit_separator</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<details>
+<summary class="title">Functions</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_shmate_assert_with_level</p>
+</li>
+<li>
+<p>_shmate_colors</p>
+</li>
+<li>
+<p>_shmate_create_log_file</p>
+</li>
+<li>
+<p>_shmate_get_pid</p>
+</li>
+<li>
+<p>_shmate_ignore_sigpipe</p>
+</li>
+<li>
+<p>_shmate_is_error_code</p>
+</li>
+<li>
+<p>_shmate_log_audit_add</p>
+</li>
+<li>
+<p>_shmate_console_audit_add</p>
+</li>
+<li>
+<p>_shmate_log_audit_myself</p>
+</li>
+<li>
+<p>_shmate_log_message</p>
+</li>
+<li>
+<p>_shmate_log_timestamp</p>
+</li>
+<li>
+<p>_shmate_lib_assert_cleanup</p>
+</li>
+<li>
+<p>_shmate_lib_assert_on_exit</p>
+</li>
+<li>
+<p>_shmate_lib_assert_on_terminate</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_assert-Variables">4.1.6. Variables</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_ansi_escape_sequence_regex">shmate_ansi_escape_sequence_regex</h5>
+<div class="paragraph">
+<p>Regular expression to match <a href="https://en.wikipedia.org/wiki/ANSI_escape_code"><em>ANSI escape sequence</em></a>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_hostname">shmate_hostname</h5>
+<div class="paragraph">
+<p>Fully qualified host name.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_debug_level_audit">shmate_debug_level_audit</h5>
+<div class="paragraph">
+<p>Integer value of <em>AUDIT</em> log level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_debug_level_debug">shmate_debug_level_debug</h5>
+<div class="paragraph">
+<p>Integer value of <em>DEBUG</em> log level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_debug_level_assert">shmate_debug_level_assert</h5>
+<div class="paragraph">
+<p>Integer value of <em>ASSERT</em> log level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_debug_level">shmate_debug_level</h5>
+<div class="paragraph">
+<p>Integer value of current debug level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_crlf">shmate_log_crlf</h5>
+<div class="paragraph">
+<p>Log file line ending character sequence accepted by <em>printf</em> command.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_format">shmate_log_format</h5>
+<div class="paragraph">
+<p>Log file line format accepted by <em>printf</em> command.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_console_crlf">shmate_console_crlf</h5>
+<div class="paragraph">
+<p>Console log line ending character sequence accepted by <em>printf</em> command.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_console_format">shmate_console_format</h5>
+<div class="paragraph">
+<p>Console log line format accepted by <em>printf</em> command.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_timestamp_format">shmate_timestamp_format</h5>
+<div class="paragraph">
+<p>Timestamp format accepted by <em>date</em> command.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_assert-Functions">4.1.7. Functions</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_colors_grayout">shmate_colors_grayout</h5>
+<div class="paragraph">
+<p>Changes terminal color scheme to grayed out.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_colors_disable">shmate_colors_disable</h5>
+<div class="paragraph">
+<p>Disables terminal colors.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_assert">shmate_log_assert</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_assert [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>ASSERT</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_debug">shmate_log_debug</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_debug [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>DEBUG</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_info">shmate_log_info</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_info [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>INFO</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_warning">shmate_log_warning</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_warning [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>WARNING</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_warn">shmate_log_warn</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_warn [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alias for <a href="#user-content-src_lib_shmate_assert-shmate_log_warning">shmate_log_warning</a>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_error">shmate_log_error</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_error [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>ERROR</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_pending">shmate_log_pending</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_pending [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>PENDING</em> level.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Direct use of this function should be avoided in favor of <a href="#user-content-src_lib_shmate_assert-shmate_pending_assert">shmate_pending_assert</a>.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_success">shmate_log_success</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_success [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>SUCCESS</em> level.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Direct use of this function should be avoided in favor of <a href="#user-content-src_lib_shmate_assert-shmate_loud_assert">shmate_loud_assert</a>.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_failure">shmate_log_failure</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_failure [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>FAILURE</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_fail">shmate_log_fail</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_fail [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Alias for <a href="#user-content-src_lib_shmate_assert-shmate_log_failure">shmate_log_failure</a>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_deprecated">shmate_log_deprecated</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_deprecated &lt;since_version&gt; &lt;symbol_type&gt; &lt;symbol_name&gt; &lt;resolution&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs deprecated symbols.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_log_audit">shmate_log_audit</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_audit &lt;command&gt; [&lt;command_arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs &lt;command&gt; and &lt;command_args&gt; in <em>AUDIT</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_audit">shmate_audit</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_audit &lt;command&gt; [&lt;command_arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs &lt;command&gt; execution in <em>AUDIT</em> level and runs the &lt;command&gt; with &lt;command_args&gt;.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_fail">shmate_fail</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_fail &lt;exit_code&gt; [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>FAILURE</em> level and terminates the program with &lt;exit_code&gt;.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_check_tools">shmate_check_tools</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_check_tools [&lt;optional_tool&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Checks if all the &lt;optional_tools&gt; are found on <em>PATH</em>. Returns non-zero value if not.
+See <a href="#user-content-src_lib_shmate_assert-shmate_assert_tools">shmate_assert_tools</a> for loud version.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_assert_tools">shmate_assert_tools</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_assert_tools [&lt;required_tool&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Checks if all the &lt;required_tools&gt; are found on <em>PATH</em>. If not, logs message in <em>ERROR</em> level and returns non-zero value.
+See <a href="#user-content-src_lib_shmate_assert-shmate_check_tools">shmate_check_tools</a> for silent version.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_assert">shmate_assert</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_assert [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Assert successful execution (zero exit code) of the last executed command.
+If non-zero exit code has been returned, &lt;messages&gt; are concatenated and logged in <em>ERROR</em> level.
+Returns the same exit code as the last executed command.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Within a function the <em>shmate_assert</em> is best called followed by a conditional <em>return</em>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">shmate_audit mkdir -p "${dir}"
+shmate_assert "Creating directory \"${dir}\"" || return $?</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_silent_assert">shmate_silent_assert</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_silent_assert [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Same as <a href="#user-content-src_lib_shmate_assert-shmate_assert">shmate_assert</a> but logs in <em>DEBUG</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_warning_assert">shmate_warning_assert</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_warning_assert [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Same as <a href="#user-content-src_lib_shmate_assert-shmate_assert">shmate_assert</a> but logs in <em>WARNING</em> level.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_pending_assert">shmate_pending_assert</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_pending_assert [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Logs concatenated &lt;messages&gt; in <em>PENDING</em> level.
+Puts the logged message on stack, so it can be taken by <a href="#user-content-src_lib_shmate_assert-shmate_loud_assert">shmate_loud_assert</a> and <a href="#user-content-src_lib_shmate_assert-shmate_fail_assert">shmate_fail_assert</a>.
+Must always be coupled with <a href="#user-content-src_lib_shmate_assert-shmate_loud_assert">shmate_loud_assert</a> or <a href="#user-content-src_lib_shmate_assert-shmate_fail_assert">shmate_fail_assert</a> to take logged message off stack.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Best used for long-running tasks.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">shmate_pending_assert 'Downloading the whole Internet'
+curl --fail '${internet_zip_url}'
+shmate_loud_assert || return $?</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_loud_assert">shmate_loud_assert</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_loud_assert [&lt;exit_code&gt;] [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Similar to <a href="#user-content-src_lib_shmate_assert-shmate_assert">shmate_assert</a>, but on successful execution of the last command logs concatenated messages in <em>SUCCESS</em> level.</p>
+</div>
+<div class="paragraph">
+<p>If no &lt;messages&gt; are given, takes the message off stack (put there by <a href="#user-content-src_lib_shmate_assert-shmate_pending_assert">shmate_pending_assert</a>).
+If &lt;exit_code&gt; is given, it overrides the returned exit code.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-shmate_fail_assert">shmate_fail_assert</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_fail_assert [&lt;exit_code&gt;] [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If no &lt;messages&gt; are given behaves like <a href="#user-content-src_lib_shmate_assert-shmate_loud_assert">shmate_loud_assert</a>, otherwise behaves like <a href="#user-content-src_lib_shmate_assert-shmate_assert">shmate_assert</a>.
+If the last command failed, logs message in <em>FAILURE</em> level and terminates the program.</p>
+</div>
+<div class="paragraph">
+<p>If &lt;exit_code&gt; is given, it overrides the returned exit code.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-content-src_lib_shmate_base">4.2. base.sh</h3>
+<div class="paragraph">
+<p>Base library for every other <em>shMate</em> based library or executable.
+Sets required global settings and adds most common functions, particularly cleanup on exit.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_base-Shell-options">4.2.1. Shell options</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>posix</p>
+</li>
+<li>
+<p>pipefail</p>
+</li>
+<li>
+<p>noglob</p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_base-Environment">4.2.2. Environment</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-SHMATE_INSTALL_DIR">SHMATE_INSTALL_DIR</h5>
+<div class="paragraph">
+<p>Path to directory where <em>shMate</em> is installed.
+Must be set, unless all of <code>SHMATE_BIN_DIR</code>, <code>SHMATE_CONF_DIR</code>, <code>SHMATE_LIB_DIR</code> are set.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-SHMATE_BIN_DIR">SHMATE_BIN_DIR</h5>
+<div class="paragraph">
+<p>Path to directory containing <em>shMate</em> executable files. Defaults to <code>${SHMATE_INSTALL_DIR}/bin</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-SHMATE_CONF_DIR">SHMATE_CONF_DIR</h5>
+<div class="paragraph">
+<p>Path to directory containing <em>shMate</em> configuration files. Defaults to <code>${SHMATE_INSTALL_DIR}/etc/shmate</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-SHMATE_LIB_DIR">SHMATE_LIB_DIR</h5>
+<div class="paragraph">
+<p>Path to directory containing <em>shMate</em> library files. Defaults to <code>${SHMATE_INSTALL_DIR}/lib/shmate</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-SHMATE_CURRENT_TIMESTAMP">SHMATE_CURRENT_TIMESTAMP</h5>
+<div class="paragraph">
+<p>Setting this to nonempty string makes <a href="#user-content-src_lib_shmate_base-shmate_current_timestamp">shmate_current_timestamp</a> print this value instead of actual timestamp.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_base-Internal-symbols">4.2.3. Internal symbols</h4>
+<details>
+<summary class="title">Variables</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_shmate_handled_signals</p>
+</li>
+<li>
+<p>_shmate_is_termination_ignored</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<details>
+<summary class="title">Functions</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_shmate_cleanup</p>
+</li>
+<li>
+<p>_shmate_on_exit</p>
+</li>
+<li>
+<p>_shmate_on_terminate</p>
+</li>
+<li>
+<p>_shmate_terminate</p>
+</li>
+<li>
+<p>_shmate_trap_signal</p>
+</li>
+<li>
+<p>_shmate_ignore_signal</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_base-Variables">4.2.4. Variables</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_os_kernel">shmate_os_kernel</h5>
+<div class="paragraph">
+<p>Kernel version, useful to detect platform.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_os_linux">shmate_os_linux</h5>
+<div class="paragraph">
+<p><em>true</em> if run on Linux platform.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_os_bsd">shmate_os_bsd</h5>
+<div class="paragraph">
+<p><em>true</em> if run on BSD platform.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_os_windows">shmate_os_windows</h5>
+<div class="paragraph">
+<p><em>true</em> if run on Windows platform.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_function_main">shmate_function_main</h5>
+<div class="paragraph">
+<p>Function name used by <a href="#user-content-src_lib_shmate_base-shmate_main">shmate_main</a>. Defaults to <code>main</code>.
+It is highly recommended to use the default whenever possible.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_function_help">shmate_function_help</h5>
+<div class="paragraph">
+<p>Function name or prefix used by <a href="#user-content-src_lib_shmate_base-shmate_exit_help">shmate_exit_help</a>. Defaults to <code>help</code>.
+It is highly recommended to use the default whenever possible.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_function_task">shmate_function_task</h5>
+<div class="paragraph">
+<p>Function prefix used by <a href="#user-content-src_lib_shmate_base-shmate_task">shmate_task</a>. Defaults to <code>task</code>.
+It is highly recommended to use the default whenever possible.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_getopts_option">shmate_getopts_option</h5>
+<div class="paragraph">
+<p>Variable set by <a href="#user-content-src_lib_shmate_base-shmate_getopts">shmate_getopts</a> function. Contains name of the option currently being processed.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_getopts_task">shmate_getopts_task</h5>
+<div class="paragraph">
+<p>Variable set by <a href="#user-content-src_lib_shmate_base-shmate_task">shmate_task</a> function. Contains name of the task currently being processed.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_base-Functions">4.2.5. Functions</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_cleanup &lt;exit_code&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Handler called just before exit. It should never be called manually, but can be implemented in caller&#8217;s script.</p>
+</div>
+<div class="paragraph">
+<p>It may or may not have access to <em>stdin</em>, <em>stdout</em>, <em>stderr</em> depending on the platform.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_on_exit">shmate_on_exit</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_on_exit &lt;exit_code&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Handler called just before <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a>, but not upon receiving signal. It should never be called manually, but can be implemented in caller&#8217;s script.
+The returned value is passed to <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a> and is the final exit code of the script (in most cases returning unaltered &lt;exit_code&gt; is desired).</p>
+</div>
+<div class="paragraph">
+<p>It does have access to <em>stdin</em>, <em>stdout</em>, <em>stderr</em>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_on_terminate">shmate_on_terminate</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_on_terminate &lt;exit_code&gt; &lt;signal_name&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Handler called just before <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a> after receiving terminating signal (e.g. HUP, TERM, USR2). It should never be called manually, but can be implemented in caller&#8217;s script.
+The non-zero return value is passed to <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a> and is the final exit code of the script (in most cases returning unaltered &lt;exit_code&gt; is desired).
+The zero return value means the signal has been handled. To exit program with zero 'exit 0' must be called explicitly.</p>
+</div>
+<div class="paragraph">
+<p>It does have access to <em>stdin</em>, <em>stdout</em>, <em>stderr</em>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_exit">shmate_exit</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_exit [&lt;exit_code&gt;]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Exits with given &lt;exit_code&gt; or zero if not specified. Must always be used instead of plain <em>exit</em>. Calls <a href="#user-content-src_lib_shmate_base-shmate_on_exit">shmate_on_exit</a> and <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a> handlers.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_exit_help">shmate_exit_help</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_exit_help [&lt;exit_code&gt; [&lt;task&gt;]]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Prints help message end exits with given &lt;exit_code&gt; or zero if not specified.
+The message is printed to stdout on zero &lt;exit_code&gt; or stderr otherwise.
+The <code>help</code> function printing the message must be defined beforehand.
+If &lt;task&gt; is specified <code>help_&lt;task&gt;</code> function is used instead of <code>help</code>.</p>
+</div>
+<div class="paragraph">
+<p>Help function prefix can be changed by setting <a href="#user-content-src_lib_shmate_base-shmate_function_help">shmate_function_help</a> variable before including the library.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_log_error">shmate_log_error</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_log_error [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Prints concatenated &lt;messages&gt; to <em>stderr</em>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_fail">shmate_fail</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_fail &lt;exit_code&gt; [&lt;message&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Prints concatenated &lt;messages&gt; to <em>stderr</em> and terminates the program with &lt;exit_code&gt;.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_exec">shmate_exec</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_exec &lt;command&gt; [&lt;command_arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Like ordinary <code>exec</code>, but calls <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a> handler beforehand.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_getopts">shmate_getopts</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_getopts &lt;option_string&gt; [&lt;arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Similar to ordinary <code>getopts</code>, but it always uses the <a href="#user-content-src_lib_shmate_base-shmate_getopts_option">shmate_getopts_option</a> variable to store
+current option name.
+Automatically adds <code>-h</code> option handler and uses <a href="#user-content-src_lib_shmate_base-shmate_exit_help">shmate_exit_help</a> if <code>-h</code> option is given or if
+options are invalid.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Important</div>
+</td>
+<td class="content">
+Like ordinary <code>getopts</code> the function returns <code>false</code> only if all options are processed, i.e. first non-option argument
+is detected or there are no more arguments. It is therefore recommended to <code>shift</code> remaining arguments by <code>OPTIND - 1</code>
+like in the following examples.
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="title">Example 1. No options except help</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">shmate_getopts '' "$@" <b class="conum">(1)</b>
+shift $((OPTIND - 1)) <b class="conum">(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p>Empty &lt;option_string&gt; means no options except <code>-h</code> are valid.</p>
+</li>
+<li>
+<p>Shift the arguments so the first positional parameter <code>$1</code> denotes the first non-option argument, if there is any.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 2. Change current directory</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">while shmate_getopts 'C:' "$@"; do <b class="conum">(1)</b>
+    case "${shmate_getopts_option}" in <b class="conum">(2)</b>
+       C) <b class="conum">(3)</b>
+           if [ -n "${OPTARG}" ]; then
+               cd "${OPTARG}" || return $?
+           fi
+           ;;
+    esac
+done
+shift $((OPTIND - 1)) <b class="conum">(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<ol>
+<li>
+<p><code>C:</code> as &lt;option_string&gt; means only <code>-h</code> option (flag) and <code>-C</code> option with argument are valid.</p>
+</li>
+<li>
+<p>Use predefined <a href="#user-content-src_lib_shmate_base-shmate_getopts_option">shmate_getopts_option</a> variable holding name of the currently processed option.</p>
+</li>
+<li>
+<p>Action to be taken when <code>-C</code> option is found. The option&#8217;s argument is stored in <code>OPTARG</code> variable.</p>
+</li>
+<li>
+<p>Shift the arguments so the first positional parameter <code>$1</code> denotes the first non-option argument, if there is any.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<details>
+<summary class="title">Sample script <code>greet</code></summary>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#&gt; &gt;&gt;&gt; greet
+#&gt;
+#&gt; Prints greeting message for every given name.
+#&gt;
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} [-g &lt;greeting&gt;] [-ux] [&lt;name&gt; ...]
+
+        Prints greeting message for every &lt;name&gt;.
+
+        Options:
+            -g &lt;greeting&gt;
+                Uses &lt;greeting&gt; instead of default \"Hello\".
+            -u
+                Prints message in uppercase.
+            -x
+                Prints exclamation mark at the end of each greeting.
+                Can be given multiple times to print more exclamation marks.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+job_greet() {
+    local suffix=
+    local name=
+
+    for name in "$@"; do
+        echo "${arg_greet} ${name}${arg_name_suffix}"
+        shmate_assert "Printing greeting for \"${name}\"" || return $?
+    done
+
+    return 0
+}
+
+job_greet_uppercase() {
+    job_greet "$@" | tr '[:lower:]' '[:upper:]'
+    shmate_assert 'Printing greetings in uppercase' || return $?
+
+    return 0
+}
+
+main() {
+    local arg_greet='Hello'
+    local arg_uppercase=false
+    local arg_name_suffix=''
+
+    while shmate_getopts 'g:ux' "$@"; do
+        case ${shmate_getopts_option} in
+            g)
+                if [ -n "${OPTARG}" ]; then
+                    arg_greet="${OPTARG}"
+                fi
+                ;;
+            u)
+                arg_uppercase=true
+                ;;
+            x)
+                arg_name_suffix="${arg_name_suffix}!"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    if ${arg_uppercase}; then
+        job_greet_uppercase "$@"
+    else
+        job_greet "$@"
+    fi
+}
+
+shmate_main "$@"</code></pre>
+</div>
+</div>
+</div>
+</details>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_main">shmate_main</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_main [&lt;arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Recommended entry point for all scripts using <em>shMate</em> library.
+Calls the <code>main</code> function defined in the calling script.
+Must be used in the last not empty line in the calling script.</p>
+</div>
+<div class="paragraph">
+<p>Main function name can be changed by setting <a href="#user-content-src_lib_shmate_base-shmate_function_main">shmate_function_main</a> variable before including the library.</p>
+</div>
+<details>
+<summary class="title">Sample script <code>greet</code></summary>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#&gt; &gt;&gt;&gt; greet
+#&gt;
+#&gt; Prints greeting message for every given name.
+#&gt;
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} [-g &lt;greeting&gt;] [-ux] [&lt;name&gt; ...]
+
+        Prints greeting message for every &lt;name&gt;.
+
+        Options:
+            -g &lt;greeting&gt;
+                Uses &lt;greeting&gt; instead of default \"Hello\".
+            -u
+                Prints message in uppercase.
+            -x
+                Prints exclamation mark at the end of each greeting.
+                Can be given multiple times to print more exclamation marks.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+job_greet() {
+    local suffix=
+    local name=
+
+    for name in "$@"; do
+        echo "${arg_greet} ${name}${arg_name_suffix}"
+        shmate_assert "Printing greeting for \"${name}\"" || return $?
+    done
+
+    return 0
+}
+
+job_greet_uppercase() {
+    job_greet "$@" | tr '[:lower:]' '[:upper:]'
+    shmate_assert 'Printing greetings in uppercase' || return $?
+
+    return 0
+}
+
+main() {
+    local arg_greet='Hello'
+    local arg_uppercase=false
+    local arg_name_suffix=''
+
+    while shmate_getopts 'g:ux' "$@"; do
+        case ${shmate_getopts_option} in
+            g)
+                if [ -n "${OPTARG}" ]; then
+                    arg_greet="${OPTARG}"
+                fi
+                ;;
+            u)
+                arg_uppercase=true
+                ;;
+            x)
+                arg_name_suffix="${arg_name_suffix}!"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    if ${arg_uppercase}; then
+        job_greet_uppercase "$@"
+    else
+        job_greet "$@"
+    fi
+}
+
+shmate_main "$@"</code></pre>
+</div>
+</div>
+</div>
+</details>
+<details>
+<summary class="title">Sample script <code>crude</code></summary>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#&gt; &gt;&gt;&gt; crude
+#&gt;
+#&gt; Performs CRUDe operations on multiple files.
+#&gt;
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} &lt;task&gt; [&lt;task_arg&gt; ...]
+
+        Performs CRUDe operations on multiple files.
+
+        Tasks:
+            create [-m &lt;mode&gt;] [&lt;file&gt; ...]
+            delete [-f] [&lt;file&gt; ...]
+            read [&lt;file&gt; ...]
+            write [&lt;file&gt; ...]
+
+Usage: ${0##*/} &lt;task&gt; -h
+
+        Prints &lt;task&gt; related help message.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+help_create() {
+    echo "
+Usage: ${0##*/} create [-m &lt;mode&gt;] [&lt;file&gt; ...]
+
+        Creates empty &lt;files&gt;. Overwrites existing &lt;files&gt;.
+
+        Options:
+            -m &lt;mode&gt;
+                Sets &lt;mode&gt; of each created file.
+"
+}
+
+help_delete() {
+    echo "
+Usage: ${0##*/} delete [-f] [&lt;file&gt; ...]
+
+        Deletes all &lt;files&gt;.
+
+        Options:
+            -f
+                Ignores missing files.
+"
+}
+
+help_read() {
+    echo "
+Usage: ${0##*/} read [&lt;file&gt; ...]
+
+        Reads all &lt;files&gt; in order and prints them to stdout.
+"
+}
+
+help_write() {
+    echo "
+Usage: ${0##*/} write [&lt;file&gt; ...]
+
+        Writes stdin to all &lt;files&gt; and to stdout.
+"
+}
+
+task_create() {
+    local arg_mode='0644'
+
+    while shmate_getopts 'm:' "$@"; do
+        case ${shmate_getopts_option} in
+            m)
+                if [ -n "${OPTARG}" ]; then
+                    arg_mode="${OPTARG}"
+                fi
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    local arg_file=
+    for arg_file in "$@"; do
+        shmate_audit install -m "${arg_mode}" /dev/null "${arg_file}"
+        shmate_assert "Creating file \"${arg_file}\"" || return $?
+    done
+
+    return 0
+}
+
+task_delete() {
+    local arg_flags=''
+
+    while shmate_getopts 'f' "$@"; do
+        case ${shmate_getopts_option} in
+            f)
+                arg_flags="${arg_flags} -f"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    shmate_audit rm${arg_flags} "$@"
+    shmate_assert 'Deleting files' || return $?
+
+    return 0
+}
+
+task_read() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit cat "$@"
+    shmate_assert 'Reading files' || return $?
+
+    return 0
+}
+
+task_write() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit tee "$@"
+    shmate_assert 'Writing files' || return $?
+
+    return 0
+}
+
+main() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_task "$@"
+}
+
+shmate_main "$@"</code></pre>
+</div>
+</div>
+</div>
+</details>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_task">shmate_task</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_task &lt;task&gt; [&lt;task_arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Delegates execution of &lt;task&gt; to function <code>task_&lt;task&gt;</code>. The function <code>task_&lt;task&gt;</code> must be defined beforehand.
+All &lt;task_args&gt; are passed along to the task function.</p>
+</div>
+<div class="paragraph">
+<p>Task function prefix can be changed by setting <a href="#user-content-src_lib_shmate_base-shmate_function_task">shmate_function_task</a> variable before including the library.</p>
+</div>
+<details>
+<summary class="title">Sample script <code>crude</code></summary>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-sh" data-lang="sh">#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#&gt; &gt;&gt;&gt; crude
+#&gt;
+#&gt; Performs CRUDe operations on multiple files.
+#&gt;
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} &lt;task&gt; [&lt;task_arg&gt; ...]
+
+        Performs CRUDe operations on multiple files.
+
+        Tasks:
+            create [-m &lt;mode&gt;] [&lt;file&gt; ...]
+            delete [-f] [&lt;file&gt; ...]
+            read [&lt;file&gt; ...]
+            write [&lt;file&gt; ...]
+
+Usage: ${0##*/} &lt;task&gt; -h
+
+        Prints &lt;task&gt; related help message.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+help_create() {
+    echo "
+Usage: ${0##*/} create [-m &lt;mode&gt;] [&lt;file&gt; ...]
+
+        Creates empty &lt;files&gt;. Overwrites existing &lt;files&gt;.
+
+        Options:
+            -m &lt;mode&gt;
+                Sets &lt;mode&gt; of each created file.
+"
+}
+
+help_delete() {
+    echo "
+Usage: ${0##*/} delete [-f] [&lt;file&gt; ...]
+
+        Deletes all &lt;files&gt;.
+
+        Options:
+            -f
+                Ignores missing files.
+"
+}
+
+help_read() {
+    echo "
+Usage: ${0##*/} read [&lt;file&gt; ...]
+
+        Reads all &lt;files&gt; in order and prints them to stdout.
+"
+}
+
+help_write() {
+    echo "
+Usage: ${0##*/} write [&lt;file&gt; ...]
+
+        Writes stdin to all &lt;files&gt; and to stdout.
+"
+}
+
+task_create() {
+    local arg_mode='0644'
+
+    while shmate_getopts 'm:' "$@"; do
+        case ${shmate_getopts_option} in
+            m)
+                if [ -n "${OPTARG}" ]; then
+                    arg_mode="${OPTARG}"
+                fi
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    local arg_file=
+    for arg_file in "$@"; do
+        shmate_audit install -m "${arg_mode}" /dev/null "${arg_file}"
+        shmate_assert "Creating file \"${arg_file}\"" || return $?
+    done
+
+    return 0
+}
+
+task_delete() {
+    local arg_flags=''
+
+    while shmate_getopts 'f' "$@"; do
+        case ${shmate_getopts_option} in
+            f)
+                arg_flags="${arg_flags} -f"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    shmate_audit rm${arg_flags} "$@"
+    shmate_assert 'Deleting files' || return $?
+
+    return 0
+}
+
+task_read() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit cat "$@"
+    shmate_assert 'Reading files' || return $?
+
+    return 0
+}
+
+task_write() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit tee "$@"
+    shmate_assert 'Writing files' || return $?
+
+    return 0
+}
+
+main() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_task "$@"
+}
+
+shmate_main "$@"</code></pre>
+</div>
+</div>
+</div>
+</details>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_find_handler">shmate_find_handler</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_find_handler &lt;name&gt; &lt;prefix&gt; [&lt;suffix&gt;]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Converts the &lt;name&gt; to lowercase and converts non-word characters to underscores.
+Then checks if function &lt;prefix&gt;_&lt;name&gt;_&lt;suffix&gt; (or &lt;prefix&gt;_&lt;name&gt; if &lt;suffix&gt; is not given) exists.
+Prints the function&#8217;s name if found. Returns non-zero otherwise.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_quoted_echo">shmate_quoted_echo</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_quoted_echo [-ne] [&lt;string&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Just like ordinary <em>echo</em> but adds single quotes for every argument. Multiple flags must be specified as single option i.e. '-ne', not '-n' '-e'.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_filter_grep">shmate_filter_grep</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_filter_grep [&lt;grep_arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Just like ordinary <em>grep</em> but ignoring error if no lines were found (never returns 1). Useful for filtering and simpler than <em>sed</em> for this purpose.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_string_cat">shmate_string_cat</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_string_cat [&lt;string&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Prints every &lt;string&gt; in separate line. If &lt;string&gt; equals '-' prints stdin instead. '-' can only be used once.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_string_cat_buf">shmate_string_cat_buf</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_string_cat_buf [&lt;string&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Like ordinary <a href="#user-content-src_lib_shmate_base-shmate_string_cat">shmate_string_cat</a>, but all &lt;strings&gt; and the whole stdin (if '-' is provided) are buffered and then printed as one.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_stream_cat">shmate_stream_cat</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_stream_cat [&lt;string&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Prints every &lt;string&gt; as is, i.e., one after another. If &lt;string&gt; equals '-' prints stdin instead. '-' can only be used once.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_input_run">shmate_input_run</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_input_run &lt;input_string&gt; &lt;command&gt; [&lt;command_arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Executes &lt;command&gt; with &lt;command_args&gt; providing &lt;input_string&gt; to command as stdin.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Caution</div>
+</td>
+<td class="content">
+The input for &lt;command&gt; will always contain an extra <em>LF</em> (newline). If this is a concern <code>echo -n</code> can be used instead.
+</td>
+</tr>
+</table>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_contains">shmate_contains</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_contains [&lt;string&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reads every line of input and returns success if all the given &lt;strings&gt; are equal to at least one of the lines.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_filter_list">shmate_filter_list</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_filter_list [&lt;string&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reads every line of input and prints only lines equal to any of the given &lt;strings&gt;.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_filter_out_list">shmate_filter_out_list</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_filter_out_list [&lt;string&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reads every line of input and prints only lines NOT equal to all the given &lt;strings&gt;.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_invert_list">shmate_invert_list</h5>
+<div class="paragraph">
+<p>Reads all lines of input and prints them in inverse order.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_iso_day">shmate_iso_day</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_iso_day &lt;date&gt; [&lt;days&gt;]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Converts &lt;date&gt; to ISO 8601 date. If given, adds &lt;days&gt; to the date, e.g., '+1' '-23'.
+Requires Linux <code>date</code> command.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_time_interval">shmate_time_interval</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_time_interval &lt;date1&gt; &lt;date2&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Calculates interval in seconds between two dates. Arguments can be in any format understood by 'date', although
+ISO 8601 is recommended. Requires Linux <code>date</code> command.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_day_interval">shmate_day_interval</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_day_interval &lt;date1&gt; &lt;date2&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Calculates interval in days between two dates. Arguments can be in any format understood by 'date', although
+ISO 8601 is recommended. Requires Linux <code>date</code> command.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_dotenv">shmate_dotenv</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dotenv [&lt;file_path&gt;]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reads <em>dotenv</em> file (or stdin) as single line of key=value pairs. Useful to export variables from <em>dotenv</em> file.
+To export all variables from not empty trusted '.env' dotenv file call:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>eval "export $(shmate_dotenv '.env')"</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_has_one_line">shmate_has_one_line</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_has_one_line &lt;string&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Checks if &lt;string&gt; has at most one line of text.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_current_timestamp">shmate_current_timestamp</h5>
+<div class="paragraph">
+<p>Prints current UTC timestamp in ISO 8601 format. Output can be fixed with <code>SHMATE_CURRENT_TIMESTAMP</code>.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-shmate_is_unsigned_integer">shmate_is_unsigned_integer</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_is_unsigned_integer &lt;string&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Returns success only if &lt;string&gt; is not negative integer.</p>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-content-src_lib_shmate_dependency">4.3. dependency.sh</h3>
+<div class="paragraph">
+<p>Library for dealing with Maven style artifacts and their repositories.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_dependency-Internal-symbols">4.3.1. Internal symbols</h4>
+<details>
+<summary class="title">Variables</summary>
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">_shmate_dep_regex</dt>
+<dd>
+<p>Regular expression for Gradle style artifact name optionally prefixed with module path relative to source root.</p>
+<div class="exampleblock">
+<div class="title">Example 3. Descriptor of an artifact within module</div>
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre>transport-native-kqueue/io.netty:netty-transport-native-kqueue:4.1.107.Final:osx-x86_64@jar</pre>
+</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</details>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_dependency-Functions">4.3.2. Functions</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_init_env">shmate_dep_init_env</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_init_env &lt;project_dir&gt; &lt;target_env_file&gt; [&lt;mvn_cmd&gt;]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_parse">shmate_dep_parse</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_parse &lt;artifact_descriptor&gt; [&lt;var_group_id&gt; [&lt;var_artifact_id&gt; [&lt;var_version&gt; [&lt;var_classifier&gt; [&lt;var_packaging&gt; [&lt;var_module_path&gt;]]]]]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_group_id">shmate_dep_group_id</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_group_id &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_artifact_id">shmate_dep_artifact_id</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_artifact_id &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_version">shmate_dep_version</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_version &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_classifier">shmate_dep_classifier</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_classifier &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_packaging">shmate_dep_packaging</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_packaging &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_module_path">shmate_dep_module_path</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_module_path &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_file_name">shmate_dep_file_name</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_file_name &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_lib_name">shmate_dep_lib_name</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_lib_name &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_repo_path">shmate_dep_repo_path</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_repo_path &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_build_path">shmate_dep_build_path</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_build_path &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_dependency-shmate_dep_deploy_opts">shmate_dep_deploy_opts</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_dep_deploy_opts &lt;artifact_descriptor&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-content-src_lib_shmate_-deprecated">4.4. _deprecated.sh</h3>
+<div class="paragraph">
+<p>Library defining all deprecated symbols in <em>shMate</em>.</p>
+</div>
+<hr>
+</div>
+<div class="sect2">
+<h3 id="user-content-src_lib_shmate_job">4.5. job.sh</h3>
+<div class="paragraph">
+<p>Library adding temporary working directory.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_job-Dependencies">4.5.1. Dependencies</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#user-content-src_lib_shmate_workdir">lib/shmate/workdir.sh</a></p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_job-Environment">4.5.2. Environment</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-SHMATE_TERMINATION_TIMEOUT">SHMATE_TERMINATION_TIMEOUT</h5>
+<div class="paragraph">
+<p>Wait at least this number of seconds for graceful termination before <strong>KILL</strong>ing descendant processes. Defaults to 10 seconds.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_job-Internal-symbols">4.5.3. Internal symbols</h4>
+<details>
+<summary class="title">Variables</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_SHMATE_JOB_NAME</p>
+</li>
+<li>
+<p>_SHMATE_JOB_RUN_DIR</p>
+</li>
+<li>
+<p>_shmate_job_ignored_signals</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<details>
+<summary class="title">Functions</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_shmate_job_prepare</p>
+</li>
+<li>
+<p>_shmate_job_confirm</p>
+</li>
+<li>
+<p>_shmate_job_run</p>
+</li>
+<li>
+<p>_shmate_job_unset_env</p>
+</li>
+<li>
+<p>_shmate_lib_job_cleanup</p>
+</li>
+<li>
+<p>_shmate_lib_job_cleanup_job</p>
+</li>
+<li>
+<p>_shmate_lib_job_on_exit</p>
+</li>
+<li>
+<p>_shmate_lib_job_on_terminate</p>
+</li>
+<li>
+<p>_shmate_cleanup_job</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_job-Functions">4.5.4. Functions</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_cleanup_job">shmate_cleanup_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_cleanup_job &lt;exit_code&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_collect_descendant_pids">shmate_collect_descendant_pids</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_collect_descendant_pids [&lt;pid&gt; ...]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_collect_job_group_pids">shmate_collect_job_group_pids</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_collect_job_group_pids [&lt;job_group_name&gt; ...]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_kill_job">shmate_kill_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_kill_job &lt;signal_name&gt; [&lt;pid&gt; ...]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_kill_job_group">shmate_kill_job_group</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_kill_job_group &lt;signal_name&gt; [&lt;job_group_name&gt; ...]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_run_qualified_job">shmate_run_qualified_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_run_qualified_job &lt;job_group_name&gt; [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_run_job">shmate_run_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_run_job [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_run_qualified_muted_job">shmate_run_qualified_muted_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_run_qualified_muted_job &lt;job_group_name&gt; [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_run_muted_job">shmate_run_muted_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_run_muted_job [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_run_foreground_job">shmate_run_foreground_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_run_foreground_job [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_run_session_job">shmate_run_session_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_run_session_job [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_run_detached_job">shmate_run_detached_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_run_detached_job [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_write_job">shmate_write_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_write_job &lt;fifo_path&gt; [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_read_job">shmate_read_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_read_job &lt;fifo_path&gt; [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_read_stderr_job">shmate_read_stderr_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_read_stderr_job &lt;fifo_path&gt; [&lt;command&gt; [&lt;command_arg&gt; ...]]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_wait_job">shmate_wait_job</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_wait_job [&lt;pid&gt;]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_wait_job_group">shmate_wait_job_group</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_wait_job_group [&lt;job_group_name&gt; ...]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_run_guardian">shmate_run_guardian</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_run_guardian &lt;command&gt; [&lt;command_arg&gt; ...]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Runs &lt;command&gt; with &lt;command_args&gt; as guarded job running in foreground. If calling process is not already
+a job it becomes the guardian. The guardian is responsible for immediate graceful termination of all descendant
+processes upon exit including termination caused by signal.</p>
+</div>
+<div class="paragraph">
+<p>Useful to run long-term tasks. Does not work in <em>Windows</em> falling back to just running the &lt;command&gt;.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_job-shmate_nap">shmate_nap</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_nap &lt;seconds&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-content-src_lib_shmate_workdir">4.6. workdir.sh</h3>
+<div class="paragraph">
+<p>Library adding temporary working directory.</p>
+</div>
+<hr>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_workdir-Dependencies">4.6.1. Dependencies</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#user-content-src_lib_shmate_assert">lib/shmate/assert.sh</a></p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_workdir-Environment">4.6.2. Environment</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_workdir-SHMATE_WORK_DIR_KEEP">SHMATE_WORK_DIR_KEEP</h5>
+<div class="paragraph">
+<p>Setting this to positive integer preserves temporary working directory. Useful for debugging.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_workdir-Internal-symbols">4.6.3. Internal symbols</h4>
+<details>
+<summary class="title">Functions</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_shmate_lib_workdir_cleanup</p>
+</li>
+<li>
+<p>_shmate_lib_workdir_on_exit</p>
+</li>
+<li>
+<p>_shmate_lib_workdir_on_terminate</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_workdir-Variables">4.6.4. Variables</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_workdir-shmate_work_dir">shmate_work_dir</h5>
+<div class="paragraph">
+<p>Path to temporary working directory.</p>
+</div>
+<hr>
+</div>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_workdir-Functions">4.6.5. Functions</h4>
+<hr>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_workdir-shmate_create_tmp_dir">shmate_create_tmp_dir</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_create_tmp_dir [&lt;dir_name&gt;]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_workdir-shmate_create_tmp_file">shmate_create_tmp_file</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_create_tmp_file [&lt;file_name&gt;]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_workdir-shmate_create_tmp_fifo">shmate_create_tmp_fifo</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_create_tmp_fifo [&lt;fifo_name&gt;]</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_workdir-shmate_platform_path">shmate_platform_path</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_platform_path &lt;path&gt;</pre>
+</div>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_workdir-shmate_posix_path">shmate_posix_path</h5>
+<div class="listingblock">
+<div class="content">
+<pre>shmate_posix_path &lt;path&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2024-05-08 05:53:14 +0200
+</div>
+</div>
+</body>
+</html>

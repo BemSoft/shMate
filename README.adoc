@@ -1,0 +1,2233 @@
+:toc: left
+ifdef::env-github[:toc-placement!:]
+:toclevels: 3
+:sectnums:
+
+:base-dir: ..
+
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+= shMate
+
+== Introduction
+
+_shMate_ is a POSIX-like shell library and toolset aiming to help and encourage shell script developers to follow principles usually attributed to high-level programming languages and _Unix_ tools in general.
+
+NOTE: Here POSIX-like shell means POSIX compatible shell with additional keywords, most notably `local` command without which reusable scripts are very prone to errors.
+
+toc::[]
+
+== Core features
+
+Developer friendly::
+The main goal of _shMate_ is to make reading and writing shell scripts easy even for inexperienced shell developers.
+Following _shMate_ principles will make the scripts friendly also to end-users.
+
+Versatility::
+The _shMate_ based script is not only dedicated for developers and end-users.
+It is a perfect candidate for *Docker* container `ENTRYPOINT`.
+Often the same script can be used by end-user and inside a container in production environment.
++
+NOTE: _shMate_'s first use case was to integrate legacy "do-not-modify-at-any-circumstances" projects written in many "not-known-to-anyone-still-alive" languages into modern CI infrastructure and _Kubernetes_ deployment.
+
+Testing::
+_shMate_ comes with <<user-content-src_bin_shmate-test>> utility to execute test suites similarly to high-level test frameworks like _JUnit_.
+The result is a report in _JUnit_ compatible XML format.
+One of the most important goals of _shMate_ is to have good test coverage on its own as well as to encourage _shMate_ users to follow up the same principle.
+
+Inline documentation::
+_shMate_'s documentation is placed in the code, conceptually similar to _JavaDoc_.
+Special utility <<user-content-src_bin_shmate-adoc>> is used to produce <<user-content-src_Executables-reference,executables>> and <<user-content-src_Libraries-reference,libraries>> reference in _AsciiDoc_ format with strong emphasis on _permanent anchor_ generation. +
+Scripts using _shMate_ can be documented the same way.
+
+Logging::
+_shMate_ clearly distinguishes between printing to _stdout_ and _stderr_.
+The former is used only to produce the script's result, often later used as an input to another program, while the latter is used only for logging.
+Logging to console supports colors and can be accompanied by separate log file.
+Many <<user-content-src_lib_shmate_assert-Informational-log-levels,informational>> and <<user-content-src_lib_shmate_assert-Debugging-log-levels,debugging>> log levels are available.
+
+Clean code::
+Due to their nature, shell scripts are hard to create following _clean code_ principles.
+_shMate_ can't do much about it, but it encourages developers to use command _assertions_ similarly to testing frameworks.
+This approach reduces _cyclomatic complexity_ and transforms code comments into useful error/debug log messages while self-documenting the script at the same time.
+
+Error handling::
+Error handling is usually second to worst implemented feature in a shell script. _shMate_ takes special care for error handling and reporting by using _assertions_ and `pipefail` option enabled by default.
+_shMate_ always performs cleanup on exit and provides cleanup handlers to script creators.
+Script creators are also encouraged to perform "late exit" common to high-level programming languages.
+
+Signal handling::
+Signal handling is usually the worst implemented feature in a shell script. _shMate_ aims to change that by providing signal handlers.
+They can be implemented by the script creator, but usually more than often their default implementation (i.e. logging and cleanup) is sufficient.
+Asynchronous signal handling can also be easily enabled.
+
+Temporary working directory::
+_shMate_ based scripts can easily enable their own private temporary working directory (unrelated to `PWD`).
+This directory automatically is cleaned up on exit, unless deliberately requested otherwise.
+
+Parallel jobs::
+_shMate_ makes managing parallel jobs (processes) easy.
+The jobs can be operated in groups and as a group they can be waited for or terminated with single command.
+_shMate_ ensures no _zombies_ are left after exit, making it ideal library for both user scripts and service managers.
+
+
+ifndef::base-dir[:base-dir: .]
+
+[#user-content-src_Executables-reference]
+== Executables reference
+'''
+[#user-content-src_bin_shmate-adoc,reftext='bin/shmate-adoc']
+=== shmate-adoc
+
+Generates AsciiDoc from shell executables and libraries.
+
+.Usage
+....
+
+Usage: shmate-adoc [-C <directory>]
+
+        Prints AsciiDoc from shell executables and libraries in current directory.
+        Each line of the source file beginning with '#>' is extracted and treated as AsciiDoc.
+
+        To reduce boilerplate code special markers can be used to describe source file (i.e. '>>>') and function within
+        (i.e. '>>>>>'). They will take care of anchors and add additional styling.
+
+        Additionally, generates AsciiDoc using executable's '-h' option.
+        If a function 'help_<task>' is found within executable, AsciiDoc from '-h <task>' option is also generated.
+
+        The current directory must belong to a Git repository. Special directories (i.e. dot-directories, Git
+        submodules, 'test', 'target', 'docker', 'ci') are excluded from the search.
+
+        Options:
+            -C <directory>
+                Changes current directory to <directory> before execution.
+
+Usage: shmate-adoc -h
+
+        Prints this help message.
+....
+'''
+[#user-content-src_bin_shmate-artifact,reftext='bin/shmate-artifact']
+=== shmate-artifact
+
+Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+
+.Usage
+....
+
+Usage: shmate-artifact <task> [<task_arg> ...]
+
+        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+
+        Uses Gradle style <artifact_descriptor>, i.e.
+            <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
+        e.g.
+            org.slf4j:slf4j-api:2.0.12@jar
+
+        Tasks:
+            check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+            fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+
+Usage: shmate-artifact <task> -h
+
+        Prints <task> related help message.
+
+Usage: shmate-artifact -h
+
+        Prints this help message.
+....
+[#user-content-src_src_bin_shmate-artifact_-h_check]
+==== check
+.Usage
+....
+
+Usage: shmate-artifact <task> [<task_arg> ...]
+
+        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+
+        Uses Gradle style <artifact_descriptor>, i.e.
+            <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
+        e.g.
+            org.slf4j:slf4j-api:2.0.12@jar
+
+        Tasks:
+            check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+            fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+
+Usage: shmate-artifact <task> -h
+
+        Prints <task> related help message.
+
+Usage: shmate-artifact -h
+
+        Prints this help message.
+....
+[#user-content-src_src_bin_shmate-artifact_-h_fetch]
+==== fetch
+.Usage
+....
+
+Usage: shmate-artifact <task> [<task_arg> ...]
+
+        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+
+        Uses Gradle style <artifact_descriptor>, i.e.
+            <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
+        e.g.
+            org.slf4j:slf4j-api:2.0.12@jar
+
+        Tasks:
+            check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+            fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+
+Usage: shmate-artifact <task> -h
+
+        Prints <task> related help message.
+
+Usage: shmate-artifact -h
+
+        Prints this help message.
+....
+'''
+[#user-content-src_bin_shmate-test,reftext='bin/shmate-test']
+=== shmate-test
+
+Runs all test cases in current directory and prints results in JUnit format.
+The 'test case' is just a function named 'test_*' in any of the libraries, i.e. non-executable '.sh' files called 'test suites'.
+
+.Example test suite `test/lib/workdir.sh`
+[%collapsible]
+====
+.Test suite
+[,sh]
+----
+#!/usr/bin/env bash
+
+# shellcheck source=src/lib/shmate/workdir.sh
+. "${SHMATE_SOURCE_DIR}/src/lib/shmate/workdir.sh"
+
+_test_path_in_work_dir() {
+    local path="$1"
+
+    local is_in_work_dir=false
+    case "${path}" in
+        "${shmate_work_dir}/"*)
+            is_in_work_dir=true
+            ;;
+    esac
+
+    ${is_in_work_dir}
+    shmate_assert "Path \"${path}\" must be within working directory \"${shmate_work_dir}\"" || return $?
+
+    return 0
+}
+
+_test_directory() {
+    local path="$1"
+    local found_path=
+
+    test -n "${path}"
+    shmate_assert 'Path must not be empty' || return $?
+
+    test -d "${path}"
+    shmate_assert "Path \"${path}\" must be a directory" || return $?
+
+    _test_path_in_work_dir "${path}" || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -perm -u=rwx) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Path \"${path}\" must have all user permissions" || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -empty) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Directory \"${path}\" must be empty" || return $?
+
+    return 0
+}
+
+_test_file() {
+    local path="$1"
+    local found_path=
+
+    test -n "${path}"
+    shmate_assert 'Path must not be empty' || return $?
+
+    test -f "${path}"
+    shmate_assert "Path \"${path}\" must be a file" || return $?
+
+    _test_path_in_work_dir "${path}" || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -perm -u=rw) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Path \"${path}\" must have read/write user permissions" || return $?
+
+    test ! -s "${path}"
+    shmate_assert "File \"${path}\" must be empty" || return $?
+
+    return 0
+}
+
+_test_fifo() {
+    local path="$1"
+    local found_path=
+
+    test -n "${path}"
+    shmate_assert 'Path must not be empty' || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -type p) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Path \"${path}\" must be a fifo" || return $?
+
+    _test_path_in_work_dir "${path}" || return $?
+
+    found_path=$(shmate_audit find "${path}" -maxdepth 0 -perm -u=rw) || return $?
+    test "${found_path}" = "${path}"
+    shmate_assert "Path \"${path}\" must have read/write user permissions" || return $?
+
+    return 0
+}
+
+test_shmate_work_dir() {
+    local found_dir=
+
+    test -n "${shmate_work_dir}"
+    shmate_assert "\"shmate_work_dir\" global variable must not be empty" || return $?
+
+    test -d "${shmate_work_dir}"
+    shmate_assert "Path \"${shmate_work_dir}\" must be a directory" || return $?
+
+    found_dir=$(shmate_audit find "${shmate_work_dir}" -maxdepth 0 ! -perm +g=rwx) || return $?
+    test "${found_dir}" = "${shmate_work_dir}"
+    shmate_assert "Working directory \"${shmate_work_dir}\" must not have any group permissions" || return $?
+
+    found_dir=$(shmate_audit find "${shmate_work_dir}" -maxdepth 0 ! -perm +o=rwx) || return $?
+    test "${found_dir}" = "${shmate_work_dir}"
+    shmate_assert "Working directory \"${shmate_work_dir}\" must not have any other user permissions" || return $?
+
+    found_dir=$(shmate_audit find "${shmate_work_dir}" -maxdepth 0 -perm -u=rwx) || return $?
+    test "${found_dir}" = "${shmate_work_dir}"
+    shmate_assert "Working directory \"${shmate_work_dir}\" must have all user permissions" || return $?
+
+    return 0
+}
+
+test_shmate_create_tmp_dir() {
+    local name='foobar'
+    local tmp_dir_1= tmp_dir_2=
+
+    tmp_dir_1=$(shmate_create_tmp_dir "${name}")
+    shmate_assert "Creating first temporary directory \"${name}\"" || return $?
+
+    _test_directory "${tmp_dir_1}" || return $?
+
+    tmp_dir_2=$(shmate_create_tmp_dir "${name}")
+    shmate_assert "Creating second temporary directory \"${name}\"" || return $?
+
+    _test_directory "${tmp_dir_2}" || return $?
+
+    test "${tmp_dir_1}" != "${tmp_dir_2}"
+    shmate_assert "First directory path \"${tmp_dir_1}\" must not equal to second directory path \"${tmp_dir_2}\"" || return $?
+
+    return 0
+}
+
+test_shmate_create_tmp_file() {
+    local name='foobar'
+    local tmp_file_1= tmp_file_2=
+
+    tmp_file_1=$(shmate_create_tmp_file "${name}")
+    shmate_assert "Creating first temporary file \"${name}\"" || return $?
+
+    _test_file "${tmp_file_1}" || return $?
+
+    tmp_file_2=$(shmate_create_tmp_file "${name}")
+    shmate_assert "Creating second temporary file \"${name}\"" || return $?
+
+    _test_file "${tmp_file_2}" || return $?
+
+    test "${tmp_file_1}" != "${tmp_file_2}"
+    shmate_assert "First file path \"${tmp_file_1}\" must not equal to second file path \"${tmp_file_2}\"" || return $?
+
+    return 0
+}
+
+test_shmate_create_tmp_fifo() {
+    local name='foobar'
+    local tmp_fifo_1= tmp_fifo_2=
+
+    tmp_fifo_1=$(shmate_create_tmp_fifo "${name}")
+    shmate_assert "Creating first temporary fifo \"${name}\"" || return $?
+
+    _test_fifo "${tmp_fifo_1}" || return $?
+
+    tmp_fifo_2=$(shmate_create_tmp_fifo "${name}")
+    shmate_assert "Creating second temporary fifo \"${name}\"" || return $?
+
+    _test_fifo "${tmp_fifo_2}" || return $?
+
+    test "${tmp_fifo_1}" != "${tmp_fifo_2}"
+    shmate_assert "First fifo path \"${tmp_fifo_1}\" must not equal to second fifo path \"${tmp_fifo_2}\"" || return $?
+
+    return 0
+}
+----
+====
+
+.Usage
+....
+
+Usage: shmate-test [-C <test_dir>] [-O <output_dir>] [-s <source_dir>] [-p <test_prefix>]
+
+        Runs all test cases in current directory and prints results in JUnit format.
+        The 'test case' is just a function named 'test_*' in any of the libraries, i.e. non-executable '.sh' files
+        called 'test suites'.
+
+        Test suite environment:
+            SHMATE_SOURCE_DIR
+                Directory specified with '-s' option.
+            SHMATE_TEST_DIR
+                Directory where the test suite is run from. Can be used to access data files.
+            SHMATE_WORK_DIR
+                Directory where the test suite can store temporary files.
+
+        Test case environment:
+            SHMATE_TEST_SUITE
+                Name of the test suite being run. Can be used for example to access test suite data directory
+                "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}" if needed.
+            SHMATE_TEST_CASE
+                Name of the test case being run. Can be used for example to create unique test case working directory
+                "${SHMATE_WORK_DIR}/${SHMATE_TEST_CASE}" if needed.
+
+        Options:
+            -C <test_dir>
+                Changes current directory to <directory> before execution.
+            -O <output_dir>
+                Saves intermediate test results in <output_dir> for posterity.
+            -s <source_dir>
+                Directory with sources passed to test function. Can be anything.
+                Uses 'git' for auto detection by default.
+            -p <test_prefix>
+                Prefix used by test case functions, i.e. '<test_prefix>_*'. Defaults to 'test'.
+                It is highly recommended to use the default if possible.
+
+Usage: shmate-test -h
+
+        Prints this help message.
+....
+
+[#user-content-src_Libraries-reference]
+== Libraries reference
+'''
+[#user-content-src_lib_shmate_assert,reftext='lib/shmate/assert.sh']
+=== assert.sh
+
+Base library for every other _shMate_ based library or executable needing logging or assertions.
+Adds logging and assertion related functions. Detects color support.
+
+NOTE: Log messages are always printed to _stderr_.
+
+'''
+[#user-content-src_lib_shmate_assert-Dependencies]
+==== Dependencies
+* <<user-content-src_lib_shmate_base>>
+* <<user-content-src_lib_shmate_-deprecated>>
+
+'''
+[#user-content-src_lib_shmate_assert-Environment]
+==== Environment
+
+'''
+[#user-content-src_lib_shmate_assert-SHMATE_DEBUG_LEVEL,reftext='SHMATE_DEBUG_LEVEL']
+===== SHMATE_DEBUG_LEVEL
+
+Integer value of current debug level. Defaults to 0.
+
+0:: Print informational log messages only.
+1:: Print informational log messages + _AUDIT_ log messages.
+2:: Print informational log messages + _AUDIT_ + _DEBUG_ log messages.
+3:: Print informational log messages + _AUDIT_ + _DEBUG_ + _ASSERT_ log messages.
+
+'''
+[#user-content-src_lib_shmate_assert-SHMATE_COLORS,reftext='SHMATE_COLORS']
+===== SHMATE_COLORS
+
+Integer controlling colorful logging. Not set by default i.e. auto detect.
+
+0::: disabled
+greater than 0::: enabled
+not set::: auto detect
+
+'''
+[#user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_FORMAT,reftext='SHMATE_TIMESTAMP_FORMAT']
+===== SHMATE_TIMESTAMP_FORMAT
+
+Timestamp format accepted by _date_ command. Defaults to '%H:%M:%S'.
+
+'''
+[#user-content-src_lib_shmate_assert-SHMATE_LOG,reftext='SHMATE_LOG']
+===== SHMATE_LOG
+
+Path to log file. If set, console log will be duplicated to the log file.
+
+'''
+[#user-content-src_lib_shmate_assert-SHMATE_LOG_ANSI_ESCAPE,reftext='SHMATE_LOG_ANSI_ESCAPE']
+===== SHMATE_LOG_ANSI_ESCAPE
+
+Setting this to positive integer indicates the log message contains link:https://en.wikipedia.org/wiki/ANSI_escape_code[_ANSI escape sequences_]
+needed to be processed when logging to console or needed to be removed if logging to file. Should be used on demand as `local` variable.
+
+'''
+[#user-content-src_lib_shmate_assert-SHMATE_LOG_IN_PLACE,reftext='SHMATE_LOG_IN_PLACE']
+===== SHMATE_LOG_IN_PLACE
+
+Setting this to positive integer disables logging to file and final _CRLF_ sequence in console log is replaced with single carriage return.
+Useful for logging progress messages. The message should be one-liner. Should be used on demand as `local` variable.
+
+'''
+[#user-content-src_lib_shmate_assert-Debugging-log-levels]
+==== Debugging log levels
+
+ASSERT:: TODO
+DEBUG:: TODO
+AUDIT:: TODO
+
+'''
+[#user-content-src_lib_shmate_assert-Informational-log-levels]
+==== Informational log levels
+
+INFO:: TODO
+WARNING:: TODO
+ERROR:: TODO
+PENDING:: TODO
+SUCCESS:: TODO
+FAILURE:: TODO
+
+'''
+[#user-content-src_lib_shmate_assert-Internal-symbols]
+==== Internal symbols
+
+.Variables
+[%collapsible]
+====
+* _SHMATE_PID
+* _SHMATE_PID_FILE
+* _shmate_log_label_assert
+* _shmate_log_label_debug
+* _shmate_log_label_audit
+* _shmate_log_label_info
+* _shmate_log_label_warning
+* _shmate_log_label_error
+* _shmate_log_label_pending
+* _shmate_log_label_success
+* _shmate_log_label_failure
+* _shmate_console_label_assert
+* _shmate_console_label_debug
+* _shmate_console_label_audit
+* _shmate_console_label_info
+* _shmate_console_label_warning
+* _shmate_console_label_error
+* _shmate_console_label_pending
+* _shmate_console_label_success
+* _shmate_console_label_failure
+* _shmate_assert_message
+* _shmate_assert_message_stack
+* _shmate_log_audit_format
+* _shmate_log_audit_args
+* _shmate_console_audit_format
+* _shmate_console_audit_args
+* _shmate_log_audit_separator
+====
+
+.Functions
+[%collapsible]
+====
+* _shmate_assert_with_level
+* _shmate_colors
+* _shmate_create_log_file
+* _shmate_get_pid
+* _shmate_ignore_sigpipe
+* _shmate_is_error_code
+* _shmate_log_audit_add
+* _shmate_console_audit_add
+* _shmate_log_audit_myself
+* _shmate_log_message
+* _shmate_log_timestamp
+* _shmate_lib_assert_cleanup
+* _shmate_lib_assert_on_exit
+* _shmate_lib_assert_on_terminate
+====
+
+'''
+[#user-content-src_lib_shmate_assert-Variables]
+==== Variables
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_ansi_escape_sequence_regex,reftext='shmate_ansi_escape_sequence_regex']
+===== shmate_ansi_escape_sequence_regex
+
+Regular expression to match link:https://en.wikipedia.org/wiki/ANSI_escape_code[_ANSI escape sequence_].
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_hostname,reftext='shmate_hostname']
+===== shmate_hostname
+
+Fully qualified host name.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_debug_level_audit,reftext='shmate_debug_level_audit']
+===== shmate_debug_level_audit
+
+Integer value of _AUDIT_ log level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_debug_level_debug,reftext='shmate_debug_level_debug']
+===== shmate_debug_level_debug
+
+Integer value of _DEBUG_ log level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_debug_level_assert,reftext='shmate_debug_level_assert']
+===== shmate_debug_level_assert
+
+Integer value of _ASSERT_ log level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_debug_level,reftext='shmate_debug_level']
+===== shmate_debug_level
+
+Integer value of current debug level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_crlf,reftext='shmate_log_crlf']
+===== shmate_log_crlf
+
+Log file line ending character sequence accepted by _printf_ command.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_format,reftext='shmate_log_format']
+===== shmate_log_format
+
+Log file line format accepted by _printf_ command.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_console_crlf,reftext='shmate_console_crlf']
+===== shmate_console_crlf
+
+Console log line ending character sequence accepted by _printf_ command.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_console_format,reftext='shmate_console_format']
+===== shmate_console_format
+
+Console log line format accepted by _printf_ command.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_timestamp_format,reftext='shmate_timestamp_format']
+===== shmate_timestamp_format
+
+Timestamp format accepted by _date_ command.
+
+'''
+[#user-content-src_lib_shmate_assert-Functions]
+==== Functions
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_colors_grayout,reftext='shmate_colors_grayout']
+===== shmate_colors_grayout
+
+Changes terminal color scheme to grayed out.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_colors_disable,reftext='shmate_colors_disable']
+===== shmate_colors_disable
+
+Disables terminal colors.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_assert,reftext='shmate_log_assert']
+===== shmate_log_assert
+----
+shmate_log_assert [<message> ...]
+----
+
+Logs concatenated <messages> in _ASSERT_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_debug,reftext='shmate_log_debug']
+===== shmate_log_debug
+----
+shmate_log_debug [<message> ...]
+----
+
+Logs concatenated <messages> in _DEBUG_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_info,reftext='shmate_log_info']
+===== shmate_log_info
+----
+shmate_log_info [<message> ...]
+----
+
+Logs concatenated <messages> in _INFO_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_warning,reftext='shmate_log_warning']
+===== shmate_log_warning
+----
+shmate_log_warning [<message> ...]
+----
+
+Logs concatenated <messages> in _WARNING_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_warn,reftext='shmate_log_warn']
+===== shmate_log_warn
+----
+shmate_log_warn [<message> ...]
+----
+
+Alias for <<user-content-src_lib_shmate_assert-shmate_log_warning>>.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_error,reftext='shmate_log_error']
+===== shmate_log_error
+----
+shmate_log_error [<message> ...]
+----
+
+Logs concatenated <messages> in _ERROR_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_pending,reftext='shmate_log_pending']
+===== shmate_log_pending
+----
+shmate_log_pending [<message> ...]
+----
+
+Logs concatenated <messages> in _PENDING_ level.
+
+TIP: Direct use of this function should be avoided in favor of <<user-content-src_lib_shmate_assert-shmate_pending_assert>>.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_success,reftext='shmate_log_success']
+===== shmate_log_success
+----
+shmate_log_success [<message> ...]
+----
+
+Logs concatenated <messages> in _SUCCESS_ level.
+
+TIP: Direct use of this function should be avoided in favor of <<user-content-src_lib_shmate_assert-shmate_loud_assert>>.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_failure,reftext='shmate_log_failure']
+===== shmate_log_failure
+----
+shmate_log_failure [<message> ...]
+----
+
+Logs concatenated <messages> in _FAILURE_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_fail,reftext='shmate_log_fail']
+===== shmate_log_fail
+----
+shmate_log_fail [<message> ...]
+----
+
+Alias for <<user-content-src_lib_shmate_assert-shmate_log_failure>>.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_deprecated,reftext='shmate_log_deprecated']
+===== shmate_log_deprecated
+----
+shmate_log_deprecated <since_version> <symbol_type> <symbol_name> <resolution>
+----
+
+Logs deprecated symbols.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_log_audit,reftext='shmate_log_audit']
+===== shmate_log_audit
+----
+shmate_log_audit <command> [<command_arg> ...]
+----
+
+Logs <command> and <command_args> in _AUDIT_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_audit,reftext='shmate_audit']
+===== shmate_audit
+----
+shmate_audit <command> [<command_arg> ...]
+----
+
+Logs <command> execution in _AUDIT_ level and runs the <command> with <command_args>.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_fail,reftext='shmate_fail']
+===== shmate_fail
+----
+shmate_fail <exit_code> [<message> ...]
+----
+
+Logs concatenated <messages> in _FAILURE_ level and terminates the program with <exit_code>.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_check_tools,reftext='shmate_check_tools']
+===== shmate_check_tools
+----
+shmate_check_tools [<optional_tool> ...]
+----
+
+Checks if all the <optional_tools> are found on _PATH_. Returns non-zero value if not.
+See <<user-content-src_lib_shmate_assert-shmate_assert_tools>> for loud version.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_assert_tools,reftext='shmate_assert_tools']
+===== shmate_assert_tools
+----
+shmate_assert_tools [<required_tool> ...]
+----
+
+Checks if all the <required_tools> are found on _PATH_. If not, logs message in _ERROR_ level and returns non-zero value.
+See <<user-content-src_lib_shmate_assert-shmate_check_tools>> for silent version.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_assert,reftext='shmate_assert']
+===== shmate_assert
+----
+shmate_assert [<message> ...]
+----
+
+Assert successful execution (zero exit code) of the last executed command.
+If non-zero exit code has been returned, <messages> are concatenated and logged in _ERROR_ level.
+Returns the same exit code as the last executed command.
+
+[TIP]
+====
+Within a function the _shmate_assert_ is best called followed by a conditional _return_.
+[source,sh]
+----
+shmate_audit mkdir -p "${dir}"
+shmate_assert "Creating directory \"${dir}\"" || return $?
+----
+====
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_silent_assert,reftext='shmate_silent_assert']
+===== shmate_silent_assert
+----
+shmate_silent_assert [<message> ...]
+----
+
+Same as <<user-content-src_lib_shmate_assert-shmate_assert>> but logs in _DEBUG_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_warning_assert,reftext='shmate_warning_assert']
+===== shmate_warning_assert
+----
+shmate_warning_assert [<message> ...]
+----
+
+Same as <<user-content-src_lib_shmate_assert-shmate_assert>> but logs in _WARNING_ level.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_pending_assert,reftext='shmate_pending_assert']
+===== shmate_pending_assert
+----
+shmate_pending_assert [<message> ...]
+----
+
+Logs concatenated <messages> in _PENDING_ level.
+Puts the logged message on stack, so it can be taken by <<user-content-src_lib_shmate_assert-shmate_loud_assert>> and <<user-content-src_lib_shmate_assert-shmate_fail_assert>>.
+Must always be coupled with <<user-content-src_lib_shmate_assert-shmate_loud_assert>> or <<user-content-src_lib_shmate_assert-shmate_fail_assert>> to take logged message off stack.
+
+[TIP]
+====
+Best used for long-running tasks.
+[source,sh]
+----
+shmate_pending_assert 'Downloading the whole Internet'
+curl --fail '${internet_zip_url}'
+shmate_loud_assert || return $?
+----
+====
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_loud_assert,reftext='shmate_loud_assert']
+===== shmate_loud_assert
+----
+shmate_loud_assert [<exit_code>] [<message> ...]
+----
+
+Similar to <<user-content-src_lib_shmate_assert-shmate_assert>>, but on successful execution of the last command logs concatenated messages in _SUCCESS_ level.
+
+If no <messages> are given, takes the message off stack (put there by <<user-content-src_lib_shmate_assert-shmate_pending_assert>>).
+If <exit_code> is given, it overrides the returned exit code.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_fail_assert,reftext='shmate_fail_assert']
+===== shmate_fail_assert
+----
+shmate_fail_assert [<exit_code>] [<message> ...]
+----
+
+If no <messages> are given behaves like <<user-content-src_lib_shmate_assert-shmate_loud_assert>>, otherwise behaves like <<user-content-src_lib_shmate_assert-shmate_assert>>.
+If the last command failed, logs message in _FAILURE_ level and terminates the program.
+
+If <exit_code> is given, it overrides the returned exit code.
+
+'''
+[#user-content-src_lib_shmate_base,reftext='lib/shmate/base.sh']
+=== base.sh
+
+Base library for every other _shMate_ based library or executable.
+Sets required global settings and adds most common functions, particularly cleanup on exit.
+
+'''
+[#user-content-src_lib_shmate_base-Shell-options]
+==== Shell options
+* posix
+* pipefail
+* noglob
+
+'''
+[#user-content-src_lib_shmate_base-Environment]
+==== Environment
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_INSTALL_DIR,reftext='SHMATE_INSTALL_DIR']
+===== SHMATE_INSTALL_DIR
+
+Path to directory where _shMate_ is installed.
+Must be set, unless all of `SHMATE_BIN_DIR`, `SHMATE_CONF_DIR`, `SHMATE_LIB_DIR` are set.
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_BIN_DIR,reftext='SHMATE_BIN_DIR']
+===== SHMATE_BIN_DIR
+
+Path to directory containing _shMate_ executable files. Defaults to `${SHMATE_INSTALL_DIR}/bin`.
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_CONF_DIR,reftext='SHMATE_CONF_DIR']
+===== SHMATE_CONF_DIR
+
+Path to directory containing _shMate_ configuration files. Defaults to `${SHMATE_INSTALL_DIR}/etc/shmate`.
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_LIB_DIR,reftext='SHMATE_LIB_DIR']
+===== SHMATE_LIB_DIR
+
+Path to directory containing _shMate_ library files. Defaults to `${SHMATE_INSTALL_DIR}/lib/shmate`.
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_CURRENT_TIMESTAMP,reftext='SHMATE_CURRENT_TIMESTAMP']
+===== SHMATE_CURRENT_TIMESTAMP
+
+Setting this to nonempty string makes <<user-content-src_lib_shmate_base-shmate_current_timestamp>> print this value instead of actual timestamp.
+
+'''
+[#user-content-src_lib_shmate_base-Internal-symbols]
+==== Internal symbols
+
+.Variables
+[%collapsible]
+====
+* _shmate_handled_signals
+* _shmate_is_termination_ignored
+====
+
+.Functions
+[%collapsible]
+====
+* _shmate_cleanup
+* _shmate_on_exit
+* _shmate_on_terminate
+* _shmate_terminate
+* _shmate_trap_signal
+* _shmate_ignore_signal
+====
+
+'''
+[#user-content-src_lib_shmate_base-Variables]
+==== Variables
+
+'''
+[#user-content-src_lib_shmate_base-shmate_os_kernel,reftext='shmate_os_kernel']
+===== shmate_os_kernel
+
+Kernel version, useful to detect platform.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_os_linux,reftext='shmate_os_linux']
+===== shmate_os_linux
+
+_true_ if run on Linux platform.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_os_bsd,reftext='shmate_os_bsd']
+===== shmate_os_bsd
+
+_true_ if run on BSD platform.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_os_windows,reftext='shmate_os_windows']
+===== shmate_os_windows
+
+_true_ if run on Windows platform.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_function_main,reftext='shmate_function_main']
+===== shmate_function_main
+
+Function name used by <<user-content-src_lib_shmate_base-shmate_main>>. Defaults to `main`.
+It is highly recommended to use the default whenever possible.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_function_help,reftext='shmate_function_help']
+===== shmate_function_help
+
+Function name or prefix used by <<user-content-src_lib_shmate_base-shmate_exit_help>>. Defaults to `help`.
+It is highly recommended to use the default whenever possible.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_function_task,reftext='shmate_function_task']
+===== shmate_function_task
+
+Function prefix used by <<user-content-src_lib_shmate_base-shmate_task>>. Defaults to `task`.
+It is highly recommended to use the default whenever possible.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_getopts_option,reftext='shmate_getopts_option']
+===== shmate_getopts_option
+
+Variable set by <<user-content-src_lib_shmate_base-shmate_getopts>> function. Contains name of the option currently being processed.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_getopts_task,reftext='shmate_getopts_task']
+===== shmate_getopts_task
+
+Variable set by <<user-content-src_lib_shmate_base-shmate_task>> function. Contains name of the task currently being processed.
+
+'''
+[#user-content-src_lib_shmate_base-Functions]
+==== Functions
+
+'''
+[#user-content-src_lib_shmate_base-shmate_cleanup,reftext='shmate_cleanup']
+===== shmate_cleanup
+----
+shmate_cleanup <exit_code>
+----
+
+Handler called just before exit. It should never be called manually, but can be implemented in caller's script.
+
+It may or may not have access to _stdin_, _stdout_, _stderr_ depending on the platform.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_on_exit,reftext='shmate_on_exit']
+===== shmate_on_exit
+----
+shmate_on_exit <exit_code>
+----
+
+Handler called just before <<user-content-src_lib_shmate_base-shmate_cleanup>>, but not upon receiving signal. It should never be called manually, but can be implemented in caller's script.
+The returned value is passed to <<user-content-src_lib_shmate_base-shmate_cleanup>> and is the final exit code of the script (in most cases returning unaltered <exit_code> is desired).
+
+It does have access to _stdin_, _stdout_, _stderr_.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_on_terminate,reftext='shmate_on_terminate']
+===== shmate_on_terminate
+----
+shmate_on_terminate <exit_code> <signal_name>
+----
+
+Handler called just before <<user-content-src_lib_shmate_base-shmate_cleanup>> after receiving terminating signal (e.g. HUP, TERM, USR2). It should never be called manually, but can be implemented in caller's script.
+The non-zero return value is passed to <<user-content-src_lib_shmate_base-shmate_cleanup>> and is the final exit code of the script (in most cases returning unaltered <exit_code> is desired).
+The zero return value means the signal has been handled. To exit program with zero 'exit 0' must be called explicitly.
+
+It does have access to _stdin_, _stdout_, _stderr_.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_exit,reftext='shmate_exit']
+===== shmate_exit
+----
+shmate_exit [<exit_code>]
+----
+
+Exits with given <exit_code> or zero if not specified. Must always be used instead of plain _exit_. Calls <<user-content-src_lib_shmate_base-shmate_on_exit>> and <<user-content-src_lib_shmate_base-shmate_cleanup>> handlers.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_exit_help,reftext='shmate_exit_help']
+===== shmate_exit_help
+----
+shmate_exit_help [<exit_code> [<task>]]
+----
+
+Prints help message end exits with given <exit_code> or zero if not specified.
+The message is printed to stdout on zero <exit_code> or stderr otherwise.
+The `help` function printing the message must be defined beforehand.
+If <task> is specified `help_<task>` function is used instead of `help`.
+
+Help function prefix can be changed by setting <<user-content-src_lib_shmate_base-shmate_function_help>> variable before including the library.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_log_error,reftext='shmate_log_error']
+===== shmate_log_error
+----
+shmate_log_error [<message> ...]
+----
+
+Prints concatenated <messages> to _stderr_.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_fail,reftext='shmate_fail']
+===== shmate_fail
+----
+shmate_fail <exit_code> [<message> ...]
+----
+
+Prints concatenated <messages> to _stderr_ and terminates the program with <exit_code>.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_exec,reftext='shmate_exec']
+===== shmate_exec
+----
+shmate_exec <command> [<command_arg> ...]
+----
+
+Like ordinary `exec`, but calls <<user-content-src_lib_shmate_base-shmate_cleanup>> handler beforehand.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_getopts,reftext='shmate_getopts']
+===== shmate_getopts
+----
+shmate_getopts <option_string> [<arg> ...]
+----
+
+Similar to ordinary `getopts`, but it always uses the <<user-content-src_lib_shmate_base-shmate_getopts_option>> variable to store
+current option name.
+Automatically adds `-h` option handler and uses <<user-content-src_lib_shmate_base-shmate_exit_help>> if `-h` option is given or if
+options are invalid.
+
+IMPORTANT: Like ordinary `getopts` the function returns `false` only if all options are processed, i.e. first non-option argument
+is detected or there are no more arguments. It is therefore recommended to `shift` remaining arguments by `OPTIND - 1`
+like in the following examples.
+
+.No options except help
+====
+[,sh]
+----
+shmate_getopts '' "$@" <1>
+shift $((OPTIND - 1)) <2>
+----
+<1> Empty <option_string> means no options except `-h` are valid.
+<2> Shift the arguments so the first positional parameter `$1` denotes the first non-option argument, if there is any.
+====
+
+.Change current directory
+====
+[,sh]
+----
+while shmate_getopts 'C:' "$@"; do <1>
+    case "${shmate_getopts_option}" in <2>
+       C) <3>
+           if [ -n "${OPTARG}" ]; then
+               cd "${OPTARG}" || return $?
+           fi
+           ;;
+    esac
+done
+shift $((OPTIND - 1)) <4>
+----
+<1> `C:` as <option_string> means only `-h` option (flag) and `-C` option with argument are valid.
+<2> Use predefined <<user-content-src_lib_shmate_base-shmate_getopts_option>> variable holding name of the currently processed option.
+<3> Action to be taken when `-C` option is found. The option's argument is stored in `OPTARG` variable.
+<4> Shift the arguments so the first positional parameter `$1` denotes the first non-option argument, if there is any.
+====
+
+.Sample script `greet`
+[%collapsible]
+====
+[,sh]
+----
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#> >>> greet
+#>
+#> Prints greeting message for every given name.
+#>
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} [-g <greeting>] [-ux] [<name> ...]
+
+        Prints greeting message for every <name>.
+
+        Options:
+            -g <greeting>
+                Uses <greeting> instead of default \"Hello\".
+            -u
+                Prints message in uppercase.
+            -x
+                Prints exclamation mark at the end of each greeting.
+                Can be given multiple times to print more exclamation marks.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+job_greet() {
+    local suffix=
+    local name=
+
+    for name in "$@"; do
+        echo "${arg_greet} ${name}${arg_name_suffix}"
+        shmate_assert "Printing greeting for \"${name}\"" || return $?
+    done
+
+    return 0
+}
+
+job_greet_uppercase() {
+    job_greet "$@" | tr '[:lower:]' '[:upper:]'
+    shmate_assert 'Printing greetings in uppercase' || return $?
+
+    return 0
+}
+
+main() {
+    local arg_greet='Hello'
+    local arg_uppercase=false
+    local arg_name_suffix=''
+
+    while shmate_getopts 'g:ux' "$@"; do
+        case ${shmate_getopts_option} in
+            g)
+                if [ -n "${OPTARG}" ]; then
+                    arg_greet="${OPTARG}"
+                fi
+                ;;
+            u)
+                arg_uppercase=true
+                ;;
+            x)
+                arg_name_suffix="${arg_name_suffix}!"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    if ${arg_uppercase}; then
+        job_greet_uppercase "$@"
+    else
+        job_greet "$@"
+    fi
+}
+
+shmate_main "$@"
+----
+====
+
+'''
+[#user-content-src_lib_shmate_base-shmate_main,reftext='shmate_main']
+===== shmate_main
+----
+shmate_main [<arg> ...]
+----
+
+Recommended entry point for all scripts using _shMate_ library.
+Calls the `main` function defined in the calling script.
+Must be used in the last not empty line in the calling script.
+
+Main function name can be changed by setting <<user-content-src_lib_shmate_base-shmate_function_main>> variable before including the library.
+
+.Sample script `greet`
+[%collapsible]
+====
+[,sh]
+----
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#> >>> greet
+#>
+#> Prints greeting message for every given name.
+#>
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} [-g <greeting>] [-ux] [<name> ...]
+
+        Prints greeting message for every <name>.
+
+        Options:
+            -g <greeting>
+                Uses <greeting> instead of default \"Hello\".
+            -u
+                Prints message in uppercase.
+            -x
+                Prints exclamation mark at the end of each greeting.
+                Can be given multiple times to print more exclamation marks.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+job_greet() {
+    local suffix=
+    local name=
+
+    for name in "$@"; do
+        echo "${arg_greet} ${name}${arg_name_suffix}"
+        shmate_assert "Printing greeting for \"${name}\"" || return $?
+    done
+
+    return 0
+}
+
+job_greet_uppercase() {
+    job_greet "$@" | tr '[:lower:]' '[:upper:]'
+    shmate_assert 'Printing greetings in uppercase' || return $?
+
+    return 0
+}
+
+main() {
+    local arg_greet='Hello'
+    local arg_uppercase=false
+    local arg_name_suffix=''
+
+    while shmate_getopts 'g:ux' "$@"; do
+        case ${shmate_getopts_option} in
+            g)
+                if [ -n "${OPTARG}" ]; then
+                    arg_greet="${OPTARG}"
+                fi
+                ;;
+            u)
+                arg_uppercase=true
+                ;;
+            x)
+                arg_name_suffix="${arg_name_suffix}!"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    if ${arg_uppercase}; then
+        job_greet_uppercase "$@"
+    else
+        job_greet "$@"
+    fi
+}
+
+shmate_main "$@"
+----
+====
+
+.Sample script `crude`
+[%collapsible]
+====
+[,sh]
+----
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#> >>> crude
+#>
+#> Performs CRUDe operations on multiple files.
+#>
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} <task> [<task_arg> ...]
+
+        Performs CRUDe operations on multiple files.
+
+        Tasks:
+            create [-m <mode>] [<file> ...]
+            delete [-f] [<file> ...]
+            read [<file> ...]
+            write [<file> ...]
+
+Usage: ${0##*/} <task> -h
+
+        Prints <task> related help message.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+help_create() {
+    echo "
+Usage: ${0##*/} create [-m <mode>] [<file> ...]
+
+        Creates empty <files>. Overwrites existing <files>.
+
+        Options:
+            -m <mode>
+                Sets <mode> of each created file.
+"
+}
+
+help_delete() {
+    echo "
+Usage: ${0##*/} delete [-f] [<file> ...]
+
+        Deletes all <files>.
+
+        Options:
+            -f
+                Ignores missing files.
+"
+}
+
+help_read() {
+    echo "
+Usage: ${0##*/} read [<file> ...]
+
+        Reads all <files> in order and prints them to stdout.
+"
+}
+
+help_write() {
+    echo "
+Usage: ${0##*/} write [<file> ...]
+
+        Writes stdin to all <files> and to stdout.
+"
+}
+
+task_create() {
+    local arg_mode='0644'
+
+    while shmate_getopts 'm:' "$@"; do
+        case ${shmate_getopts_option} in
+            m)
+                if [ -n "${OPTARG}" ]; then
+                    arg_mode="${OPTARG}"
+                fi
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    local arg_file=
+    for arg_file in "$@"; do
+        shmate_audit install -m "${arg_mode}" /dev/null "${arg_file}"
+        shmate_assert "Creating file \"${arg_file}\"" || return $?
+    done
+
+    return 0
+}
+
+task_delete() {
+    local arg_flags=''
+
+    while shmate_getopts 'f' "$@"; do
+        case ${shmate_getopts_option} in
+            f)
+                arg_flags="${arg_flags} -f"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    shmate_audit rm${arg_flags} "$@"
+    shmate_assert 'Deleting files' || return $?
+
+    return 0
+}
+
+task_read() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit cat "$@"
+    shmate_assert 'Reading files' || return $?
+
+    return 0
+}
+
+task_write() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit tee "$@"
+    shmate_assert 'Writing files' || return $?
+
+    return 0
+}
+
+main() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_task "$@"
+}
+
+shmate_main "$@"
+----
+====
+
+'''
+[#user-content-src_lib_shmate_base-shmate_task,reftext='shmate_task']
+===== shmate_task
+----
+shmate_task <task> [<task_arg> ...]
+----
+
+Delegates execution of <task> to function `task_<task>`. The function `task_<task>` must be defined beforehand.
+All <task_args> are passed along to the task function.
+
+Task function prefix can be changed by setting <<user-content-src_lib_shmate_base-shmate_function_task>> variable before including the library.
+
+.Sample script `crude`
+[%collapsible]
+====
+[,sh]
+----
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#> >>> crude
+#>
+#> Performs CRUDe operations on multiple files.
+#>
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} <task> [<task_arg> ...]
+
+        Performs CRUDe operations on multiple files.
+
+        Tasks:
+            create [-m <mode>] [<file> ...]
+            delete [-f] [<file> ...]
+            read [<file> ...]
+            write [<file> ...]
+
+Usage: ${0##*/} <task> -h
+
+        Prints <task> related help message.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+help_create() {
+    echo "
+Usage: ${0##*/} create [-m <mode>] [<file> ...]
+
+        Creates empty <files>. Overwrites existing <files>.
+
+        Options:
+            -m <mode>
+                Sets <mode> of each created file.
+"
+}
+
+help_delete() {
+    echo "
+Usage: ${0##*/} delete [-f] [<file> ...]
+
+        Deletes all <files>.
+
+        Options:
+            -f
+                Ignores missing files.
+"
+}
+
+help_read() {
+    echo "
+Usage: ${0##*/} read [<file> ...]
+
+        Reads all <files> in order and prints them to stdout.
+"
+}
+
+help_write() {
+    echo "
+Usage: ${0##*/} write [<file> ...]
+
+        Writes stdin to all <files> and to stdout.
+"
+}
+
+task_create() {
+    local arg_mode='0644'
+
+    while shmate_getopts 'm:' "$@"; do
+        case ${shmate_getopts_option} in
+            m)
+                if [ -n "${OPTARG}" ]; then
+                    arg_mode="${OPTARG}"
+                fi
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    local arg_file=
+    for arg_file in "$@"; do
+        shmate_audit install -m "${arg_mode}" /dev/null "${arg_file}"
+        shmate_assert "Creating file \"${arg_file}\"" || return $?
+    done
+
+    return 0
+}
+
+task_delete() {
+    local arg_flags=''
+
+    while shmate_getopts 'f' "$@"; do
+        case ${shmate_getopts_option} in
+            f)
+                arg_flags="${arg_flags} -f"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    shmate_audit rm${arg_flags} "$@"
+    shmate_assert 'Deleting files' || return $?
+
+    return 0
+}
+
+task_read() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit cat "$@"
+    shmate_assert 'Reading files' || return $?
+
+    return 0
+}
+
+task_write() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit tee "$@"
+    shmate_assert 'Writing files' || return $?
+
+    return 0
+}
+
+main() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_task "$@"
+}
+
+shmate_main "$@"
+----
+====
+
+'''
+[#user-content-src_lib_shmate_base-shmate_find_handler,reftext='shmate_find_handler']
+===== shmate_find_handler
+----
+shmate_find_handler <name> <prefix> [<suffix>]
+----
+
+Converts the <name> to lowercase and converts non-word characters to underscores.
+Then checks if function <prefix>_<name>_<suffix> (or <prefix>_<name> if <suffix> is not given) exists.
+Prints the function's name if found. Returns non-zero otherwise.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_quoted_echo,reftext='shmate_quoted_echo']
+===== shmate_quoted_echo
+----
+shmate_quoted_echo [-ne] [<string> ...]
+----
+
+Just like ordinary _echo_ but adds single quotes for every argument. Multiple flags must be specified as single option i.e. '-ne', not '-n' '-e'.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_filter_grep,reftext='shmate_filter_grep']
+===== shmate_filter_grep
+----
+shmate_filter_grep [<grep_arg> ...]
+----
+
+Just like ordinary _grep_ but ignoring error if no lines were found (never returns 1). Useful for filtering and simpler than _sed_ for this purpose.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_string_cat,reftext='shmate_string_cat']
+===== shmate_string_cat
+----
+shmate_string_cat [<string> ...]
+----
+
+Prints every <string> in separate line. If <string> equals '-' prints stdin instead. '-' can only be used once.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_string_cat_buf,reftext='shmate_string_cat_buf']
+===== shmate_string_cat_buf
+----
+shmate_string_cat_buf [<string> ...]
+----
+
+Like ordinary <<user-content-src_lib_shmate_base-shmate_string_cat>>, but all <strings> and the whole stdin (if '-' is provided) are buffered and then printed as one.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_stream_cat,reftext='shmate_stream_cat']
+===== shmate_stream_cat
+----
+shmate_stream_cat [<string> ...]
+----
+
+Prints every <string> as is, i.e., one after another. If <string> equals '-' prints stdin instead. '-' can only be used once.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_input_run,reftext='shmate_input_run']
+===== shmate_input_run
+----
+shmate_input_run <input_string> <command> [<command_arg> ...]
+----
+
+Executes <command> with <command_args> providing <input_string> to command as stdin.
+
+CAUTION: The input for <command> will always contain an extra _LF_ (newline). If this is a concern `echo -n` can be used instead.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_contains,reftext='shmate_contains']
+===== shmate_contains
+----
+shmate_contains [<string> ...]
+----
+
+Reads every line of input and returns success if all the given <strings> are equal to at least one of the lines.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_filter_list,reftext='shmate_filter_list']
+===== shmate_filter_list
+----
+shmate_filter_list [<string> ...]
+----
+
+Reads every line of input and prints only lines equal to any of the given <strings>.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_filter_out_list,reftext='shmate_filter_out_list']
+===== shmate_filter_out_list
+----
+shmate_filter_out_list [<string> ...]
+----
+
+Reads every line of input and prints only lines NOT equal to all the given <strings>.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_invert_list,reftext='shmate_invert_list']
+===== shmate_invert_list
+
+Reads all lines of input and prints them in inverse order.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_iso_day,reftext='shmate_iso_day']
+===== shmate_iso_day
+----
+shmate_iso_day <date> [<days>]
+----
+
+Converts <date> to ISO 8601 date. If given, adds <days> to the date, e.g., '+1' '-23'.
+Requires Linux `date` command.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_time_interval,reftext='shmate_time_interval']
+===== shmate_time_interval
+----
+shmate_time_interval <date1> <date2>
+----
+
+Calculates interval in seconds between two dates. Arguments can be in any format understood by 'date', although
+ISO 8601 is recommended. Requires Linux `date` command.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_day_interval,reftext='shmate_day_interval']
+===== shmate_day_interval
+----
+shmate_day_interval <date1> <date2>
+----
+
+Calculates interval in days between two dates. Arguments can be in any format understood by 'date', although
+ISO 8601 is recommended. Requires Linux `date` command.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_dotenv,reftext='shmate_dotenv']
+===== shmate_dotenv
+----
+shmate_dotenv [<file_path>]
+----
+
+Reads _dotenv_ file (or stdin) as single line of key=value pairs. Useful to export variables from _dotenv_ file.
+To export all variables from not empty trusted '.env' dotenv file call:
+
+    eval "export $(shmate_dotenv '.env')"
+
+'''
+[#user-content-src_lib_shmate_base-shmate_has_one_line,reftext='shmate_has_one_line']
+===== shmate_has_one_line
+----
+shmate_has_one_line <string>
+----
+
+Checks if <string> has at most one line of text.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_current_timestamp,reftext='shmate_current_timestamp']
+===== shmate_current_timestamp
+
+Prints current UTC timestamp in ISO 8601 format. Output can be fixed with `SHMATE_CURRENT_TIMESTAMP`.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_is_unsigned_integer,reftext='shmate_is_unsigned_integer']
+===== shmate_is_unsigned_integer
+----
+shmate_is_unsigned_integer <string>
+----
+
+Returns success only if <string> is not negative integer.
+
+'''
+[#user-content-src_lib_shmate_dependency,reftext='lib/shmate/dependency.sh']
+=== dependency.sh
+Library for dealing with Maven style artifacts and their repositories.
+
+'''
+[#user-content-src_lib_shmate_dependency-Internal-symbols]
+==== Internal symbols
+
+.Variables
+[%collapsible]
+====
+_shmate_dep_regex::
+Regular expression for Gradle style artifact name optionally prefixed with module path relative to source root.
++
+.Descriptor of an artifact within module
+=====
+....
+transport-native-kqueue/io.netty:netty-transport-native-kqueue:4.1.107.Final:osx-x86_64@jar
+....
+=====
+
+====
+
+'''
+[#user-content-src_lib_shmate_dependency-Functions]
+==== Functions
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_init_env,reftext='shmate_dep_init_env']
+===== shmate_dep_init_env
+----
+shmate_dep_init_env <project_dir> <target_env_file> [<mvn_cmd>]
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_parse,reftext='shmate_dep_parse']
+===== shmate_dep_parse
+----
+shmate_dep_parse <artifact_descriptor> [<var_group_id> [<var_artifact_id> [<var_version> [<var_classifier> [<var_packaging> [<var_module_path>]]]]]]
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_group_id,reftext='shmate_dep_group_id']
+===== shmate_dep_group_id
+----
+shmate_dep_group_id <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_artifact_id,reftext='shmate_dep_artifact_id']
+===== shmate_dep_artifact_id
+----
+shmate_dep_artifact_id <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_version,reftext='shmate_dep_version']
+===== shmate_dep_version
+----
+shmate_dep_version <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_classifier,reftext='shmate_dep_classifier']
+===== shmate_dep_classifier
+----
+shmate_dep_classifier <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_packaging,reftext='shmate_dep_packaging']
+===== shmate_dep_packaging
+----
+shmate_dep_packaging <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_module_path,reftext='shmate_dep_module_path']
+===== shmate_dep_module_path
+----
+shmate_dep_module_path <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_file_name,reftext='shmate_dep_file_name']
+===== shmate_dep_file_name
+----
+shmate_dep_file_name <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_lib_name,reftext='shmate_dep_lib_name']
+===== shmate_dep_lib_name
+----
+shmate_dep_lib_name <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_repo_path,reftext='shmate_dep_repo_path']
+===== shmate_dep_repo_path
+----
+shmate_dep_repo_path <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_build_path,reftext='shmate_dep_build_path']
+===== shmate_dep_build_path
+----
+shmate_dep_build_path <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_dependency-shmate_dep_deploy_opts,reftext='shmate_dep_deploy_opts']
+===== shmate_dep_deploy_opts
+----
+shmate_dep_deploy_opts <artifact_descriptor>
+----
+
+'''
+[#user-content-src_lib_shmate_-deprecated,reftext='lib/shmate/_deprecated.sh']
+=== _deprecated.sh
+
+Library defining all deprecated symbols in _shMate_.
+
+'''
+[#user-content-src_lib_shmate_job,reftext='lib/shmate/job.sh']
+=== job.sh
+
+Library adding temporary working directory.
+
+'''
+[#user-content-src_lib_shmate_job-Dependencies]
+==== Dependencies
+* <<user-content-src_lib_shmate_workdir>>
+
+'''
+[#user-content-src_lib_shmate_job-Environment]
+==== Environment
+
+'''
+[#user-content-src_lib_shmate_job-SHMATE_TERMINATION_TIMEOUT,reftext='SHMATE_TERMINATION_TIMEOUT']
+===== SHMATE_TERMINATION_TIMEOUT
+
+Wait at least this number of seconds for graceful termination before **KILL**ing descendant processes. Defaults to 10 seconds.
+
+'''
+[#user-content-src_lib_shmate_job-Internal-symbols]
+==== Internal symbols
+
+.Variables
+[%collapsible]
+====
+* _SHMATE_JOB_NAME
+* _SHMATE_JOB_RUN_DIR
+* _shmate_job_ignored_signals
+====
+
+.Functions
+[%collapsible]
+====
+* _shmate_job_prepare
+* _shmate_job_confirm
+* _shmate_job_run
+* _shmate_job_unset_env
+* _shmate_lib_job_cleanup
+* _shmate_lib_job_cleanup_job
+* _shmate_lib_job_on_exit
+* _shmate_lib_job_on_terminate
+* _shmate_cleanup_job
+====
+
+'''
+[#user-content-src_lib_shmate_job-Functions]
+==== Functions
+
+'''
+[#user-content-src_lib_shmate_job-shmate_cleanup_job,reftext='shmate_cleanup_job']
+===== shmate_cleanup_job
+----
+shmate_cleanup_job <exit_code>
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_collect_descendant_pids,reftext='shmate_collect_descendant_pids']
+===== shmate_collect_descendant_pids
+----
+shmate_collect_descendant_pids [<pid> ...]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_collect_job_group_pids,reftext='shmate_collect_job_group_pids']
+===== shmate_collect_job_group_pids
+----
+shmate_collect_job_group_pids [<job_group_name> ...]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_kill_job,reftext='shmate_kill_job']
+===== shmate_kill_job
+----
+shmate_kill_job <signal_name> [<pid> ...]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_kill_job_group,reftext='shmate_kill_job_group']
+===== shmate_kill_job_group
+----
+shmate_kill_job_group <signal_name> [<job_group_name> ...]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_qualified_job,reftext='shmate_run_qualified_job']
+===== shmate_run_qualified_job
+----
+shmate_run_qualified_job <job_group_name> [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_job,reftext='shmate_run_job']
+===== shmate_run_job
+----
+shmate_run_job [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_qualified_muted_job,reftext='shmate_run_qualified_muted_job']
+===== shmate_run_qualified_muted_job
+----
+shmate_run_qualified_muted_job <job_group_name> [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_muted_job,reftext='shmate_run_muted_job']
+===== shmate_run_muted_job
+----
+shmate_run_muted_job [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_foreground_job,reftext='shmate_run_foreground_job']
+===== shmate_run_foreground_job
+----
+shmate_run_foreground_job [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_session_job,reftext='shmate_run_session_job']
+===== shmate_run_session_job
+----
+shmate_run_session_job [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_detached_job,reftext='shmate_run_detached_job']
+===== shmate_run_detached_job
+----
+shmate_run_detached_job [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_write_job,reftext='shmate_write_job']
+===== shmate_write_job
+----
+shmate_write_job <fifo_path> [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_read_job,reftext='shmate_read_job']
+===== shmate_read_job
+----
+shmate_read_job <fifo_path> [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_read_stderr_job,reftext='shmate_read_stderr_job']
+===== shmate_read_stderr_job
+----
+shmate_read_stderr_job <fifo_path> [<command> [<command_arg> ...]]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_wait_job,reftext='shmate_wait_job']
+===== shmate_wait_job
+----
+shmate_wait_job [<pid>]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_wait_job_group,reftext='shmate_wait_job_group']
+===== shmate_wait_job_group
+----
+shmate_wait_job_group [<job_group_name> ...]
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_guardian,reftext='shmate_run_guardian']
+===== shmate_run_guardian
+----
+shmate_run_guardian <command> [<command_arg> ...]
+----
+
+Runs <command> with <command_args> as guarded job running in foreground. If calling process is not already
+a job it becomes the guardian. The guardian is responsible for immediate graceful termination of all descendant
+processes upon exit including termination caused by signal.
+
+Useful to run long-term tasks. Does not work in _Windows_ falling back to just running the <command>.
+
+'''
+[#user-content-src_lib_shmate_job-shmate_nap,reftext='shmate_nap']
+===== shmate_nap
+----
+shmate_nap <seconds>
+----
+
+'''
+[#user-content-src_lib_shmate_workdir,reftext='lib/shmate/workdir.sh']
+=== workdir.sh
+
+Library adding temporary working directory.
+
+'''
+[#user-content-src_lib_shmate_workdir-Dependencies]
+==== Dependencies
+* <<user-content-src_lib_shmate_assert>>
+
+'''
+[#user-content-src_lib_shmate_workdir-Environment]
+==== Environment
+
+'''
+[#user-content-src_lib_shmate_workdir-SHMATE_WORK_DIR_KEEP,reftext='SHMATE_WORK_DIR_KEEP']
+===== SHMATE_WORK_DIR_KEEP
+
+Setting this to positive integer preserves temporary working directory. Useful for debugging.
+
+'''
+[#user-content-src_lib_shmate_workdir-Internal-symbols]
+==== Internal symbols
+
+.Functions
+[%collapsible]
+====
+* _shmate_lib_workdir_cleanup
+* _shmate_lib_workdir_on_exit
+* _shmate_lib_workdir_on_terminate
+====
+
+'''
+[#user-content-src_lib_shmate_workdir-Variables]
+==== Variables
+
+'''
+[#user-content-src_lib_shmate_workdir-shmate_work_dir,reftext='shmate_work_dir']
+===== shmate_work_dir
+
+Path to temporary working directory.
+
+'''
+[#user-content-src_lib_shmate_workdir-Functions]
+==== Functions
+
+'''
+[#user-content-src_lib_shmate_workdir-shmate_create_tmp_dir,reftext='shmate_create_tmp_dir']
+===== shmate_create_tmp_dir
+----
+shmate_create_tmp_dir [<dir_name>]
+----
+
+'''
+[#user-content-src_lib_shmate_workdir-shmate_create_tmp_file,reftext='shmate_create_tmp_file']
+===== shmate_create_tmp_file
+----
+shmate_create_tmp_file [<file_name>]
+----
+
+'''
+[#user-content-src_lib_shmate_workdir-shmate_create_tmp_fifo,reftext='shmate_create_tmp_fifo']
+===== shmate_create_tmp_fifo
+----
+shmate_create_tmp_fifo [<fifo_name>]
+----
+
+'''
+[#user-content-src_lib_shmate_workdir-shmate_platform_path,reftext='shmate_platform_path']
+===== shmate_platform_path
+----
+shmate_platform_path <path>
+----
+
+'''
+[#user-content-src_lib_shmate_workdir-shmate_posix_path,reftext='shmate_posix_path']
+===== shmate_posix_path
+----
+shmate_posix_path <path>
+----

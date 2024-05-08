@@ -1,0 +1,145 @@
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#> >>> crude
+#>
+#> Performs CRUDe operations on multiple files.
+#>
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} <task> [<task_arg> ...]
+
+        Performs CRUDe operations on multiple files.
+
+        Tasks:
+            create [-m <mode>] [<file> ...]
+            delete [-f] [<file> ...]
+            read [<file> ...]
+            write [<file> ...]
+
+Usage: ${0##*/} <task> -h
+
+        Prints <task> related help message.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+help_create() {
+    echo "
+Usage: ${0##*/} create [-m <mode>] [<file> ...]
+
+        Creates empty <files>. Overwrites existing <files>.
+
+        Options:
+            -m <mode>
+                Sets <mode> of each created file.
+"
+}
+
+help_delete() {
+    echo "
+Usage: ${0##*/} delete [-f] [<file> ...]
+
+        Deletes all <files>.
+
+        Options:
+            -f
+                Ignores missing files.
+"
+}
+
+help_read() {
+    echo "
+Usage: ${0##*/} read [<file> ...]
+
+        Reads all <files> in order and prints them to stdout.
+"
+}
+
+help_write() {
+    echo "
+Usage: ${0##*/} write [<file> ...]
+
+        Writes stdin to all <files> and to stdout.
+"
+}
+
+task_create() {
+    local arg_mode='0644'
+
+    while shmate_getopts 'm:' "$@"; do
+        case ${shmate_getopts_option} in
+            m)
+                if [ -n "${OPTARG}" ]; then
+                    arg_mode="${OPTARG}"
+                fi
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    local arg_file=
+    for arg_file in "$@"; do
+        shmate_audit install -m "${arg_mode}" /dev/null "${arg_file}"
+        shmate_assert "Creating file \"${arg_file}\"" || return $?
+    done
+
+    return 0
+}
+
+task_delete() {
+    local arg_flags=''
+
+    while shmate_getopts 'f' "$@"; do
+        case ${shmate_getopts_option} in
+            f)
+                arg_flags="${arg_flags} -f"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    shmate_audit rm${arg_flags} "$@"
+    shmate_assert 'Deleting files' || return $?
+
+    return 0
+}
+
+task_read() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit cat "$@"
+    shmate_assert 'Reading files' || return $?
+
+    return 0
+}
+
+task_write() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_audit tee "$@"
+    shmate_assert 'Writing files' || return $?
+
+    return 0
+}
+
+main() {
+    shmate_getopts '' "$@"
+    shift $((OPTIND - 1))
+
+    shmate_task "$@"
+}
+
+shmate_main "$@"

@@ -1,0 +1,231 @@
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/..")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#> >>> shmate-adoc
+#>
+#> Generates AsciiDoc from shell executables and libraries.
+#>
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} [-C <directory>]
+
+        Prints AsciiDoc from shell executables and libraries in current directory.
+        Each line of the source file beginning with '#>' is extracted and treated as AsciiDoc.
+
+        To reduce boilerplate code special markers can be used to describe source file (i.e. '>>>') and function within
+        (i.e. '>>>>>'). They will take care of anchors and add additional styling.
+
+        Additionally, generates AsciiDoc using executable's '-h' option.
+        If a function 'help_<task>' is found within executable, AsciiDoc from '-h <task>' option is also generated.
+
+        The current directory must belong to a Git repository. Special directories (i.e. dot-directories, Git
+        submodules, 'test', 'target', 'docker', 'ci') are excluded from the search.
+
+        Options:
+            -C <directory>
+                Changes current directory to <directory> before execution.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+verify_source_file() {
+    local file_path="$1"
+    local file_dir="${file_path%/*}"
+
+    local super_git_root=
+    super_git_root=$(git -C "${file_dir}" rev-parse --show-superproject-working-tree)
+    shmate_assert "Checking if \"${file_dir}\" is Git submodule" || return $?
+
+    test -z "${super_git_root}"
+    shmate_silent_assert "Skipping \"${file_path}\" as belonging to Git submodule" || return $?
+
+    return 0
+}
+
+path_to_prefix() {
+    echo -n "$1" | tr -Cs '[:alnum:][:space:]/' '-' | tr -s '[:space:]/' '_'
+}
+
+filter_asciidoc() {
+    local source_dir="$1"
+    local source_file="$2"
+
+    local id_prefix="${source_file%.sh}"
+    id_prefix=$(path_to_prefix "${id_prefix}")
+    shmate_assert "Generating anchor ID prefix for \"${source_file}\"" || return $?
+
+    local dir_prefix="${source_dir}"
+    dir_prefix=$(path_to_prefix "${dir_prefix}")
+    shmate_assert "Generating source directory prefix for \"${source_dir}\"" || return $?
+
+    # Workaround for 'https://gitlab.com/gitlab-org/gitlab/-/issues/196071'
+    id_prefix="${_anchor_prefix}${id_prefix}"
+    dir_prefix="${_anchor_prefix}${dir_prefix}"
+
+    sed -En 's|^#>[[:space:]]?(.*)|\1|p' "${source_file}" | \
+        sed -E \
+            -e "s|^>>>[[:space:]]+([^[:space:]]+)[[:space:]]*\$|'''\n\[#${id_prefix},reftext='${source_file#${source_dir}}'\]\n=== \1|" \
+            -e "s|^>>>>[[:space:]]+(.+)\$|'''\n[#${id_prefix}-\1]\n==== \1|" \
+            -e ':Mark1' -e 's|(\[#.*)[[:space:]](.*\])|\1-\2|;tMark1' \
+            -e "s|^>>>>>[[:space:]]+([^[:space:]]+)[[:space:]]*\$|'''\n\[#${id_prefix}-\1,reftext='\1'\]\n===== \1|" \
+            -e "s|^>>>>>[[:space:]]+([^[:space:]]+)[[:space:]]*(.+)\$|'''\n\[#${id_prefix}-\1,reftext='\1'\]\n===== \1\n----\n\1 \2\n----|" \
+            -e ':Mark2' -e 's|(<<.*):(.*>>)|\1-\2|;tMark2' \
+            -e "s|<<([[:alnum:]_-]+)>>|<<${dir_prefix}\\1>>|g"
+
+    return $?
+}
+
+print_inline_asciidoc() {
+    local source_dir="$1"
+    local source_file="$2"
+
+    local asciidoc=
+    asciidoc=$(filter_asciidoc "${source_dir}" "${source_file}")
+    shmate_assert "Extracting inline AsciiDoc from \"${source_file}\""
+
+    test -n "${asciidoc}"
+    shmate_warning_assert "No inline AsciiDoc found in \"${source_file}\"" && shmate_log_info "Inline AsciiDoc found in \"${source_file}\"" || return 0
+
+    echo "${asciidoc}"
+    echo
+
+    return $?
+}
+
+print_command_asciidoc() {
+    local source_dir="$1"
+    local title="$2"
+    shift 2
+
+    local command="$*"
+
+    local output=
+    output=$($@)
+    shmate_warning_assert "Could not get output of '${command}'" || return 0
+
+    test -n "${output}"
+    shmate_warning_assert "Output of '${command}' is empty" || return 0
+
+    if [ -z "${title}" ]; then
+        shmate_string_cat '.Usage' '....' "${output}" '....'
+        return $?
+    fi
+
+    local anchor_id="${command}"
+    anchor_id=$(echo -n "${anchor_id}" | tr -Cs '[:alnum:][:space:]/' '-' | tr -s '[:space:]/' '_')
+    shmate_assert "Generating anchor ID for \"${command}\"" || return $?
+
+    local dir_prefix="${source_dir}"
+    dir_prefix=$(path_to_prefix "${dir_prefix}")
+    shmate_assert "Generating source directory prefix for \"${source_dir}\"" || return $?
+
+    # Workaround for 'https://gitlab.com/gitlab-org/gitlab/-/issues/196071'
+    dir_prefix="${_anchor_prefix}${dir_prefix}"
+
+    anchor_id="${dir_prefix}${anchor_id}"
+
+    shmate_string_cat "[#${anchor_id}]" "==== ${title}" '.Usage' '....' "${output}" '....'
+
+    return $?
+}
+
+create_asciidoc() {
+    local source_dir="$1"
+
+    local dir_prefix="${source_dir}"
+    dir_prefix=$(path_to_prefix "${dir_prefix}")
+    shmate_assert "Generating source directory prefix for \"${source_dir}\"" || return $?
+
+    # Workaround for 'https://gitlab.com/gitlab-org/gitlab/-/issues/196071'
+    local _anchor_prefix='user-content-'
+    dir_prefix="${_anchor_prefix}${dir_prefix}"
+
+    echo
+    echo 'ifndef::base-dir[:base-dir: .]'
+    echo
+    echo "[#${dir_prefix}Executables-reference]"
+    echo '== Executables reference'
+    find -L "${source_dir}" -type f -perm -0111 -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/test/.*' ! -regex '.*/target/.*' ! -regex '.*/docker/.*' ! -regex '.*/ci/.*' | sort | while read -r file_path; do
+        verify_source_file "${file_path}" || continue
+
+        print_inline_asciidoc "${source_dir}" "${file_path}"
+        shmate_assert "Printing inline AsciiDoc from \"${file_path}\"" || return $?
+
+        print_command_asciidoc "${source_dir}" '' "${file_path}" -h
+        shmate_assert "Printing help AsciiDoc from \"${file_path}\"" || return $?
+
+        sed -En 's|^[[:space:]]*help_(.*)\(\).*$|\1|p' "${file_path}" | while read -r task; do
+            task="$(echo -n "${task}" | tr '_' '-')"
+
+            print_command_asciidoc "${source_dir}" "${task}" "${file_path}" -h "${task}"
+            shmate_assert "Printing help AsciiDoc of task \"${task}\" from \"${file_path}\"" || return $?
+        done || return $?
+    done || return $?
+
+    echo
+    echo "[#${dir_prefix}Libraries-reference]"
+    echo '== Libraries reference'
+    find -L "${source_dir}" -type f ! -perm -0111 -name '*.sh' -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/test/.*' ! -regex '.*/target/.*' ! -regex '.*/docker/.*' ! -regex '.*/ci/.*' | sort | while read -r file_path; do
+        verify_source_file "${file_path}" || continue
+
+        print_inline_asciidoc "${source_dir}" "${file_path}"
+        shmate_assert "Printing inline AsciiDoc from \"${file_path}\"" || return $?
+    done || return $?
+
+    return 0
+}
+
+help2adoc() {
+    local directory="$1"
+
+    local git_root=
+    git_root=$(shmate_audit git -C "${directory}" rev-parse --show-toplevel)
+    shmate_assert "Ensuring directory \"${directory}\" is within Git repository" || return $?
+
+    test -n "${git_root}"
+    shmate_assert "Ensuring directory \"${directory}\" is potential source code directory" || return $?
+
+    local source_dir=
+    source_dir=$(shmate_audit git -C "${directory}" rev-parse --show-prefix)
+    shmate_assert "Obtaining relative path to Git repository \"${git_root}\" of directory \"${directory}\"" || return $?
+
+    shmate_audit cd "${git_root}"
+    shmate_assert "Changing current directory to \"${git_root}\"" || return $?
+
+    shmate_pending_assert "Creating AsciiDoc from source files in \"${git_root}/${source_dir}\"" || return $?
+    create_asciidoc "${source_dir}" | sed -E -e "s|${git_root}/||g" -e "s|${HOME}/|\${HOME}/|g"
+    shmate_loud_assert || return $?
+
+    return 0
+}
+
+main() {
+    local arg_directory='.'
+
+    while shmate_getopts 'C:' "$@"; do
+        case ${shmate_getopts_option} in
+            C)
+                arg_directory="${OPTARG}"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    shmate_assert_tools git || return $?
+
+    help2adoc "${arg_directory}" || return $?
+
+    return 0
+}
+
+shmate_main "$@"

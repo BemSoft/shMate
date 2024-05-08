@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../src")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+. "${SHMATE_LIB_DIR}/assert.sh"
+
+install_gem() {
+    local gem_name="$1"
+    local bin_name="${2:-$1}"
+
+    if shmate_check_tools "${bin_name}"; then
+        return 0
+    fi
+
+    shmate_pending_assert "Installing Gem \"${gem_name}\""
+    gem install --user-install "${gem_name}"
+    shmate_loud_assert || return $?
+
+    return 0
+}
+
+main() {
+    shmate_assert_tools ruby gem || return $?
+
+    local gem_bin_dir=
+    gem_bin_dir="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin"
+    shmate_assert "Reading user Gem executable path" || return $?
+
+    export PATH="${gem_bin_dir}:${PATH}"
+
+    install_gem 'asciidoctor' || return $?
+    install_gem 'asciidoctor-reducer' || return $?
+
+    local base_dir="$(realpath "${SHMATE_LIB_DIR}/../../..")"
+    local doc_dir="${base_dir}/doc"
+    local source_dir="${base_dir}/src"
+    local help2adoc_cmd="${source_dir}/bin/shmate-adoc"
+
+    "${help2adoc_cmd}" -C "${source_dir}" > "${doc_dir}/reference.adoc"
+    shmate_assert "Generating reference in \"${doc_dir}/reference.adoc\"" || return $?
+
+    shmate_pending_assert "Generating README in \"${base_dir}/README.adoc\""
+    asciidoctor-reducer --preserve-conditionals -o "${base_dir}/README.adoc" "${doc_dir}/index.adoc"
+    shmate_loud_assert || return $?
+
+    shmate_pending_assert "Generating HTML from \"${base_dir}/README.adoc\" in \"${base_dir}/doc/html/index.html\""
+    asciidoctor "${base_dir}/README.adoc" -o "${base_dir}/doc/html/index.html"
+    shmate_loud_assert || return $?
+
+    return 0
+}
+
+shmate_main "$@"

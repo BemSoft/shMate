@@ -1,0 +1,52 @@
+== Core features
+
+Developer friendly::
+The main goal of _shMate_ is to make reading and writing shell scripts easy even for inexperienced shell developers.
+Following _shMate_ principles will make the scripts friendly also to end-users.
+
+Versatility::
+The _shMate_ based script is not only dedicated for developers and end-users.
+It is a perfect candidate for *Docker* container `ENTRYPOINT`.
+Often the same script can be used by end-user and inside a container in production environment.
++
+NOTE: _shMate_'s first use case was to integrate legacy "do-not-modify-at-any-circumstances" projects written in many "not-known-to-anyone-still-alive" languages into modern CI infrastructure and _Kubernetes_ deployment.
+
+Testing::
+_shMate_ comes with <<user-content-src_bin_shmate-test>> utility to execute test suites similarly to high-level test frameworks like _JUnit_.
+The result is a report in _JUnit_ compatible XML format.
+One of the most important goals of _shMate_ is to have good test coverage on its own as well as to encourage _shMate_ users to follow up the same principle.
+
+Inline documentation::
+_shMate_'s documentation is placed in the code, conceptually similar to _JavaDoc_.
+Special utility <<user-content-src_bin_shmate-adoc>> is used to produce <<user-content-src_Executables-reference,executables>> and <<user-content-src_Libraries-reference,libraries>> reference in _AsciiDoc_ format with strong emphasis on _permanent anchor_ generation. +
+Scripts using _shMate_ can be documented the same way.
+
+Logging::
+_shMate_ clearly distinguishes between printing to _stdout_ and _stderr_.
+The former is used only to produce the script's result, often later used as an input to another program, while the latter is used only for logging.
+Logging to console supports colors and can be accompanied by separate log file.
+Many <<user-content-src_lib_shmate_assert-Informational-log-levels,informational>> and <<user-content-src_lib_shmate_assert-Debugging-log-levels,debugging>> log levels are available.
+
+Clean code::
+Due to their nature, shell scripts are hard to create following _clean code_ principles.
+_shMate_ can't do much about it, but it encourages developers to use command _assertions_ similarly to testing frameworks.
+This approach reduces _cyclomatic complexity_ and transforms code comments into useful error/debug log messages while self-documenting the script at the same time.
+
+Error handling::
+Error handling is usually second to worst implemented feature in a shell script. _shMate_ takes special care for error handling and reporting by using _assertions_ and `pipefail` option enabled by default.
+_shMate_ always performs cleanup on exit and provides cleanup handlers to script creators.
+Script creators are also encouraged to perform "late exit" common to high-level programming languages.
+
+Signal handling::
+Signal handling is usually the worst implemented feature in a shell script. _shMate_ aims to change that by providing signal handlers.
+They can be implemented by the script creator, but usually more than often their default implementation (i.e. logging and cleanup) is sufficient.
+Asynchronous signal handling can also be easily enabled.
+
+Temporary working directory::
+_shMate_ based scripts can easily enable their own private temporary working directory (unrelated to `PWD`).
+This directory automatically is cleaned up on exit, unless deliberately requested otherwise.
+
+Parallel jobs::
+_shMate_ makes managing parallel jobs (processes) easy.
+The jobs can be operated in groups and as a group they can be waited for or terminated with single command.
+_shMate_ ensures no _zombies_ are left after exit, making it ideal library for both user scripts and service managers.

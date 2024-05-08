@@ -1,0 +1,446 @@
+#!/usr/bin/env bash
+
+# shellcheck disable=SC2039
+
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/..")}"
+export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
+
+#> >>> shmate-test
+#>
+#> Runs all test cases in current directory and prints results in JUnit format.
+#> The 'test case' is just a function named 'test_*' in any of the libraries, i.e. non-executable '.sh' files called 'test suites'.
+#>
+#> .Example test suite `test/lib/workdir.sh`
+#> [%collapsible]
+#> ====
+#> .Test suite
+#> [,sh]
+#> ----
+#> include::{base-dir}/test/lib/workdir.sh[]
+#> ----
+#> ====
+#>
+
+. "${SHMATE_LIB_DIR}/job.sh"
+
+help() {
+    echo "
+Usage: ${0##*/} [-C <test_dir>] [-O <output_dir>] [-s <source_dir>] [-p <test_prefix>]
+
+        Runs all test cases in current directory and prints results in JUnit format.
+        The 'test case' is just a function named 'test_*' in any of the libraries, i.e. non-executable '.sh' files
+        called 'test suites'.
+
+        Test suite environment:
+            SHMATE_SOURCE_DIR
+                Directory specified with '-s' option.
+            SHMATE_TEST_DIR
+                Directory where the test suite is run from. Can be used to access data files.
+            SHMATE_WORK_DIR
+                Directory where the test suite can store temporary files.
+
+        Test case environment:
+            SHMATE_TEST_SUITE
+                Name of the test suite being run. Can be used for example to access test suite data directory
+                \"\${SHMATE_TEST_DIR}/\${SHMATE_TEST_SUITE}\" if needed.
+            SHMATE_TEST_CASE
+                Name of the test case being run. Can be used for example to create unique test case working directory
+                \"\${SHMATE_WORK_DIR}/\${SHMATE_TEST_CASE}\" if needed.
+
+        Options:
+            -C <test_dir>
+                Changes current directory to <directory> before execution.
+            -O <output_dir>
+                Saves intermediate test results in <output_dir> for posterity.
+            -s <source_dir>
+                Directory with sources passed to test function. Can be anything.
+                Uses 'git' for auto detection by default.
+            -p <test_prefix>
+                Prefix used by test case functions, i.e. '<test_prefix>_*'. Defaults to 'test'.
+                It is highly recommended to use the default if possible.
+
+Usage: ${0##*/} -h
+
+        Prints this help message.
+"
+}
+
+shmate_on_terminate() {
+    local exit_code=$1
+    local signal_name="$2"
+
+    if [ ${exit_code} -ne 0 ]; then
+        shmate_log_error "Testing interrupted with ${signal_name} signal"
+    fi
+
+    return ${exit_code}
+}
+
+if shmate_check_tools git; then
+    verify_test_file() {
+        local file_path="$1"
+        local file_dir="${file_path%/*}"
+
+        local super_git_root=
+        super_git_root=$(git -C "${file_dir}" rev-parse --show-superproject-working-tree)
+        shmate_silent_assert "Checking if \"${file_dir}\" is Git submodule" || return 0
+
+        test -z "${super_git_root}"
+        shmate_silent_assert "Skipping \"${file_path}\" as belonging to Git submodule" || return $?
+
+        return 0
+    }
+else
+    verify_test_file() {
+        return 0
+    }
+fi
+
+current_time() {
+    date -u +%s
+}
+
+current_timestamp() {
+    date -u +%Y-%m-%dT%H:%M:%S
+}
+
+seconds_elapsed() {
+    local start=$1
+    local end=$2
+
+    echo $((end - start))
+
+    return 0
+}
+
+filter_log() {
+    sed -E "s/${shmate_ansi_escape_sequence_regex}//g"
+}
+
+filter_errors() {
+    shmate_filter_grep -E '\[ERROR[[:space:]]*\]' | sed "s|'|'\"'\"'|g"
+}
+
+run_test() {
+    local test_dir="$1"
+    local output_dir="$2"
+    local test_case_function_prefix="$3"
+
+    local test_suite_id=0
+
+    shmate_log_debug "PATH:
+${PATH}"
+
+    shmate_audit cd "${test_dir}"
+    shmate_assert "Changing current directory to \"${test_dir}\"" || return $?
+
+    find -L '.' -type f ! -perm -0111 -name '*.sh' -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/target/.*' | sort | while read -r file_path; do
+        verify_test_file "${file_path}" || continue
+
+        test_suite_dir="${file_path#./}"
+        test_suite_dir="${test_suite_dir%.sh}"
+
+        test_suite=$(echo -n "${test_suite_dir}" | tr -Cs '[:alnum:]' '-')
+
+        shmate_log_debug "Loading test suite \"${test_suite}\""
+
+        test_suite_dir="${output_dir}/${test_suite_dir}"
+        test_suite_env="${test_suite_dir}/.env"
+        test_suite_out="${test_suite_dir}/.out"
+        test_suite_err="${test_suite_dir}/.err"
+
+        export SHMATE_TEST_DIR="$(realpath "${file_path%/*}")"
+        export SHMATE_WORK_DIR="${test_suite_dir}/work"
+
+        shmate_audit rm -rf "${SHMATE_WORK_DIR}" && shmate_audit mkdir -p "${SHMATE_WORK_DIR}"
+        shmate_assert "Creating empty test suite working directory \"${SHMATE_WORK_DIR}\"" || return $?
+
+        shmate_log_audit touch "${test_suite_env}"
+        echo -n > "${test_suite_env}"
+        shmate_assert "Creating test suite environment file \"${test_suite_env}\"" || return $?
+
+        shmate_log_audit touch "${test_suite_out}"
+        echo -n > "${test_suite_out}"
+        shmate_assert "Creating test suite output file \"${test_suite_out}\"" || return $?
+
+        shmate_log_audit touch "${test_suite_err}"
+        echo -n > "${test_suite_err}"
+        shmate_assert "Creating test suite error file \"${test_suite_err}\"" || return $?
+
+        is_test_suite_error=false
+
+        . "${file_path}" >> "${test_suite_out}" 2> "${test_suite_err}"
+        shmate_assert "Error sourcing test suite from \"${file_path}\"" || {
+            is_test_suite_error=true
+            cat "${test_suite_err}" 1>&2
+        }
+
+        test_case_id=1
+
+        test_suite_timestamp=$(current_timestamp)
+        test_suite_start_time=$(current_time)
+
+        if ! ${is_test_suite_error}; then
+            shmate_log_pending "Test suite \"${test_suite}\""
+        fi
+
+        sed -En "s|^[[:space:]]*(${test_case_function_prefix}_(.*))\\(\\).*\$|\\1 \\2|p" "${file_path}" | while read -r test_case_function test_case; do
+            test_case=$(echo -n "${test_case}" | tr -Cs '[:alnum:]' '-')
+
+            if ${is_test_suite_error} || [ "$(command -v "${test_case_function}")" != "${test_case_function}" ]; then
+                shmate_log_debug "Skipping test case \"${test_suite}:${test_case}\""
+
+                test_case_err=
+                test_case_exit_code=
+                test_case_seconds=0
+            else
+                shmate_log_debug "Starting test case \"${test_suite}:${test_case}\""
+
+                test_case_err="${test_suite_dir}/${test_case}.err"
+
+                shmate_log_audit touch "${test_case_err}"
+                echo -n > "${test_case_err}"
+                shmate_assert "Creating test case error file \"${test_case_err}\"" || return $?
+
+                test_case_start_time=$(current_time)
+
+                (
+                    shmate_colors_grayout
+
+                    export SHMATE_TEST_SUITE="${test_suite_dir##*/}"
+                    export SHMATE_TEST_CASE="${test_case}"
+                    ${test_case_function} 2>&1 >> "${test_suite_out}" | shmate_audit tee -a "${test_suite_err}" "${test_case_err}" 1>&2
+                )
+                test_case_exit_code=$?
+
+                test_case_end_time=$(current_time)
+                test_case_seconds=$(seconds_elapsed ${test_case_start_time} ${test_case_end_time})
+            fi
+
+            test_case_timestamp=$(current_timestamp)
+
+            shmate_log_audit touch "${test_suite_env}"
+            echo "TEST_CASE_${test_case_id}_NAME='${test_case}'
+TEST_CASE_${test_case_id}_TIMESTAMP='${test_case_timestamp}'
+TEST_CASE_${test_case_id}_TIME=${test_case_seconds}
+TEST_CASE_${test_case_id}_EXIT_CODE=${test_case_exit_code}
+TEST_CASE_${test_case_id}_ERROR_LOG='${test_case_err}'" >> "${test_suite_env}"
+            shmate_assert "Appending test case ${test_suite}:${test_case} environment to test suite environment file \"${test_suite_env}\"" || return $?
+
+            if ${is_test_suite_error}; then
+                shmate_log_debug "Test case \"${test_suite}:${test_case}\" skipped because of test suite error"
+            elif [ -z ${test_case_exit_code} ]; then
+                shmate_log_warning "Test case \"${test_suite}:${test_case}\" skipped"
+            elif [ ${test_case_exit_code} -eq 0 ]; then
+                shmate_log_info "Test case \"${test_suite}:${test_case}\" passed"
+            else
+                shmate_log_failure "Test case \"${test_suite}:${test_case}\" failed with exit code [${test_case_exit_code}]"
+
+                error_message=$(filter_log < "${test_case_err}" | filter_errors | head -n 1)
+                shmate_assert "Extracting error message from \"${test_case_err}\"" || return $?
+
+                shmate_log_audit touch "${test_suite_env}"
+                echo "TEST_CASE_${test_case_id}_ERROR_MESSAGE='${error_message}'" >> "${test_suite_env}"
+                shmate_assert "Appending test case ${test_suite}:${test_case} error message to test suite environment file \"${test_suite_env}\"" || return $?
+            fi
+
+            test_case_id=$((test_case_id + 1))
+        done || return $?
+
+        test_suite_end_time=$(current_time)
+        test_suite_seconds=$(seconds_elapsed ${test_suite_start_time} ${test_suite_end_time})
+
+        test_count=$(shmate_filter_grep -Ec '^TEST_CASE_[[:digit:]]+_NAME=.*$' < "${test_suite_env}")
+        shmate_assert "Calculating number of test cases in test suite \"${test_suite}\"" || return $?
+
+        pass_count=$(shmate_filter_grep -Ec '^TEST_CASE_[[:digit:]]+_EXIT_CODE=0$' < "${test_suite_env}")
+        shmate_assert "Calculating number of test passes in test suite \"${test_suite}\"" || return $?
+
+        failure_count=$(shmate_filter_grep -Ec '^TEST_CASE_[[:digit:]]+_EXIT_CODE=[1-9][[:digit:]]*$' < "${test_suite_env}")
+        shmate_assert "Calculating number of test failures in test suite \"${test_suite}\"" || return $?
+
+        skip_count=$(shmate_filter_grep -Ec '^TEST_CASE_[[:digit:]]+_EXIT_CODE=$' < "${test_suite_env}")
+        shmate_assert "Calculating number of test skips in test suite \"${test_suite}\"" || return $?
+
+        # Errors are only possible if the test suite script returns an error resulting in all test cases being skipped
+        error_count=0
+        if ${is_test_suite_error}; then
+            error_count=${skip_count}
+            skip_count=0
+        fi
+
+        if ${is_test_suite_error}; then
+            shmate_log_error "Test suite \"${test_suite}\" has errors, no test cases run"
+        elif [ ${failure_count} -gt 0 ]; then
+            shmate_log_failure "Test suite \"${test_suite}\" failed ${failure_count} test cases"
+        else
+            shmate_log_success "Test suite \"${test_suite}\" passed all enabled test cases"
+        fi
+
+        shmate_log_audit touch "${test_suite_env}"
+        echo "NAME='${test_suite}'
+ID=${test_suite_id}
+SOURCE='${test_dir}/${file_path#./}'
+TIMESTAMP='${test_suite_timestamp}'
+TIME=${test_suite_seconds}
+TEST_CASES=${test_count}
+TEST_PASSES=${pass_count}
+TEST_ERRORS=${error_count}
+TEST_FAILURES=${failure_count}
+TEST_SKIPS=${skip_count}
+OUTPUT_LOG='${test_suite_out}'
+ERROR_LOG='${test_suite_err}'" >> "${test_suite_env}"
+        shmate_assert "Appending test suite ${test_suite} environment to test suite environment file \"${test_suite_env}\"" || return $?
+
+        echo "${test_suite_env}"
+
+        test_suite_id=$((test_suite_id + 1))
+    done || return $?
+
+    return 0
+}
+
+collect_test_report_junit() {
+    echo '<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>'
+
+    while read -r test_suite_env; do
+        . "${test_suite_env}"
+        shmate_assert "Sourcing test suite environment file \"${test_suite_env}\"" || return $?
+
+        total_tests=$((total_tests + TEST_CASES))
+        total_passes=$((total_passes + TEST_PASSES))
+        total_errors=$((total_errors + TEST_ERRORS))
+        total_failures=$((total_failures + TEST_FAILURES))
+        total_skips=$((total_skips + TEST_SKIPS))
+
+        echo "    <testsuite id=\"${ID}\" hostname=\"${local_host}\" package=\"${SOURCE}\" name=\"${NAME}\" tests=\"${TEST_CASES}\" errors=\"${TEST_ERRORS}\" failures=\"${TEST_FAILURES}\" skipped=\"${TEST_SKIPS}\" time=\"${TIME}\" timestamp=\"${TIMESTAMP}\">"
+
+        for test_case_id in $(seq 1 ${TEST_CASES}); do
+            eval test_case_name='$'TEST_CASE_${test_case_id}_NAME
+            eval test_case_timestamp='$'TEST_CASE_${test_case_id}_TIMESTAMP
+            eval test_case_time='$'TEST_CASE_${test_case_id}_TIME
+            eval test_case_exit_code='$'TEST_CASE_${test_case_id}_EXIT_CODE
+            eval test_case_error_log='$'TEST_CASE_${test_case_id}_ERROR_LOG
+            eval test_case_error_message='$'TEST_CASE_${test_case_id}_ERROR_MESSAGE
+
+            if [ -n "${test_case_error_message}" ]; then
+                test_case_error_message=$(echo -n "${test_case_error_message}" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g; s/"/\&quot;/g; s/'"'"'/\&#39;/g')
+                shmate_assert 'Escaping XML special characters' || return $?
+            fi
+
+            echo "        <testcase classname=\"${NAME}\" name=\"${test_case_name}\" time=\"${test_case_time}\">"
+
+            if [ ${TEST_ERRORS} -gt 0 ]; then
+                # Errors are only possible if the test suite script returns an error resulting in all test cases being marked as error
+                echo "            <error message=\"Test suite script error\"/>"
+            elif [ -z "${test_case_exit_code}" ]; then
+                echo "            <skipped/>"
+            elif [ ${test_case_exit_code} -ne 0 ]; then
+                echo "            <failure type=\"${test_case_exit_code}\" message=\"${test_case_error_message}\">
+                <![CDATA["
+
+                filter_log < "${test_case_error_log}"
+                shmate_assert "Printing error log from \"${test_case_error_log}\"" || return $?
+
+                echo '                ]]>
+            </failure>'
+            fi
+
+            echo '        </testcase>'
+        done || return $?
+
+        echo '        <system-out>
+            <![CDATA['
+
+        cat "${OUTPUT_LOG}"
+        shmate_assert "Printing output log from \"${OUTPUT_LOG}\"" || return $?
+
+        echo '            ]]>
+        </system-out>
+        <system-err>
+            <![CDATA['
+
+        filter_log < "${ERROR_LOG}"
+        shmate_assert "Printing error log from \"${ERROR_LOG}\"" || return $?
+
+        echo '            ]]>
+        </system-err>
+    </testsuite>'
+    done || return $?
+
+    echo '</testsuites>'
+}
+
+collect_test_report() {
+    local test_case_name=
+    local test_case_timestamp=
+    local test_case_time=
+    local test_case_exit_code=
+    local test_case_error_log=
+    local test_case_error_message=
+
+    local total_tests=0
+    local total_passes=0
+    local total_errors=0
+    local total_failures=0
+    local total_skips=0
+
+    collect_test_report_junit || return $?
+
+    if [ ${total_errors} -gt 0 -o ${total_failures} -gt 0 ]; then
+        shmate_log_failure "Totally ${total_passes}/${total_tests} test cases passed, ${total_failures} failed, ${total_skips} skipped, ${total_errors} errors"
+        return 1
+    elif [ ${total_tests} -gt 0 ]; then
+        shmate_log_success "Totally ${total_passes}/${total_tests} test cases passed, ${total_skips} skipped"
+        return 0
+    else
+        shmate_log_warning "No test cases run"
+        return 0
+    fi
+}
+
+main() {
+    local arg_test_dir='.'
+    local arg_source_dir=
+    local arg_output_dir="${shmate_work_dir}"
+    local arg_test_case_function_prefix='test'
+
+    while shmate_getopts 'C:O:p:s:' "$@"; do
+        case ${shmate_getopts_option} in
+            C)
+                arg_test_dir="${OPTARG}"
+                ;;
+            O)
+                arg_output_dir="${OPTARG}"
+                ;;
+            p)
+                arg_test_case_function_prefix="${OPTARG}"
+                ;;
+            s)
+                arg_source_dir="${OPTARG}"
+                ;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    if [ -z "${arg_source_dir}" ]; then
+        shmate_assert_tools git || return $?
+
+        export SHMATE_SOURCE_DIR=$(shmate_audit git -C "${arg_test_dir}" rev-parse --show-toplevel)
+        shmate_assert "Detecting Git repository containing \"${arg_test_dir}\"" || return $?
+    else
+        export SHMATE_SOURCE_DIR="${arg_source_dir}"
+    fi
+
+    job_main() {
+        run_test "${arg_test_dir}" "${arg_output_dir}" "${arg_test_case_function_prefix}" | collect_test_report | shmate_string_cat_buf '-'
+        shmate_silent_assert 'Running main job' || return $?
+
+        return 0
+    }
+
+    shmate_run_guardian job_main "$@"
+}
+
+shmate_main "$@"

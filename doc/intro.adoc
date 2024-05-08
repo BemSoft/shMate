@@ -1,0 +1,5 @@
+== Introduction
+
+_shMate_ is a POSIX-like shell library and toolset aiming to help and encourage shell script developers to follow principles usually attributed to high-level programming languages and _Unix_ tools in general.
+
+NOTE: Here POSIX-like shell means POSIX compatible shell with additional keywords, most notably `local` command without which reusable scripts are very prone to errors.
