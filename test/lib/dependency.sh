@@ -202,37 +202,39 @@ _test_shmate_dep_deploy_opts() {
     return 0
 }
 
-test_shmate_dep_init_env() {
-    local project_dir="${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}/project"
+if shmate_check_tools mvn; then
+    test_shmate_dep_init_env() {
+        local project_dir="${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}/project"
 
-    shmate_dep_init_env "${project_dir}" "${test_mvn_env_file}"
+        shmate_dep_init_env "${project_dir}" "${test_mvn_env_file}"
 
-    test -s "${test_mvn_env_file}"
-    shmate_assert "Maven environment file \"${test_mvn_env_file}\" must not empty" || return $?
+        test -s "${test_mvn_env_file}"
+        shmate_assert "Maven environment file \"${test_mvn_env_file}\" must not empty" || return $?
 
-    . "${test_mvn_env_file}"
+        . "${test_mvn_env_file}"
 
-    test -n "${SHMATE_MVN_PROJECT_DIR}"
-    shmate_assert "\"SHMATE_MVN_PROJECT_DIR\" variable must not be empty" || return $?
+        test -n "${SHMATE_MVN_PROJECT_DIR}"
+        shmate_assert "\"SHMATE_MVN_PROJECT_DIR\" variable must not be empty" || return $?
 
-    test "${SHMATE_MVN_PROJECT_DIR}" = "${project_dir}"
-    shmate_assert "\"SHMATE_MVN_PROJECT_DIR\" variable must be equal to \"${project_dir}\", but is \"${SHMATE_MVN_PROJECT_DIR}\"" || return $?
+        test "${SHMATE_MVN_PROJECT_DIR}" = "${project_dir}"
+        shmate_assert "\"SHMATE_MVN_PROJECT_DIR\" variable must be equal to \"${project_dir}\", but is \"${SHMATE_MVN_PROJECT_DIR}\"" || return $?
 
-    test -n "${SHMATE_MVN_OS_NAME}"
-    shmate_assert "\"SHMATE_MVN_OS_NAME\" variable must not be empty" || return $?
+        test -n "${SHMATE_MVN_OS_NAME}"
+        shmate_assert "\"SHMATE_MVN_OS_NAME\" variable must not be empty" || return $?
 
-    test -n "${SHMATE_MVN_OS_ARCH}"
-    shmate_assert "\"SHMATE_MVN_OS_ARCH\" variable must not be empty" || return $?
+        test -n "${SHMATE_MVN_OS_ARCH}"
+        shmate_assert "\"SHMATE_MVN_OS_ARCH\" variable must not be empty" || return $?
 
-    test -n "${SHMATE_MVN_OS_CLASSIFIER}"
-    shmate_assert "\"SHMATE_MVN_OS_CLASSIFIER\" variable must not be empty" || return $?
+        test -n "${SHMATE_MVN_OS_CLASSIFIER}"
+        shmate_assert "\"SHMATE_MVN_OS_CLASSIFIER\" variable must not be empty" || return $?
 
-    shmate_log_debug "SHMATE_MVN_OS_NAME=${SHMATE_MVN_OS_NAME}"
-    shmate_log_debug "SHMATE_MVN_OS_ARCH=${SHMATE_MVN_OS_ARCH}"
-    shmate_log_debug "SHMATE_MVN_OS_CLASSIFIER=${SHMATE_MVN_OS_CLASSIFIER}"
+        shmate_log_debug "SHMATE_MVN_OS_NAME=${SHMATE_MVN_OS_NAME}"
+        shmate_log_debug "SHMATE_MVN_OS_ARCH=${SHMATE_MVN_OS_ARCH}"
+        shmate_log_debug "SHMATE_MVN_OS_CLASSIFIER=${SHMATE_MVN_OS_CLASSIFIER}"
 
-    return 0
-}
+        return 0
+    }
+fi
 
 test_shmate_dep_group_id() {
     _test_shmate_dep_group_id "${test_artifact_descriptor}" "${test_artifact_group_id}"
