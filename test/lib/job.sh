@@ -165,12 +165,12 @@ test_session_job() {
 }
 
 test_attached_job() {
-    shmate_run_job "${SHELL}" "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}/attached-job" "$@"
+    shmate_run_job "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}/attached-job" "$@"
     shmate_wait_job
 }
 
 test_detached_job() {
-    shmate_run_detached_job "${SHELL}" "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}/detached-job" "$@"
+    shmate_run_detached_job "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}/detached-job" "$@"
     shmate_wait_job
 }
 
@@ -183,5 +183,5 @@ test_guarded_job() {
 }
 
 test_attached_guarded_job() {
-    shmate_run_guardian "${SHELL}" "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}/guarded-job" "$@"
+    shmate_run_guardian "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}/guarded-job" "$@"
 }
