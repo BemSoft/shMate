@@ -22,7 +22,7 @@ Usage: ${0##*/} [-C <directory>]
         To reduce boilerplate code special markers can be used to describe source file (i.e. '>>>') and function within
         (i.e. '>>>>>'). They will take care of anchors and add additional styling.
 
-        Additionally, generates AsciiDoc using executable's '-h' option.
+        Additionally generates AsciiDoc using executable's '-h' option.
         If a function 'help_<task>' is found within executable, AsciiDoc from '-h <task>' option is also generated.
 
         The current directory must belong to a Git repository. Special directories (i.e. dot-directories, Git
@@ -155,7 +155,7 @@ create_asciidoc() {
     echo
     echo "[#${dir_prefix}Executables-reference]"
     echo '== Executables reference'
-    find -L "${source_dir}" -type f -perm -0111 -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/test/.*' ! -regex '.*/target/.*' ! -regex '.*/docker/.*' ! -regex '.*/ci/.*' | sort | while read -r file_path; do
+    find -L "${source_dir}" -type f -perm -0100 -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/test/.*' ! -regex '.*/target/.*' ! -regex '.*/docker/.*' ! -regex '.*/ci/.*' | sort | while read -r file_path; do
         verify_source_file "${file_path}" || continue
 
         print_inline_asciidoc "${source_dir}" "${file_path}"
@@ -175,7 +175,7 @@ create_asciidoc() {
     echo
     echo "[#${dir_prefix}Libraries-reference]"
     echo '== Libraries reference'
-    find -L "${source_dir}" -type f ! -perm -0111 -name '*.sh' -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/test/.*' ! -regex '.*/target/.*' ! -regex '.*/docker/.*' ! -regex '.*/ci/.*' | sort | while read -r file_path; do
+    find -L "${source_dir}" -type f ! -perm -0100 -name '*.sh' -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/test/.*' ! -regex '.*/target/.*' ! -regex '.*/docker/.*' ! -regex '.*/ci/.*' | sort | while read -r file_path; do
         verify_source_file "${file_path}" || continue
 
         print_inline_asciidoc "${source_dir}" "${file_path}"
@@ -197,7 +197,7 @@ help2adoc() {
 
     local source_dir=
     source_dir=$(shmate_audit git -C "${directory}" rev-parse --show-prefix)
-    shmate_assert "Obtaining relative path to Git repository \"${git_root}\" of directory \"${directory}\"" || return $?
+    shmate_assert "Obtaining path of directory \"${directory}\" relative to Git repository \"${git_root}\"" || return $?
 
     shmate_audit cd "${git_root}"
     shmate_assert "Changing current directory to \"${git_root}\"" || return $?

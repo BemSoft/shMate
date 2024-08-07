@@ -629,7 +629,7 @@ The jobs can be operated in groups and as a group they can be waited for or term
         To reduce boilerplate code special markers can be used to describe source file (i.e. '&gt;&gt;&gt;') and function within
         (i.e. '&gt;&gt;&gt;&gt;&gt;'). They will take care of anchors and add additional styling.
 
-        Additionally, generates AsciiDoc using executable's '-h' option.
+        Additionally generates AsciiDoc using executable's '-h' option.
         If a function 'help_&lt;task&gt;' is found within executable, AsciiDoc from '-h &lt;task&gt;' option is also generated.
 
         The current directory must belong to a Git repository. Special directories (i.e. dot-directories, Git
@@ -1972,14 +1972,15 @@ The zero return value means the signal has been handled. To exit program with ze
 <h5 id="user-content-src_lib_shmate_base-shmate_exit_help">shmate_exit_help</h5>
 <div class="listingblock">
 <div class="content">
-<pre>shmate_exit_help [&lt;exit_code&gt; [&lt;task&gt;]]</pre>
+<pre>shmate_exit_help [&lt;exit_code&gt;]</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Prints help message end exits with given &lt;exit_code&gt; or zero if not specified.
 The message is printed to stdout on zero &lt;exit_code&gt; or stderr otherwise.
 The <code>help</code> function printing the message must be defined beforehand.
-If &lt;task&gt; is specified <code>help_&lt;task&gt;</code> function is used instead of <code>help</code>.</p>
+If <a href="#user-content-src_lib_shmate_base-shmate_getopts_task">shmate_getopts_task</a> is set, i.e. <a href="#user-content-src_lib_shmate_base-shmate_task">shmate_task</a> function has been called
+beforehand, the <code>help_${shmate_getopts_task}</code> function is used instead of <code>help</code>.</p>
 </div>
 <div class="paragraph">
 <p>Help function prefix can be changed by setting <a href="#user-content-src_lib_shmate_base-shmate_function_help">shmate_function_help</a> variable before including the library.</p>
@@ -3412,7 +3413,7 @@ processes upon exit including termination caused by signal.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-08 05:53:14 +0200
+Last updated 2024-08-07 20:29:15 +0200
 </div>
 </div>
 </body>

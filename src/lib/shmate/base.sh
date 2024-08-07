@@ -243,26 +243,26 @@ shmate_exit() {
     exit $?
 }
 
-#> >>>>> shmate_exit_help [<exit_code> [<task>]]
+#> >>>>> shmate_exit_help [<exit_code>]
 #>
 #> Prints help message end exits with given <exit_code> or zero if not specified.
 #> The message is printed to stdout on zero <exit_code> or stderr otherwise.
 #> The `help` function printing the message must be defined beforehand.
-#> If <task> is specified `help_<task>` function is used instead of `help`.
+#> If <<lib_shmate_base:shmate_getopts_task>> is set, i.e. <<lib_shmate_base:shmate_task>> function has been called
+#> beforehand, the `help_${shmate_getopts_task}` function is used instead of `help`.
 #>
 #> Help function prefix can be changed by setting <<lib_shmate_base:shmate_function_help>> variable before including the library.
 #>
 shmate_exit_help() {
     local exit_code="$1"
-    local task="$2" # Optional
 
     if [ -z "${exit_code}" ]; then
         exit_code=0
     fi
 
     local handler=
-    if [ -n "${task}" ]; then
-        handler=$(shmate_find_handler "${task}" "${shmate_function_help}") || shmate_exit $?
+    if [ -n "${shmate_getopts_task}" ]; then
+        handler=$(shmate_find_handler "${shmate_getopts_task}" "${shmate_function_help}") || shmate_exit $?
     else
         handler="${shmate_function_help}"
     fi
@@ -371,15 +371,15 @@ shmate_getopts() {
     if [ ${status} -eq 0 ]; then
         case "${shmate_getopts_option}" in
             h)
-                shmate_exit_help 0 "${shmate_getopts_task}"
+                shmate_exit_help 0
                 ;;
             '?')
                 shmate_log_error "$0: Illegal option \"-${OPTARG}\""
-                shmate_exit_help 1 "${shmate_getopts_task}"
+                shmate_exit_help 1
                 ;;
             ':')
                 shmate_log_error "$0: Option \"-${OPTARG}\" requires and argument"
-                shmate_exit_help 1 "${shmate_getopts_task}"
+                shmate_exit_help 1
                 ;;
         esac
     fi
@@ -436,7 +436,7 @@ shmate_main() {
 #> ====
 #>
 shmate_task() {
-    readonly shmate_getopts_task="$1"
+    shmate_getopts_task="$1"
     shift 1
 
     if [ -z "${shmate_getopts_task}" ]; then
@@ -447,9 +447,11 @@ shmate_task() {
     local handler=
     handler=$(shmate_find_handler "${shmate_getopts_task}" "${shmate_function_task}") || {
         shmate_log_error "$0: Illegal task \"${shmate_getopts_task}\""
+        shmate_getopts_task=
         shmate_exit_help 1
     }
 
+    readonly shmate_getopts_task
     OPTIND=1
     ${handler} "$@"
 }

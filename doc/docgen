@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/../src")}"
+export PROJECT_DIR=$(realpath "$(dirname "$(realpath "$0")")/..")
+export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-${PROJECT_DIR}/src}"
 export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
 
 . "${SHMATE_LIB_DIR}/assert.sh"
@@ -14,13 +15,30 @@ install_gem() {
     fi
 
     shmate_pending_assert "Installing Gem \"${gem_name}\""
-    gem install --user-install "${gem_name}"
+    shmate_audit gem install --user-install "${gem_name}"
     shmate_loud_assert || return $?
 
     return 0
 }
 
-main() {
+create_curl_conf() {
+    local curl_conf="${PROJECT_DIR}/curl.conf"
+    local base_url='https://raw.githubusercontent.com/BemSoft/shMate/main'
+
+    printf '# Cannot use git? Try curl instead.\n\ncreate-dirs\n' > "${curl_conf}"
+    shmate_assert "Creating 'curl' config in \"${curl_conf}\"" || return $?
+
+    shmate_pending_assert "Generating 'curl' config in \"${curl_conf}\""
+    find "${PROJECT_DIR}" -type f ! -path '*/.git*' | while read -r absolute_path; do
+        relative_path="${absolute_path#${PROJECT_DIR}/}"
+        printf '\nurl = %s/%s\noutput = %s\n' "${base_url}" "${relative_path}" "${relative_path}" >> "${curl_conf}"
+    done
+    shmate_loud_assert || return $?
+
+    return 0
+}
+
+create_docs() {
     shmate_assert_tools ruby gem || return $?
 
     local gem_bin_dir=
@@ -32,23 +50,27 @@ main() {
     install_gem 'asciidoctor' || return $?
     install_gem 'asciidoctor-reducer' || return $?
 
-    local base_dir="$(realpath "${SHMATE_LIB_DIR}/../../..")"
-    local doc_dir="${base_dir}/doc"
-    local source_dir="${base_dir}/src"
+    local doc_dir="${PROJECT_DIR}/doc"
+    local source_dir="${PROJECT_DIR}/src"
     local help2adoc_cmd="${source_dir}/bin/shmate-adoc"
 
     "${help2adoc_cmd}" -C "${source_dir}" > "${doc_dir}/reference.adoc"
     shmate_assert "Generating reference in \"${doc_dir}/reference.adoc\"" || return $?
 
-    shmate_pending_assert "Generating README in \"${base_dir}/README.adoc\""
-    asciidoctor-reducer --preserve-conditionals -o "${base_dir}/README.adoc" "${doc_dir}/index.adoc"
+    shmate_pending_assert "Generating README in \"${PROJECT_DIR}/README.adoc\""
+    shmate_audit asciidoctor-reducer --preserve-conditionals -o "${PROJECT_DIR}/README.adoc" "${doc_dir}/index.adoc"
     shmate_loud_assert || return $?
 
-    shmate_pending_assert "Generating HTML from \"${base_dir}/README.adoc\" in \"${base_dir}/doc/html/index.html\""
-    asciidoctor "${base_dir}/README.adoc" -o "${base_dir}/doc/html/index.html"
+    shmate_pending_assert "Generating HTML from \"${PROJECT_DIR}/README.adoc\" in \"${PROJECT_DIR}/doc/html/index.html\""
+    shmate_audit asciidoctor "${PROJECT_DIR}/README.adoc" -o "${PROJECT_DIR}/doc/html/index.html"
     shmate_loud_assert || return $?
 
     return 0
+}
+
+main() {
+    create_curl_conf || return $?
+    create_docs || return $?
 }
 
 shmate_main "$@"

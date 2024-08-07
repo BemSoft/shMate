@@ -134,7 +134,7 @@ ${PATH}"
     shmate_audit cd "${test_dir}"
     shmate_assert "Changing current directory to \"${test_dir}\"" || return $?
 
-    find -L '.' -type f ! -perm -0111 -name '*.sh' -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/target/.*' | sort | while read -r file_path; do
+    find -L '.' -type f ! -perm -0100 -name '*.sh' -regextype posix-egrep ! -regex '.*/\.[^/]+.*' ! -regex '.*/target/.*' | sort | while read -r file_path; do
         verify_test_file "${file_path}" || continue
 
         test_suite_dir="${file_path#./}"
