@@ -21,17 +21,28 @@ install_gem() {
     return 0
 }
 
-create_curl_conf() {
-    local curl_conf="${PROJECT_DIR}/curl.conf"
-    local base_url='https://raw.githubusercontent.com/BemSoft/shMate/main'
+create_file_list() {
+    local file_list="${PROJECT_DIR}/file-list.txt"
 
-    printf '# Cannot use git? Try curl instead.\n\ncreate-dirs\n' > "${curl_conf}"
-    shmate_assert "Creating 'curl' config in \"${curl_conf}\"" || return $?
+    echo -n > "${file_list}"
+    shmate_assert "Creating file list in \"${file_list}\"" || return $?
 
-    shmate_pending_assert "Generating 'curl' config in \"${curl_conf}\""
-    find "${PROJECT_DIR}" -type f ! -path '*/.git*' | while read -r absolute_path; do
-        relative_path="${absolute_path#${PROJECT_DIR}/}"
-        printf '\nurl = %s/%s\noutput = %s\n' "${base_url}" "${relative_path}" "${relative_path}" >> "${curl_conf}"
+    shmate_pending_assert "Generating file list in \"${file_list}\""
+    find "${PROJECT_DIR}" -type f ! -path '*/.git*' | sort | while read -r absolute_path; do
+        if [ "${absolute_path}" = "${file_list}" ]; then
+            continue
+        fi
+
+        perms='0644'
+        if [ -x "${absolute_path}" ]; then
+            perms='0755'
+        fi
+
+        file_list_entry=$(shmate_audit sha1sum "${absolute_path}" | sed -E "s|[[:space:]]+${PROJECT_DIR}/|\t${perms}\t|")
+        shmate_assert "Calculating checksum of \"${absolute_path}\"" || return $?
+
+        shmate_audit echo "${file_list_entry}" >> "${file_list}"
+        shmate_assert "Adding entry for \"${absolute_path}\"" || return $?
     done
     shmate_loud_assert || return $?
 
@@ -69,7 +80,7 @@ create_docs() {
 }
 
 main() {
-    create_curl_conf || return $?
+    create_file_list || return $?
     create_docs || return $?
 }
 
