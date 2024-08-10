@@ -80,8 +80,8 @@ create_docs() {
 }
 
 main() {
-    create_file_list || return $?
     create_docs || return $?
+    create_file_list || return $?
 }
 
 shmate_main "$@"
