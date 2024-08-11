@@ -1,6 +1,6 @@
 faafdee72fbfb5f2f9c1a23cdbd82af86651f5ae	0755	doc/docgen
 54c27423497852f69f78e22e62afd70e0c904c59	0644	doc/features.adoc
-cde24492284d1e8fa69c74a4d82422e462556ba3	0644	doc/html/index.html
+9a9b53b557f1257405e888b02bc73fdce7a65a7e	0644	doc/html/index.html
 b383927c284dfa231c5858df66d43efca6c31e8a	0644	doc/index.adoc
 78ef961c8847f514354fe97ef4ece3c9f07801d5	0644	doc/intro.adoc
 059c1634218909b8d9f61f294a7f9f1589f8e7fd	0644	doc/reference.adoc
