@@ -172,7 +172,8 @@ find_artifact_source() {
                 'http://'*|'https://'*|'file://'*)
                     ;;
                 *)
-                    shmate_log_error "Repository \"${artifact_source}\" is not a valid URL" || return $?
+                    shmate_log_error "Repository \"${artifact_source}\" is not a valid URL"
+                    return 1
                     ;;
             esac
             ;;
