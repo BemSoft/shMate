@@ -43,18 +43,28 @@ Artifact repository client. Can be used to integrate with various Maven 2 style 
 .Usage
 ....
 
-Usage: shmate-artifact <task> [<task_arg> ...]
+Usage: shmate-artifact [-k <curl_conf>] [-r <artifact_repo>] <task> [<task_arg> ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
 
         Uses Gradle style <artifact_descriptor>, i.e.
             <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
         e.g.
             org.slf4j:slf4j-api:2.0.12@jar
 
+        Options:
+            -k <curl_conf>
+                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
+                "${SHMATE_CONF_DIR}/curl.conf", but can also be configured per repository alias in
+                "${SHMATE_CONF_DIR}/artifact.conf" as variable with 'curlconf_' prefix.
+            -r <artifact_repo>
+                Maven repository base URL or one of the configured aliases in "${SHMATE_CONF_DIR}/artifact.conf".
+                The aliases are just variables with 'repository_' prefix, i.e. 'repository_<artifact_repo>'.
+                Defaults to 'default'.
+
         Tasks:
-            check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
-            fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+            check [-q] [<artifact_descriptor>[</path/inside/archive>] ...]
+            fetch [-C <directory>] [-t <target_path>] [<artifact_descriptor>[</path/inside/archive>] ...]
 
 Usage: shmate-artifact <task> -h
 
@@ -69,18 +79,28 @@ Usage: shmate-artifact -h
 .Usage
 ....
 
-Usage: shmate-artifact <task> [<task_arg> ...]
+Usage: shmate-artifact [-k <curl_conf>] [-r <artifact_repo>] <task> [<task_arg> ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
 
         Uses Gradle style <artifact_descriptor>, i.e.
             <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
         e.g.
             org.slf4j:slf4j-api:2.0.12@jar
 
+        Options:
+            -k <curl_conf>
+                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
+                "${SHMATE_CONF_DIR}/curl.conf", but can also be configured per repository alias in
+                "${SHMATE_CONF_DIR}/artifact.conf" as variable with 'curlconf_' prefix.
+            -r <artifact_repo>
+                Maven repository base URL or one of the configured aliases in "${SHMATE_CONF_DIR}/artifact.conf".
+                The aliases are just variables with 'repository_' prefix, i.e. 'repository_<artifact_repo>'.
+                Defaults to 'default'.
+
         Tasks:
-            check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
-            fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+            check [-q] [<artifact_descriptor>[</path/inside/archive>] ...]
+            fetch [-C <directory>] [-t <target_path>] [<artifact_descriptor>[</path/inside/archive>] ...]
 
 Usage: shmate-artifact <task> -h
 
@@ -95,18 +115,28 @@ Usage: shmate-artifact -h
 .Usage
 ....
 
-Usage: shmate-artifact <task> [<task_arg> ...]
+Usage: shmate-artifact [-k <curl_conf>] [-r <artifact_repo>] <task> [<task_arg> ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
 
         Uses Gradle style <artifact_descriptor>, i.e.
             <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
         e.g.
             org.slf4j:slf4j-api:2.0.12@jar
 
+        Options:
+            -k <curl_conf>
+                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
+                "${SHMATE_CONF_DIR}/curl.conf", but can also be configured per repository alias in
+                "${SHMATE_CONF_DIR}/artifact.conf" as variable with 'curlconf_' prefix.
+            -r <artifact_repo>
+                Maven repository base URL or one of the configured aliases in "${SHMATE_CONF_DIR}/artifact.conf".
+                The aliases are just variables with 'repository_' prefix, i.e. 'repository_<artifact_repo>'.
+                Defaults to 'default'.
+
         Tasks:
-            check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
-            fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+            check [-q] [<artifact_descriptor>[</path/inside/archive>] ...]
+            fetch [-C <directory>] [-t <target_path>] [<artifact_descriptor>[</path/inside/archive>] ...]
 
 Usage: shmate-artifact <task> -h
 
@@ -686,6 +716,12 @@ Path to directory containing _shMate_ library files. Defaults to `${SHMATE_INSTA
 ===== SHMATE_CURRENT_TIMESTAMP
 
 Setting this to nonempty string makes <<user-content-src_lib_shmate_base-shmate_current_timestamp>> print this value instead of actual timestamp.
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_SUPPRESS_FAILURE_EXIT,reftext='SHMATE_SUPPRESS_FAILURE_EXIT']
+===== SHMATE_SUPPRESS_FAILURE_EXIT
+
+Setting this to positive integer disables printing of failure message upon non-zero exit code.
 
 '''
 [#user-content-src_lib_shmate_base-Internal-symbols]

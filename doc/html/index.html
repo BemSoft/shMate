@@ -654,18 +654,28 @@ Usage: shmate-adoc -h
 <div class="literalblock">
 <div class="title">Usage</div>
 <div class="content">
-<pre>Usage: shmate-artifact &lt;task&gt; [&lt;task_arg&gt; ...]
+<pre>Usage: shmate-artifact [-k &lt;curl_conf&gt;] [-r &lt;artifact_repo&gt;] &lt;task&gt; [&lt;task_arg&gt; ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
 
         Uses Gradle style &lt;artifact_descriptor&gt;, i.e.
             &lt;group_id&gt;:&lt;artifact_id&gt;:&lt;version&gt;[:&lt;classifier&gt;]@&lt;packaging&gt;
         e.g.
             org.slf4j:slf4j-api:2.0.12@jar
 
+        Options:
+            -k &lt;curl_conf&gt;
+                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
+                "${SHMATE_CONF_DIR}/curl.conf", but can also be configured per repository alias in
+                "${SHMATE_CONF_DIR}/artifact.conf" as variable with 'curlconf_' prefix.
+            -r &lt;artifact_repo&gt;
+                Maven repository base URL or one of the configured aliases in "${SHMATE_CONF_DIR}/artifact.conf".
+                The aliases are just variables with 'repository_' prefix, i.e. 'repository_&lt;artifact_repo&gt;'.
+                Defaults to 'default'.
+
         Tasks:
-            check [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
-            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            check [-q] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
 
 Usage: shmate-artifact &lt;task&gt; -h
 
@@ -681,18 +691,28 @@ Usage: shmate-artifact -h
 <div class="literalblock">
 <div class="title">Usage</div>
 <div class="content">
-<pre>Usage: shmate-artifact &lt;task&gt; [&lt;task_arg&gt; ...]
+<pre>Usage: shmate-artifact [-k &lt;curl_conf&gt;] [-r &lt;artifact_repo&gt;] &lt;task&gt; [&lt;task_arg&gt; ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
 
         Uses Gradle style &lt;artifact_descriptor&gt;, i.e.
             &lt;group_id&gt;:&lt;artifact_id&gt;:&lt;version&gt;[:&lt;classifier&gt;]@&lt;packaging&gt;
         e.g.
             org.slf4j:slf4j-api:2.0.12@jar
 
+        Options:
+            -k &lt;curl_conf&gt;
+                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
+                "${SHMATE_CONF_DIR}/curl.conf", but can also be configured per repository alias in
+                "${SHMATE_CONF_DIR}/artifact.conf" as variable with 'curlconf_' prefix.
+            -r &lt;artifact_repo&gt;
+                Maven repository base URL or one of the configured aliases in "${SHMATE_CONF_DIR}/artifact.conf".
+                The aliases are just variables with 'repository_' prefix, i.e. 'repository_&lt;artifact_repo&gt;'.
+                Defaults to 'default'.
+
         Tasks:
-            check [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
-            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            check [-q] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
 
 Usage: shmate-artifact &lt;task&gt; -h
 
@@ -709,18 +729,28 @@ Usage: shmate-artifact -h
 <div class="literalblock">
 <div class="title">Usage</div>
 <div class="content">
-<pre>Usage: shmate-artifact &lt;task&gt; [&lt;task_arg&gt; ...]
+<pre>Usage: shmate-artifact [-k &lt;curl_conf&gt;] [-r &lt;artifact_repo&gt;] &lt;task&gt; [&lt;task_arg&gt; ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
 
         Uses Gradle style &lt;artifact_descriptor&gt;, i.e.
             &lt;group_id&gt;:&lt;artifact_id&gt;:&lt;version&gt;[:&lt;classifier&gt;]@&lt;packaging&gt;
         e.g.
             org.slf4j:slf4j-api:2.0.12@jar
 
+        Options:
+            -k &lt;curl_conf&gt;
+                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
+                "${SHMATE_CONF_DIR}/curl.conf", but can also be configured per repository alias in
+                "${SHMATE_CONF_DIR}/artifact.conf" as variable with 'curlconf_' prefix.
+            -r &lt;artifact_repo&gt;
+                Maven repository base URL or one of the configured aliases in "${SHMATE_CONF_DIR}/artifact.conf".
+                The aliases are just variables with 'repository_' prefix, i.e. 'repository_&lt;artifact_repo&gt;'.
+                Defaults to 'default'.
+
         Tasks:
-            check [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
-            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [-r &lt;artifact_repo&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            check [-q] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
+            fetch [-C &lt;directory&gt;] [-t &lt;target_path&gt;] [&lt;artifact_descriptor&gt;[&lt;/path/inside/archive&gt;] ...]
 
 Usage: shmate-artifact &lt;task&gt; -h
 
@@ -1785,6 +1815,13 @@ Must be set, unless all of <code>SHMATE_BIN_DIR</code>, <code>SHMATE_CONF_DIR</c
 <h5 id="user-content-src_lib_shmate_base-SHMATE_CURRENT_TIMESTAMP">SHMATE_CURRENT_TIMESTAMP</h5>
 <div class="paragraph">
 <p>Setting this to nonempty string makes <a href="#user-content-src_lib_shmate_base-shmate_current_timestamp">shmate_current_timestamp</a> print this value instead of actual timestamp.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_base-SHMATE_SUPPRESS_FAILURE_EXIT">SHMATE_SUPPRESS_FAILURE_EXIT</h5>
+<div class="paragraph">
+<p>Setting this to positive integer disables printing of failure message upon non-zero exit code.</p>
 </div>
 <hr>
 </div>
@@ -3413,7 +3450,7 @@ processes upon exit including termination caused by signal.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-08-11 18:17:26 +0200
+Last updated 2024-08-23 03:15:04 +0200
 </div>
 </div>
 </body>

@@ -54,6 +54,12 @@ fi
 #> Setting this to nonempty string makes <<lib_shmate_base:shmate_current_timestamp>> print this value instead of actual timestamp.
 #>
 
+#> >>>>> SHMATE_SUPPRESS_FAILURE_EXIT
+#>
+#> Setting this to positive integer disables printing of failure message upon non-zero exit code.
+SHMATE_SUPPRESS_FAILURE_EXIT=${SHMATE_SUPPRESS_FAILURE_EXIT:-0}
+#>
+
 #> >>>> Internal symbols
 #>
 #> .Variables
@@ -296,7 +302,9 @@ shmate_fail() {
         set -- 'Non-zero exit code'
     fi
 
-    echo "[${error_code}] $*" 1>&2
+    if [ ${SHMATE_SUPPRESS_FAILURE_EXIT} -le 0 ]; then
+        echo "[${error_code}] $*" 1>&2
+    fi
     shmate_exit ${error_code}
 }
 
@@ -746,7 +754,7 @@ shmate_dotenv() {
     if [ -z "${dotenv_file}" ]; then
         dotenv_file='-'
     fi
-    grep -v '^(#|$)' "${dotenv_file}" | tr '\n' ' '
+    grep -Ev '^(#|$)' "${dotenv_file}" | tr '\n' ' '
 
     return $?
 }

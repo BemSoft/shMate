@@ -14,18 +14,28 @@ export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
 
 help() {
     echo "
-Usage: ${0##*/} <task> [<task_arg> ...]
+Usage: ${0##*/} [-k <curl_conf>] [-r <artifact_repo>] <task> [<task_arg> ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
+        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
 
         Uses Gradle style <artifact_descriptor>, i.e.
             <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
         e.g.
             org.slf4j:slf4j-api:2.0.12@jar
 
+        Options:
+            -k <curl_conf>
+                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
+                \"\${SHMATE_CONF_DIR}/curl.conf\", but can also be configured per repository alias in
+                \"\${SHMATE_CONF_DIR}/artifact.conf\" as variable with 'curlconf_' prefix.
+            -r <artifact_repo>
+                Maven repository base URL or one of the configured aliases in \"\${SHMATE_CONF_DIR}/artifact.conf\".
+                The aliases are just variables with 'repository_' prefix, i.e. 'repository_<artifact_repo>'.
+                Defaults to 'default'.
+
         Tasks:
-            check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
-            fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+            check [-q] [<artifact_descriptor>[</path/inside/archive>] ...]
+            fetch [-C <directory>] [-t <target_path>] [<artifact_descriptor>[</path/inside/archive>] ...]
 
 Usage: ${0##*/} <task> -h
 
@@ -39,7 +49,7 @@ Usage: ${0##*/} -h
 
 help_check() {
     echo "
-Usage: ${0##*/} check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+Usage: ${0##*/} [<global_arg> ...] check [-q] [<artifact_descriptor>[</path/inside/archive>] ...]
 
         Checks if artifacts described with <artifact_descriptor> exist in remote Maven repository <artifact_repo>.
         Returns zero if all the artifacts are found and non-zero otherwise.
@@ -50,21 +60,17 @@ Usage: ${0##*/} check [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/
         Options:
             -q
                 Does not print log messages stating if the artifact is found or not.
-            -r <artifact_repo>
-                Maven repository base URL or one of the configured aliases in \"\${SHMATE_CONF_DIR}/artifact.conf\".
-                The aliases are just variables with 'repository_' prefix, i.e. 'repository_<artifact_repo>'.
-                Defaults to 'default'.
 
-        Example:
+        Examples:
             To check if 'org.slf4j:slf4j-api:2.0.12@jar' artifact exists in default repository:
 
-            \$ ${0##*/} check 'org.slf4j:slf4j-api:2.0.12@jar'
+                \$ ${0##*/} check 'org.slf4j:slf4j-api:2.0.12@jar'
 "
 }
 
 help_fetch() {
     echo "
-Usage: ${0##*/} fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [<artifact_descriptor>[</path/inside/archive>] ...]
+Usage: ${0##*/} [<global_arg> ...] fetch [-C <directory>] [-t <target_path>] [<artifact_descriptor>[</path/inside/archive>] ...]
 
         Fetches artifacts described with <artifact_descriptor> from remote Maven repository <artifact_repo>
         and possibly extracts their contents to <target_path> in current directory.
@@ -81,25 +87,71 @@ Usage: ${0##*/} fetch [-C <directory>] [-t <target_path>] [-r <artifact_repo>] [
             -t <target_path>
                 Path where the artifact will be downloaded/extracted. The <target_path> will be created if it does not
                 exist. If it ends with '/' or is '.', it denotes a directory affecting artifact processing.
-                Defaults to '.'.
-            -r <artifact_repo>
-                Maven repository base URL or one of the configured aliases in \"\${SHMATE_CONF_DIR}/${0##*/}.conf\".
-                The aliases are just variables with 'repository_' prefix, i.e. 'repository_<artifact_repo>'.
-                Defaults to 'default'.
+                Defaults to current directory.
 
-        Example:
-            To download 'org.slf4j:slf4j-api:2.0.12@jar' artifact from 'example' repository and extract
-            'META-INF/MANIFEST.MF' from the JAR to 'manifest.txt':
+        Examples:
+            To download 'org.slf4j:slf4j-api:2.0.12@jar' artifact from default repository and:
 
-            \$ ${0##*/} fetch -t 'manifest.txt' 'org.slf4j:slf4j-api:2.0.12@jar/META-INF/MANIFEST.MF'
+            extract 'META-INF/MANIFEST.MF' from the JAR to 'manifest.txt' file:
+
+                \$ ${0##*/} fetch -t 'manifest.txt' 'org.slf4j:slf4j-api:2.0.12@jar/META-INF/MANIFEST.MF'
+
+            extract 'META-INF/MANIFEST.MF' from the JAR to 'manifest' directory:
+
+                \$ ${0##*/} fetch -t 'manifest/' 'org.slf4j:slf4j-api:2.0.12@jar/META-INF/MANIFEST.MF'
+
+            extract contents of the JAR to 'slf4j' directory:
+
+                \$ ${0##*/} fetch -t 'slf4j/' 'org.slf4j:slf4j-api:2.0.12@jar/'
 "
 }
 
+find_curl_conf() {
+    local curl_conf="${1:-curl.conf}"
+    local artifact_source="${2:-default}"
+
+    if [ -z "${curl_conf}" ]; then
+        case "${artifact_source}" in
+            'http://'*|'https://'*|'file://'*)
+                ;;
+            *)
+                artifact_source=$(echo -n "${artifact_source}" | tr -Cs '[:alnum:]' '_')
+                local config_file="${SHMATE_CONF_DIR}/artifact.conf"
+                if [ -s "${config_file}" ]; then
+                    . "${config_file}" || return $?
+                fi
+
+                local var_curlconf=
+                eval var_curlconf='$'curlconf_${artifact_source}
+
+                if [ -n "${var_curlconf}" ]; then
+                    curl_conf="${var_curlconf}"
+                fi
+                ;;
+        esac
+    fi
+
+    case "${curl_conf}" in
+        /*)
+            ;;
+        *)
+            curl_conf="${SHMATE_CONF_DIR}/${curl_conf}"
+            ;;
+    esac
+
+    test -r "${curl_conf}" -a ! -d "${curl_conf}"
+    shmate_assert "'curl' configuration file \"${curl_conf}\" does not exist or is not readable" || return $?
+
+    echo "${curl_conf}"
+
+    return 0
+}
+
 find_artifact_source() {
-    local artifact_source="$1"
+    local artifact_source="${1:-default}"
 
     case "${artifact_source}" in
-        'http://'*|'https://'*)
+        'http://'*|'https://'*|'file://'*)
             ;;
         *)
             artifact_source=$(echo -n "${artifact_source}" | tr -Cs '[:alnum:]' '_')
@@ -115,6 +167,14 @@ find_artifact_source() {
             shmate_assert "Variable \"repository_${artifact_source}\" is not set in \"${config_file}\"" || return $?
 
             artifact_source="${var_repository}"
+
+            case "${artifact_source}" in
+                'http://'*|'https://'*|'file://'*)
+                    ;;
+                *)
+                    shmate_log_error "Repository \"${artifact_source}\" is not a valid URL" || return $?
+                    ;;
+            esac
             ;;
     esac
 
@@ -124,9 +184,9 @@ find_artifact_source() {
 }
 
 check_artifact() {
-    local artifact_source="$1"
-    local artifact_descriptor="$2"
-    local is_quiet="$3"
+    local artifact_descriptor="$1"
+    local is_quiet="$2"
+
     local artifact_repo_path=
     local artifact_dir=
 
@@ -140,16 +200,20 @@ check_artifact() {
     artifact_repo_path=$(shmate_dep_repo_path "${artifact_descriptor}")
     shmate_assert "Invalid dependency descriptor \"${artifact_descriptor}\"" || return $?
 
-    artifact_source=$(find_artifact_source "${artifact_source}") || return $?
+    local artifact_source="${arg_artifact_source}/${artifact_repo_path}"
 
-    artifact_source="${artifact_source}/${artifact_repo_path}"
-
-    set -- curl -L --silent --fail --head "${artifact_source}" -o /dev/null
+    set -- curl --fail --location --config "${arg_curl_conf}" --silent --head "${artifact_source}" -o /dev/null
     if ${is_quiet}; then
-        shmate_audit "$@" || shmate_exit $?
+        shmate_audit "$@" || {
+            SHMATE_SUPPRESS_FAILURE_EXIT=1
+            return $?
+        }
     else
         shmate_audit "$@"
-        shmate_warning_assert "Artifact \"${artifact_source}\" not found" || return $?
+        shmate_warning_assert "Artifact \"${artifact_source}\" not found" || {
+            SHMATE_SUPPRESS_FAILURE_EXIT=1
+            return $?
+        }
 
         shmate_log_info "Found artifact \"${artifact_source}\""
     fi
@@ -158,9 +222,9 @@ check_artifact() {
 }
 
 fetch_artifact() {
-    local target_path="$1"
-    local artifact_source="$2"
-    local artifact_descriptor="$3"
+    local artifact_descriptor="$1"
+    local target_path="$2"
+
     local artifact_repo_path=
     local artifact_dir=
 
@@ -175,9 +239,7 @@ fetch_artifact() {
     artifact_repo_path=$(shmate_dep_repo_path "${artifact_descriptor}")
     shmate_assert "Invalid dependency descriptor \"${artifact_descriptor}\"" || return $?
 
-    artifact_source=$(find_artifact_source "${artifact_source}")  || return $?
-
-    artifact_source="${artifact_source}/${artifact_repo_path}"
+    local artifact_source="${arg_artifact_source}/${artifact_repo_path}"
 
     shmate_log_info "Fetching artifact \"${artifact_source}\""
 
@@ -199,7 +261,7 @@ fetch_artifact() {
                 ;;
         esac
 
-        shmate_audit curl -L --fail --create-dirs "${artifact_source}" -o "${target_file}"
+        shmate_audit curl --fail --location --config "${arg_curl_conf}" --create-dirs "${artifact_source}" -o "${target_file}"
         shmate_assert "Fetching artifact from \"${artifact_source}\" to \"${target_file}\"" || return $?
     else
         artifact_dir="${artifact_dir#/}"
@@ -224,12 +286,12 @@ fetch_artifact() {
                 shmate_assert "Creating target directory \"${target_path}\"" || return $?
 
                 shmate_log_audit_begin && \
-                    shmate_log_audit_command curl -L --fail "${artifact_source}" -o - && \
+                    shmate_log_audit_command curl --fail --location --config "${arg_curl_conf}" "${artifact_source}" -o - && \
                     shmate_log_audit_operator '|' && \
                     shmate_log_audit_command tar -C "${target_path}" -xzf - --transform "s|^${artifact_dir}/||" --wildcards --wildcards-match-slash --anchored "${artifact_pattern}" && \
                     shmate_log_audit_end
                 # GNU tar extension
-                curl -L --fail "${artifact_source}" -o - | tar -C "${target_path}" -xzf - --transform "s|^${artifact_dir}/||" --wildcards --wildcards-match-slash --anchored "${artifact_pattern}"
+                curl --fail --location --config "${arg_curl_conf}" "${artifact_source}" -o - | tar -C "${target_path}" -xzf - --transform "s|^${artifact_dir}/||" --wildcards --wildcards-match-slash --anchored "${artifact_pattern}"
                 shmate_assert "Fetching artifact from \"${artifact_source}\" and extracting \"${artifact_pattern}\"" || return $?
                 ;;
             zip|jar)
@@ -239,7 +301,7 @@ fetch_artifact() {
                 artifact_file=$(shmate_dep_file_name "${artifact_descriptor}")
                 shmate_assert "Invalid dependency descriptor \"${artifact_descriptor}\"" || return $?
 
-                shmate_audit curl -L --fail --create-dirs "${artifact_source}" -o "${artifact_file}"
+                shmate_audit curl --fail --location --config "${arg_curl_conf}" --create-dirs "${artifact_source}" -o "${artifact_file}"
                 shmate_assert "Fetching artifact from \"${artifact_source}\" to \"${artifact_file}\"" || return $?
 
                 if [ -z "${artifact_dir}" ]; then
@@ -278,16 +340,12 @@ fetch_artifact() {
 task_check() {
     shmate_assert_tools curl || return $?
 
-    local arg_artifact_source='default'
     local arg_quiet=false
 
-    while shmate_getopts 'qr:' "$@"; do
+    while shmate_getopts 'q' "$@"; do
         case ${shmate_getopts_option} in
             q)
                 arg_quiet=true
-                ;;
-            r)
-                arg_artifact_source="${OPTARG}"
                 ;;
         esac
     done
@@ -295,7 +353,7 @@ task_check() {
 
     local artifact_descriptor=
     for artifact_descriptor in "$@"; do
-        check_artifact "${arg_artifact_source}" "${artifact_descriptor}" "${arg_quiet}" || return $?
+        check_artifact "${artifact_descriptor}" "${arg_quiet}" || return $?
     done || return $?
 
     return 0
@@ -306,18 +364,14 @@ task_fetch() {
 
     local arg_work_dir=
     local arg_target_path='.'
-    local arg_artifact_source='default'
 
-    while shmate_getopts 'C:t:r:' "$@"; do
+    while shmate_getopts 'C:t:' "$@"; do
         case ${shmate_getopts_option} in
             C)
                 arg_work_dir="${OPTARG}"
                 ;;
             t)
                 arg_target_path="${OPTARG}"
-                ;;
-            r)
-                arg_artifact_source="${OPTARG}"
                 ;;
         esac
     done
@@ -326,7 +380,7 @@ task_fetch() {
     if [ -n "${arg_work_dir}" ]; then
         if ! [ -e "${arg_work_dir}" ]; then
             shmate_audit mkdir -p "${arg_work_dir}"
-            shmate_assert "Creating working directory to \"${arg_work_dir}\"" || return $?
+            shmate_assert "Creating working directory \"${arg_work_dir}\"" || return $?
         fi
         shmate_audit cd "${arg_work_dir}"
         shmate_assert "Changing current working directory to \"${arg_work_dir}\"" || return $?
@@ -334,15 +388,36 @@ task_fetch() {
 
     local artifact_descriptor=
     for artifact_descriptor in "$@"; do
-        fetch_artifact "${arg_target_path}" "${arg_artifact_source}" "${artifact_descriptor}" || return $?
+        fetch_artifact "${artifact_descriptor}" "${arg_target_path}" || return $?
     done || return $?
 
     return 0
 }
 
 main() {
-    shmate_getopts '' "$@"
+    local arg_curl_conf=
+    local arg_artifact_source=
+
+    while shmate_getopts 'k:r:' "$@"; do
+        case ${shmate_getopts_option} in
+            k)
+                arg_curl_conf="${OPTARG}"
+
+                test -n "${arg_curl_conf}"
+                shmate_assert "Path of 'curl' configuration file must not be empty" || shmate_exit_help $?
+                ;;
+            r)
+                arg_artifact_source="${OPTARG}"
+
+                test -n "${arg_artifact_source}"
+                shmate_assert "Repository URL or alias must not be empty" || shmate_exit_help $?
+                ;;
+        esac
+    done
     shift $((OPTIND - 1))
+
+    arg_curl_conf=$(find_curl_conf "${arg_curl_conf}" "${arg_artifact_source}") || return $?
+    arg_artifact_source=$(find_artifact_source "${arg_artifact_source}") || return $?
 
     shmate_task "$@"
 }

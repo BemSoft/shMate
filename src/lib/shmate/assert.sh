@@ -285,12 +285,11 @@ _shmate_create_log_file() {
     if [ -n "${SHMATE_LOG}" ]; then
         SHMATE_LOG=$(realpath "${SHMATE_LOG}")
 
-        touch "${SHMATE_LOG}"
-        if [ $? -ne 0 ]; then
+        touch "${SHMATE_LOG}" || {
             local log_file="${SHMATE_LOG}"
             unset SHMATE_LOG
             shmate_log_error "Could not open log file \"${log_file}\""
-        fi
+        }
     fi
 
     return 0
@@ -842,7 +841,9 @@ shmate_fail() {
         set -- 'Non-zero exit code'
     fi
 
-    shmate_log_failure "[${error_code}]" "$@"
+    if [ ${SHMATE_SUPPRESS_FAILURE_EXIT} -le 0 ]; then
+        shmate_log_failure "[${error_code}]" "$@"
+    fi
     shmate_exit ${error_code}
 }
 
@@ -1026,13 +1027,17 @@ shmate_fail_assert() {
         _shmate_assert_message=$(shmate_input_run "${_shmate_assert_message_stack}" tail -n 1)
 
         if [ ${status} -gt 0 ]; then
-            shmate_log_failure "[${error_code}]" "${message}"
+            if [ ${SHMATE_SUPPRESS_FAILURE_EXIT} -le 0 ]; then
+                shmate_log_failure "[${error_code}]" "${message}"
+            fi
             shmate_exit ${error_code}
         else
             shmate_log_success "${message}"
         fi
     elif [ ${status} -gt 0 ]; then
-        shmate_log_failure "[${error_code}]" "${message}"
+        if [ ${SHMATE_SUPPRESS_FAILURE_EXIT} -le 0 ]; then
+            shmate_log_failure "[${error_code}]" "${message}"
+        fi
         shmate_exit ${error_code}
     fi
 
