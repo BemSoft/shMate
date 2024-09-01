@@ -1,11 +1,11 @@
 faafdee72fbfb5f2f9c1a23cdbd82af86651f5ae	0755	doc/docgen
 54c27423497852f69f78e22e62afd70e0c904c59	0644	doc/features.adoc
-93edecda96e19308947cf3175e13b15c6d8314df	0644	doc/html/index.html
+221292b9e11036837e6ef9c715317079ba94a6bf	0644	doc/html/index.html
 b383927c284dfa231c5858df66d43efca6c31e8a	0644	doc/index.adoc
 78ef961c8847f514354fe97ef4ece3c9f07801d5	0644	doc/intro.adoc
-85eed151aacd6a83002c4733a74a83b2f42a3328	0644	doc/reference.adoc
+2f0405d8990f5f5e6a0bec899d7a671cb53a5d89	0644	doc/reference.adoc
 a06f6b529b9fc4f540380185e35a37e2d1193e4a	0644	LICENSE
-b3e63f3825bbfec24545d5077fe26947df859633	0644	README.adoc
+232c263720ca82497ecc97f155a5b5e8988615c9	0644	README.adoc
 2ed4df4c9b0ceaca670123e7593ec01d404f5aa8	0755	src/bin/shmate-adoc
 f0a6cd97f1c14688cdf622a177f52959e7ac155c	0755	src/bin/shmate-artifact
 fb837ff9006274726a17207b3e7454822f06a195	0755	src/bin/shmate-test
@@ -15,8 +15,8 @@ fc7068f209e356ac12c091cb106b356c99c1a5ff	0644	src/etc/shmate/curl.conf
 375269f4278987c0065d087ce3540ad9215dfa37	0644	src/lib/shmate/base.sh
 b30bc466d26946212a2ac0df02eca3b93f280e16	0644	src/lib/shmate/dependency.sh
 c21290b66d71daed2d31b5acc78af4c1908ca80e	0644	src/lib/shmate/_deprecated.sh
-212842567c9cb6ba81d11c96c947501142caa91d	0644	src/lib/shmate/job.sh
-5219dd995f93a6588bf93f2b6823e5b585dc7dac	0644	src/lib/shmate/workdir.sh
+d000bc4f790493d2c4b96f0451eebc5bc00e47f5	0644	src/lib/shmate/job.sh
+c83f7fff03abd80eeeb4e7d28e33f7ee390b0d21	0644	src/lib/shmate/workdir.sh
 2796410dcc7576e5a017c6c279fd4c3c8c0ef120	0755	test/example/crude
 30f48a12e1dec2d3fce45de99097e181d00a110f	0755	test/example/greet
 8f4289ce6c0fe77b4b71d467071c16b90d4bb92f	0644	test/lib/dependency/project/hello/pom.xml
@@ -26,5 +26,5 @@ aa8ed3d564d217d928a918f07caad6b656b677e6	0644	test/lib/dependency/project/pom.xm
 ae954388c7c07b88c14b46781a2b493bc769cd03	0755	test/lib/job/attached-job
 14021c30fec2045954d338ea2c97c3298c000ecd	0755	test/lib/job/detached-job
 5da5c048f4abd70fe77f5d4bcfcbd0434cbffa6c	0755	test/lib/job/guarded-job
-aff4c3fe296ec0617b6c833af78a16fafe58cad8	0644	test/lib/job.sh
+6830de33c66f510116580ad51181742d9f176e03	0644	test/lib/job.sh
 e5fc19a91881aba34f899ff558997123a52bbdca	0644	test/lib/workdir.sh

@@ -2084,31 +2084,17 @@ shmate_kill_job_group <signal_name> [<job_group_name> ...]
 ----
 
 '''
-[#user-content-src_lib_shmate_job-shmate_run_qualified_job,reftext='shmate_run_qualified_job']
-===== shmate_run_qualified_job
-----
-shmate_run_qualified_job <job_group_name> [<command> [<command_arg> ...]]
-----
-
-'''
 [#user-content-src_lib_shmate_job-shmate_run_job,reftext='shmate_run_job']
 ===== shmate_run_job
 ----
-shmate_run_job [<command> [<command_arg> ...]]
-----
-
-'''
-[#user-content-src_lib_shmate_job-shmate_run_qualified_muted_job,reftext='shmate_run_qualified_muted_job']
-===== shmate_run_qualified_muted_job
-----
-shmate_run_qualified_muted_job <job_group_name> [<command> [<command_arg> ...]]
+shmate_run_job <job_group_name> [<command> [<command_arg> ...]]
 ----
 
 '''
 [#user-content-src_lib_shmate_job-shmate_run_muted_job,reftext='shmate_run_muted_job']
 ===== shmate_run_muted_job
 ----
-shmate_run_muted_job [<command> [<command_arg> ...]]
+shmate_run_muted_job <job_group_name> [<command> [<command_arg> ...]]
 ----
 
 '''
@@ -2122,7 +2108,7 @@ shmate_run_foreground_job [<command> [<command_arg> ...]]
 [#user-content-src_lib_shmate_job-shmate_run_session_job,reftext='shmate_run_session_job']
 ===== shmate_run_session_job
 ----
-shmate_run_session_job [<command> [<command_arg> ...]]
+shmate_run_session_job <job_group_name> [<command> [<command_arg> ...]]
 ----
 
 '''

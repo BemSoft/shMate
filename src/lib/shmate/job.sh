@@ -64,7 +64,7 @@ _shmate_job_prepare() {
         shmate_audit mkdir -p "${_shmate_new_job_run_dir}" || return $?
     fi
 
-    _shmate_new_job_run_dir="$(env TMPDIR="${_shmate_new_job_run_dir}" mktemp -dt ".XXXXX")" || return $?
+    _shmate_new_job_run_dir="$(env TMPDIR="${_shmate_new_job_run_dir}" mktemp -dt ".XXXXXX")" || return $?
 
     _shmate_new_job_pidfile="${_shmate_new_job_run_dir}/.pid"
     shmate_audit touch "${_shmate_new_job_pidfile}"
@@ -441,9 +441,9 @@ shmate_kill_job_group() {
     #return 0
 #}
 
-#> >>>>> shmate_run_qualified_job <job_group_name> [<command> [<command_arg> ...]]
+#> >>>>> shmate_run_job <job_group_name> [<command> [<command_arg> ...]]
 #>
-shmate_run_qualified_job() {
+shmate_run_job() {
     local job_group_name="$1"
     shift
 
@@ -459,15 +459,9 @@ shmate_run_qualified_job() {
     return 0
 }
 
-#> >>>>> shmate_run_job [<command> [<command_arg> ...]]
+#> >>>>> shmate_run_muted_job <job_group_name> [<command> [<command_arg> ...]]
 #>
-shmate_run_job() {
-    shmate_run_qualified_job '' "$@"
-}
-
-#> >>>>> shmate_run_qualified_muted_job <job_group_name> [<command> [<command_arg> ...]]
-#>
-shmate_run_qualified_muted_job() {
+shmate_run_muted_job() {
     local job_group_name="$1"
     shift
 
@@ -483,12 +477,6 @@ shmate_run_qualified_muted_job() {
     return 0
 }
 
-#> >>>>> shmate_run_muted_job [<command> [<command_arg> ...]]
-#>
-shmate_run_muted_job() {
-    shmate_run_qualified_muted_job '' "$@"
-}
-
 #> >>>>> shmate_run_foreground_job [<command> [<command_arg> ...]]
 #>
 shmate_run_foreground_job() {
@@ -501,10 +489,16 @@ shmate_run_foreground_job() {
     return 0
 }
 
-#> >>>>> shmate_run_session_job [<command> [<command_arg> ...]]
+#> >>>>> shmate_run_session_job <job_group_name> [<command> [<command_arg> ...]]
 #>
 shmate_run_session_job() {
-    local job_type='session'
+    local job_group_name="$1"
+    shift
+
+    local job_type='unqualified session'
+    if [ -n "${job_group_name}" ]; then
+        job_type='qualified session'
+    fi
 
     _shmate_job_prepare "${job_type}" '' "$@" || return $?
     _shmate_job_unset_env "$@" 1>&2 0<&0 &
