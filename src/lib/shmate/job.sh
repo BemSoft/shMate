@@ -108,7 +108,7 @@ _shmate_job_confirm() {
 
     local job_pidfile="${run_dir}/${new_job_pid}.pid"
     shmate_log_audit_begin && \
-        shmate_log_audit_command echo ${job_pidfile} && \
+        shmate_log_audit_command echo ${new_job_pid} && \
         shmate_log_audit_operator '>' && \
         shmate_log_audit_file "${job_pidfile}" && \
         shmate_log_audit_end
@@ -357,8 +357,10 @@ shmate_kill_job_group() {
     local signal_name="$1"
     shift
 
+    local mindepth=1
     if [ $# -le 0 ]; then
         set -- ''
+        mindepth=2 # Kill only qualified jobs
     fi
 
     local job_group_name=
@@ -370,7 +372,7 @@ shmate_kill_job_group() {
     for job_group_name in "$@"; do
         run_dir="${shmate_work_dir}/.run/pid/${job_group_name}"
         if [ -n "${shmate_work_dir}" -a -d "${run_dir}" ]; then
-            parent_pidlist=`find -L "${run_dir}" -mindepth 1 -type f -name '*.pid' | while read -r pid_file; do
+            parent_pidlist=`find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' | while read -r pid_file; do
                 cat "${pid_file}"
                 shmate_silent_assert "Reading PID file \"${pid_file}\"" || continue
 
@@ -663,8 +665,10 @@ shmate_wait_job() {
 #> >>>>> shmate_wait_job_group [<job_group_name> ...]
 #>
 shmate_wait_job_group() {
-    if [ $# -eq 0 ]; then
+    local mindepth=1
+    if [ $# -le 0 ]; then
         set -- ''
+        mindepth=2 # Wait only for qualified jobs
     fi
 
     local job_group_name=
@@ -676,10 +680,11 @@ shmate_wait_job_group() {
         for job_group_name in "$@"; do
             run_dir="${shmate_work_dir}/.run/pid/${job_group_name}"
             if [ -d "${run_dir}" ]; then
-                pids="${pids} $(find -L "${run_dir}" -mindepth 1 -type f -name '*.pid' -exec cat {} \; | xargs)"
+                pids="${pids} $(find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' -exec cat {} \; | xargs)"
                 shmate_assert 'Reading job PIDs' || return $?
             fi
         done
+        pids="${pids# }"
     fi
 
     shmate_log_debug "Waiting for multiple PIDs${pids}"
@@ -700,7 +705,7 @@ shmate_wait_job_group() {
             for job_group_name in "$@"; do
                 run_dir="${shmate_work_dir}/.run/pid/${job_group_name}"
                 if [ -d "${run_dir}" ]; then
-                    find -L "${run_dir}" -mindepth 1 -type f -name '*.pid' -delete
+                    find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' -delete
                     shmate_warning_assert "Cannot remove pidfiles from directory \"${run_dir}\""
                 fi
             done
@@ -711,7 +716,7 @@ shmate_wait_job_group() {
                 run_dir="${shmate_work_dir}/.run/job/${job_group_name}"
                 if [ -d "${run_dir}" ]; then
                     local job_exit_code=
-                    job_exit_code=`find -L "${run_dir}" -mindepth 1 -type f -name '.exit-code' -exec cat {} \; | sort -un | tail -n 1`
+                    job_exit_code=`find -L "${run_dir}" -mindepth ${mindepth} -type f -name '.exit-code' -exec cat {} \; | sort -un | tail -n 1`
                     shmate_warning_assert "Cannot retrieve exit codes from directory \"${run_dir}\""
 
                     if [ -n "${job_exit_code}" ]; then
