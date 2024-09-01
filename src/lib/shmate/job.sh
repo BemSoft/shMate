@@ -500,9 +500,9 @@ shmate_run_session_job() {
         job_type='qualified session'
     fi
 
-    _shmate_job_prepare "${job_type}" '' "$@" || return $?
+    _shmate_job_prepare "${job_type}" "${job_group_name}" "$@" || return $?
     _shmate_job_unset_env "$@" 1>&2 0<&0 &
-    _shmate_job_confirm "${job_type}" '' "$@" || return $?
+    _shmate_job_confirm "${job_type}" "${job_group_name}" "$@" || return $?
 
     return 0
 }
@@ -676,8 +676,9 @@ shmate_wait_job_group() {
             if [ -d "${run_dir}" ]; then
                 pids="${pids} $(find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' -exec cat {} \; | xargs)"
                 shmate_assert 'Reading job PIDs' || return $?
+
+                pids="${pids# }"
             fi
-            pids="${pids# }"
         done
     fi
 

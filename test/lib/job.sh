@@ -160,7 +160,7 @@ test_session_job() {
     local parent_job_id=${_SHMATE_JOB_NAME}
     local parent_pidfile="${_SHMATE_PID_FILE}"
 
-    shmate_run_session_job _test_session_job "$@"
+    shmate_run_session_job '' _test_session_job "$@"
     shmate_wait_job
 }
 
