@@ -339,8 +339,6 @@ fetch_artifact() {
 }
 
 task_check() {
-    shmate_assert_tools curl || return $?
-
     local arg_quiet=false
 
     while shmate_getopts 'q' "$@"; do
@@ -352,6 +350,8 @@ task_check() {
     done
     shift $((OPTIND - 1))
 
+    shmate_assert_tools curl || return $?
+
     local artifact_descriptor=
     for artifact_descriptor in "$@"; do
         check_artifact "${artifact_descriptor}" "${arg_quiet}" || return $?
@@ -361,8 +361,6 @@ task_check() {
 }
 
 task_fetch() {
-    shmate_assert_tools curl || return $?
-
     local arg_work_dir=
     local arg_target_path='.'
 
@@ -377,6 +375,8 @@ task_fetch() {
         esac
     done
     shift $((OPTIND - 1))
+
+    shmate_assert_tools curl || return $?
 
     if [ -n "${arg_work_dir}" ]; then
         if ! [ -e "${arg_work_dir}" ]; then
