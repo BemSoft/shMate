@@ -677,8 +677,8 @@ shmate_wait_job_group() {
                 pids="${pids} $(find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' -exec cat {} \; | xargs)"
                 shmate_assert 'Reading job PIDs' || return $?
             fi
+            pids="${pids# }"
         done
-        pids="${pids# }"
     fi
 
     shmate_log_debug "Waiting for multiple PIDs${pids}"
