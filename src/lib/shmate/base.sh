@@ -111,7 +111,7 @@ _shmate_trap_signal() {
     local handler="$1"
     shift
 
-    local signal
+    local signal=
     for signal in "$@"; do
         trap "${handler} ${signal}" "${signal}"
     done

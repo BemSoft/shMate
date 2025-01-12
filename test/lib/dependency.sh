@@ -3,8 +3,6 @@
 # shellcheck source=src/lib/shmate/dependency.sh
 . "${SHMATE_SOURCE_DIR}/src/lib/shmate/dependency.sh"
 
-_shmate_job_unset_env
-
 readonly test_mvn_env_file="${shmate_work_dir}/mvn.env"
 
 readonly test_artifact_group_id='io.netty'

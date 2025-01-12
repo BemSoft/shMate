@@ -51,26 +51,19 @@ _test_qualified_job() {
 }
 
 _test_session_job() {
-    test -z "${_SHMATE_PID}"
-    shmate_assert "_SHMATE_PID must be empty, but is \"${_SHMATE_PID}\"" || return $?
+    local shmate_env=
+    shmate_env=$(env | shmate_filter_grep -E '^_*SHMATE_' | sort)
+    shmate_assert 'Reading shMate environment' || return $?
 
-    test -z "${_SHMATE_PID_FILE}"
-    shmate_assert "_SHMATE_PID_FILE must be empty, but is \"${_SHMATE_PID_FILE}\"" || return $?
+    test -z "${shmate_env}"
+    shmate_assert "shMate environment variables must be unset, but are:
+${shmate_env}" || return $?
 
     _shmate_get_pid
     local job_pid=${_SHMATE_PID}
 
     test ${job_pid} -eq ${parent_pid}
     shmate_assert "Parent PID ${parent_pid} and job PID ${job_pid} must be equal" || return $?
-
-    test -z "${_SHMATE_GUARDIAN_PID}"
-    shmate_assert "_SHMATE_GUARDIAN_PID must be empty, but is \"${_SHMATE_GUARDIAN_PID}\"" || return $?
-
-    test -z "${_SHMATE_JOB_NAME}"
-    shmate_assert "_SHMATE_JOB_NAME must be empty, but is \"${_SHMATE_JOB_NAME}\"" || return $?
-
-    test -z "${_SHMATE_JOB_RUN_DIR}"
-    shmate_assert "_SHMATE_JOB_RUN_DIR must be empty, but is \"${_SHMATE_JOB_RUN_DIR}\"" || return $?
 
     shmate_log_info "Hello, I'm a session job and I don't know my name"
 

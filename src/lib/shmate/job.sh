@@ -148,9 +148,35 @@ _shmate_job_run() {
     return 0
 }
 
+#> * _shmate_job_unset_internal_env
+_shmate_job_unset_internal_env() {
+    unset _SHMATE_GUARDIAN_PID _SHMATE_JOB_NAME _SHMATE_JOB_RUN_DIR _SHMATE_PID_FILE _SHMATE_PID
+
+    return 0
+}
+
+#> * _shmate_job_run_without_internal_env
+_shmate_job_run_without_internal_env() {
+    _shmate_job_unset_internal_env || return $?
+
+    if [ $# -gt 0 ]; then
+        "$@" 0<&0
+        exit $?
+    fi
+
+    return 0
+}
+
 #> * _shmate_job_unset_env
 _shmate_job_unset_env() {
-    unset _SHMATE_GUARDIAN_PID _SHMATE_JOB_NAME _SHMATE_JOB_RUN_DIR _SHMATE_PID_FILE _SHMATE_PID
+    unset $(env | sed -En 's|^(_*SHMATE_[^=]+)=.*$|\1|p')
+
+    return 0
+}
+
+#> * _shmate_job_run_without_env
+_shmate_job_run_without_env() {
+    _shmate_job_unset_env || return $?
 
     if [ $# -gt 0 ]; then
         "$@" 0<&0
@@ -395,52 +421,6 @@ shmate_kill_job_group() {
     done
 }
 
-# TODO: Usefulness of this function is questionable as is its name and signature.
-
-##> >>>>> shmate_annihilate_pids <parent_signal_name> <child_signal_name>
-##>
-#shmate_annihilate_pids() {
-    #local parent_signal="$1"
-    #local child_signal="$2"
-    #shift 2
-
-    #if [ -z "${parent_signal}" ]; then
-        #parent_signal='TERM'
-    #fi
-
-    #if [ -z "${child_signal}" ]; then
-        #child_signal="${parent_signal}"
-    #fi
-
-    #local parent_pidlist=
-    #parent_pidlist=$(xargs)
-    #shmate_assert 'Collecting parent PIDs' || return $?
-
-    #if [ -z "${parent_pidlist}" ]; then
-        #shmate_log_debug 'No processes annihilated because of empty PID list'
-        #return 0
-    #fi
-
-    #local child_pidlist=
-    #if ! ${shmate_os_windows}; then
-        #local parent_pidlist_csv=
-        #parent_pidlist_csv=$(echo -n "${parent_pidlist}" | tr '[:space:]' ',')
-        #shmate_assert 'Collecting parent PIDs as comma separated values' || return $?
-
-        #child_pidlist=$(shmate_audit pgrep -P "${parent_pidlist_csv}")
-        #shmate_silent_assert "Collecting children of PIDs ${parent_pidlist}"
-    #fi
-
-    #shmate_kill_job "${parent_signal}" ${parent_pidlist} || return $?
-
-    #if [ -n "${child_pidlist}" ]; then
-        #child_pidlist=$(shmate_collect_descendant_pids ${child_pidlist}) || return $?
-        #shmate_kill_job "${child_signal}" ${child_pidlist} || return $?
-    #fi
-
-    #return 0
-#}
-
 #> >>>>> shmate_run_job <job_group_name> [<command> [<command_arg> ...]]
 #>
 shmate_run_job() {
@@ -501,7 +481,7 @@ shmate_run_session_job() {
     fi
 
     _shmate_job_prepare "${job_type}" "${job_group_name}" "$@" || return $?
-    _shmate_job_unset_env "$@" 1>&2 0<&0 &
+    _shmate_job_run_without_env "$@" 1>&2 0<&0 &
     _shmate_job_confirm "${job_type}" "${job_group_name}" "$@" || return $?
 
     return 0
@@ -511,7 +491,7 @@ shmate_run_session_job() {
 #>
 if shmate_check_tools setsid; then
     shmate_run_detached_job() {
-        _shmate_job_unset_env setsid "$@" > /dev/null 2>&1 0<&0 &
+        _shmate_job_run_without_internal_env setsid "$@" > /dev/null 2>&1 0<&0 &
         shmate_log_audit_begin && shmate_log_audit_text "Running detached job \"$1\" with PID $!" && shmate_log_audit_end
     }
 fi

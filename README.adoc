@@ -419,6 +419,12 @@ Usage: shmate-test [-C <test_dir>] [-O <output_dir>] [-s <source_dir>] [-p <test
         called 'test suites'.
 
         Test suite environment:
+            SHMATE_BIN_DIR:
+                Directory where shMate binaries are installed.
+            SHMATE_CONF_DIR:
+                Directory where shMate configuration is installed.
+            SHMATE_LIB_DIR:
+                Directory where shMate libraries are installed.
             SHMATE_SOURCE_DIR
                 Directory specified with '-s' option.
             SHMATE_TEST_DIR
@@ -428,10 +434,10 @@ Usage: shmate-test [-C <test_dir>] [-O <output_dir>] [-s <source_dir>] [-p <test
 
         Test case environment:
             SHMATE_TEST_SUITE
-                Name of the test suite being run. Can be used for example to access test suite data directory
+                Name of the test suite being run. Can be used to access test suite data directory
                 "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}" if needed.
             SHMATE_TEST_CASE
-                Name of the test case being run. Can be used for example to create unique test case working directory
+                Name of the test case being run. Can be used to create unique test case working directory
                 "${SHMATE_WORK_DIR}/${SHMATE_TEST_CASE}" if needed.
 
         Options:
@@ -2036,7 +2042,10 @@ Wait at least this number of seconds for graceful termination before **KILL**ing
 * _shmate_job_prepare
 * _shmate_job_confirm
 * _shmate_job_run
+* _shmate_job_unset_internal_env
+* _shmate_job_run_without_internal_env
 * _shmate_job_unset_env
+* _shmate_job_run_without_env
 * _shmate_lib_job_cleanup
 * _shmate_lib_job_cleanup_job
 * _shmate_lib_job_on_exit

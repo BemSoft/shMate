@@ -959,6 +959,12 @@ test_shmate_create_tmp_fifo() {
         called 'test suites'.
 
         Test suite environment:
+            SHMATE_BIN_DIR:
+                Directory where shMate binaries are installed.
+            SHMATE_CONF_DIR:
+                Directory where shMate configuration is installed.
+            SHMATE_LIB_DIR:
+                Directory where shMate libraries are installed.
             SHMATE_SOURCE_DIR
                 Directory specified with '-s' option.
             SHMATE_TEST_DIR
@@ -968,10 +974,10 @@ test_shmate_create_tmp_fifo() {
 
         Test case environment:
             SHMATE_TEST_SUITE
-                Name of the test suite being run. Can be used for example to access test suite data directory
+                Name of the test suite being run. Can be used to access test suite data directory
                 "${SHMATE_TEST_DIR}/${SHMATE_TEST_SUITE}" if needed.
             SHMATE_TEST_CASE
-                Name of the test case being run. Can be used for example to create unique test case working directory
+                Name of the test case being run. Can be used to create unique test case working directory
                 "${SHMATE_WORK_DIR}/${SHMATE_TEST_CASE}" if needed.
 
         Options:
@@ -3128,7 +3134,16 @@ To export all variables from not empty trusted '.env' dotenv file call:</p>
 <p>_shmate_job_run</p>
 </li>
 <li>
+<p>_shmate_job_unset_internal_env</p>
+</li>
+<li>
+<p>_shmate_job_run_without_internal_env</p>
+</li>
+<li>
 <p>_shmate_job_unset_env</p>
+</li>
+<li>
+<p>_shmate_job_run_without_env</p>
 </li>
 <li>
 <p>_shmate_lib_job_cleanup</p>
@@ -3432,7 +3447,7 @@ processes upon exit including termination caused by signal.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-01 20:11:07 +0200
+Last updated 2025-01-12 14:11:42 +0100
 </div>
 </div>
 </body>
