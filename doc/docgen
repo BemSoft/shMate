@@ -28,7 +28,7 @@ create_file_list() {
     shmate_assert "Creating file list in \"${file_list}\"" || return $?
 
     shmate_pending_assert "Generating file list in \"${file_list}\""
-    find "${PROJECT_DIR}" -type f ! -path '*/.git*' | sort | while read -r absolute_path; do
+    find "${PROJECT_DIR}" -type f ! -path '*/.git*' ! -path '*/build/*' | sort | while read -r absolute_path; do
         if [ "${absolute_path}" = "${file_list}" ]; then
             continue
         fi
