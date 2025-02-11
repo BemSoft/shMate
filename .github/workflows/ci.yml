@@ -3,7 +3,8 @@ name: CI
 on:
   push:
   pull_request:
-    branches: [ $default-branch ]
+    branches:
+      - main
 
 jobs:
   build:
