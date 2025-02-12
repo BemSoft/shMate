@@ -895,7 +895,7 @@ shmate_assert_tools() {
 ${PATH}"
             exit_code=$((exit_code + 1))
         fi
-    done || return $?
+    done
 
     if ${shmate_os_windows}; then
         set -o posix

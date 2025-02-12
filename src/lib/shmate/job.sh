@@ -134,6 +134,9 @@ _shmate_job_confirm() {
 
 #> * _shmate_job_run
 _shmate_job_run() {
+    command -v "$1" > /dev/null
+    shmate_assert "Job command \"$1\" must exist" || return $?
+
     export _SHMATE_GUARDIAN_PID _SHMATE_PID_FILE="${_shmate_new_job_pidfile}" _SHMATE_JOB_NAME="${_shmate_new_job_id}" _SHMATE_JOB_RUN_DIR="${_shmate_new_job_run_dir}"
     unset _SHMATE_PID
 
@@ -157,6 +160,9 @@ _shmate_job_unset_internal_env() {
 
 #> * _shmate_job_run_without_internal_env
 _shmate_job_run_without_internal_env() {
+    command -v "$1" > /dev/null
+    shmate_assert "Job command \"$1\" must exist" || return $?
+
     _shmate_job_unset_internal_env || return $?
 
     if [ $# -gt 0 ]; then
@@ -176,6 +182,9 @@ _shmate_job_unset_env() {
 
 #> * _shmate_job_run_without_env
 _shmate_job_run_without_env() {
+    command -v "$1" > /dev/null
+    shmate_assert "Job command \"$1\" must exist" || return $?
+
     _shmate_job_unset_env || return $?
 
     if [ $# -gt 0 ]; then
