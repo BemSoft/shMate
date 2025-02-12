@@ -64,7 +64,7 @@ _shmate_job_prepare() {
         shmate_audit mkdir -p "${_shmate_new_job_run_dir}" || return $?
     fi
 
-    _shmate_new_job_run_dir="$(env TMPDIR="${_shmate_new_job_run_dir}" mktemp -dt ".XXXXXX")" || return $?
+    _shmate_new_job_run_dir="$(mktemp -p "${_shmate_new_job_run_dir}" -d ".XXXXXX")" || return $?
 
     _shmate_new_job_pidfile="${_shmate_new_job_run_dir}/.pid"
     shmate_audit touch "${_shmate_new_job_pidfile}"

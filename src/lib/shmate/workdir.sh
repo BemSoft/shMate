@@ -40,7 +40,7 @@ _shmate_lib_workdir_cleanup() {
     if [ ${SHMATE_WORK_DIR_KEEP} -le 0 ]; then
         if [ -n "${shmate_work_dir}" ]; then
             shmate_audit rm -rf "${shmate_work_dir}"
-            shmate_assert "Deleting temporary working directory \"${shmate_work_dir}\""
+            shmate_assert "Deleting temporary working directory \"${shmate_work_dir}\"" # Proceed anyway
         fi
     fi
 
@@ -78,9 +78,13 @@ _shmate_on_terminate() {
 #>
 #> Path to temporary working directory.
 #>
-shmate_work_dir="${0##*/}"
-shmate_work_dir=$(mktemp -d -t "${shmate_work_dir}.XXXXXX")
-shmate_fail_assert 'Creating temporary working directory'
+shmate_work_dir=$(realpath "${TMPDIR:-/tmp}")
+shmate_fail_assert "Resolving temporary directory \"${TMPDIR:-/tmp}\""
+
+export TMPDIR="${shmate_work_dir}"
+
+shmate_work_dir=$(mktemp -p "${TMPDIR}" -d "${0##*/}.XXXXXX")
+shmate_fail_assert "Creating temporary working directory in \"${TMPDIR}\""
 
 shmate_log_audit mkdir -p -m 0700 "${shmate_work_dir}"
 
@@ -88,6 +92,8 @@ chmod 0700 "${shmate_work_dir}"
 shmate_fail_assert "Modding temporary working directory \"${shmate_work_dir}\""
 
 readonly shmate_work_dir
+
+shmate_log_debug "Using temporary working directory \"${shmate_work_dir}\""
 
 #> >>>> Functions
 #>
@@ -97,7 +103,7 @@ shmate_create_tmp_dir() {
     local name="$1" # Optional
 
     local tmp_file=
-    tmp_file=$(env TMPDIR="${shmate_work_dir}" mktemp -d -t "${name}.XXXXXX")
+    tmp_file=$(mktemp -p "${shmate_work_dir}" -d "${name}.XXXXXX")
     shmate_assert "Creating temporary directory \"${name}\"" || return $?
 
     shmate_log_audit mkdir "${tmp_file}"
@@ -113,7 +119,7 @@ shmate_create_tmp_file() {
     local name="$1" # Optional
 
     local tmp_file=
-    tmp_file=$(env TMPDIR="${shmate_work_dir}" mktemp -t "${name}.XXXXXX")
+    tmp_file=$(mktemp -p "${shmate_work_dir}" "${name}.XXXXXX")
     shmate_assert "Creating temporary file \"${name}\"" || return $?
 
     shmate_log_audit touch "${tmp_file}"
@@ -129,7 +135,7 @@ shmate_create_tmp_fifo() {
     local name="$1" # Optional
 
     local tmp_file=
-    tmp_file=$(env TMPDIR="${shmate_work_dir}" mktemp -t "${name}.XXXXXX")
+    tmp_file=$(mktemp -p "${shmate_work_dir}" "${name}.XXXXXX")
     shmate_assert "Creating temporary file \"${name}\"" || return $?
 
     shmate_audit rm -f "${tmp_file}" && shmate_audit mkfifo "${tmp_file}"
