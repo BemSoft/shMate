@@ -99,7 +99,7 @@ _shmate_terminate() {
     exit_code=$((exit_code + 128))
 
     _shmate_on_terminate ${exit_code} "${signal}"
-    shmate_on_terminate $? "${signal}" || exit $?
+    shmate_on_terminate $? "${signal}" || shmate_exit $?
 
     _shmate_is_termination_ignored=true
 
@@ -213,7 +213,7 @@ shmate_cleanup() {
 
 #> >>>>> shmate_on_exit <exit_code>
 #>
-#> Handler called just before <<lib_shmate_base:shmate_cleanup>>, but not upon receiving signal. It should never be called manually, but can be implemented in caller's script.
+#> Handler called just before <<lib_shmate_base:shmate_cleanup>>. It should never be called manually, but can be implemented in caller's script.
 #> The returned value is passed to <<lib_shmate_base:shmate_cleanup>> and is the final exit code of the script (in most cases returning unaltered <exit_code> is desired).
 #>
 #> It does have access to _stdin_, _stdout_, _stderr_.
@@ -226,7 +226,7 @@ shmate_on_exit() {
 #>
 #> Handler called just before <<lib_shmate_base:shmate_cleanup>> after receiving terminating signal (e.g. HUP, TERM, USR2). It should never be called manually, but can be implemented in caller's script.
 #> The non-zero return value is passed to <<lib_shmate_base:shmate_cleanup>> and is the final exit code of the script (in most cases returning unaltered <exit_code> is desired).
-#> The zero return value means the signal has been handled. To exit program with zero 'exit 0' must be called explicitly.
+#> The zero return value means the signal has been handled. To exit program with zero <<lib_shmate_base:shmate_exit>> must be called explicitly.
 #>
 #> It does have access to _stdin_, _stdout_, _stderr_.
 #>
@@ -239,10 +239,7 @@ shmate_on_terminate() {
 #> Exits with given <exit_code> or zero if not specified. Must always be used instead of plain _exit_. Calls <<lib_shmate_base:shmate_on_exit>> and <<lib_shmate_base:shmate_cleanup>> handlers.
 #>
 shmate_exit() {
-    local exit_code="$1"
-    if [ -z "${exit_code}" ]; then
-        exit_code=0
-    fi
+    local exit_code="${1:-0}"
 
     _shmate_on_exit ${exit_code}
     shmate_on_exit $?
@@ -260,11 +257,7 @@ shmate_exit() {
 #> Help function prefix can be changed by setting <<lib_shmate_base:shmate_function_help>> variable before including the library.
 #>
 shmate_exit_help() {
-    local exit_code="$1"
-
-    if [ -z "${exit_code}" ]; then
-        exit_code=0
-    fi
+    local exit_code="${1:-0}"
 
     local handler=
     if [ -n "${shmate_getopts_task}" ]; then

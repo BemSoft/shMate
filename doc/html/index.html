@@ -1974,7 +1974,7 @@ It is highly recommended to use the default whenever possible.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Handler called just before <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a>, but not upon receiving signal. It should never be called manually, but can be implemented in caller&#8217;s script.
+<p>Handler called just before <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a>. It should never be called manually, but can be implemented in caller&#8217;s script.
 The returned value is passed to <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a> and is the final exit code of the script (in most cases returning unaltered &lt;exit_code&gt; is desired).</p>
 </div>
 <div class="paragraph">
@@ -1992,7 +1992,7 @@ The returned value is passed to <a href="#user-content-src_lib_shmate_base-shmat
 <div class="paragraph">
 <p>Handler called just before <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a> after receiving terminating signal (e.g. HUP, TERM, USR2). It should never be called manually, but can be implemented in caller&#8217;s script.
 The non-zero return value is passed to <a href="#user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</a> and is the final exit code of the script (in most cases returning unaltered &lt;exit_code&gt; is desired).
-The zero return value means the signal has been handled. To exit program with zero 'exit 0' must be called explicitly.</p>
+The zero return value means the signal has been handled. To exit program with zero <a href="#user-content-src_lib_shmate_base-shmate_exit">shmate_exit</a> must be called explicitly.</p>
 </div>
 <div class="paragraph">
 <p>It does have access to <em>stdin</em>, <em>stdout</em>, <em>stderr</em>.</p>
@@ -3447,7 +3447,7 @@ processes upon exit including termination caused by signal.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-12 06:48:54 +0100
+Last updated 2025-02-12 07:07:41 +0100
 </div>
 </div>
 </body>

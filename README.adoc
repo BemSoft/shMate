@@ -1080,7 +1080,7 @@ It may or may not have access to _stdin_, _stdout_, _stderr_ depending on the pl
 shmate_on_exit <exit_code>
 ----
 
-Handler called just before <<user-content-src_lib_shmate_base-shmate_cleanup>>, but not upon receiving signal. It should never be called manually, but can be implemented in caller's script.
+Handler called just before <<user-content-src_lib_shmate_base-shmate_cleanup>>. It should never be called manually, but can be implemented in caller's script.
 The returned value is passed to <<user-content-src_lib_shmate_base-shmate_cleanup>> and is the final exit code of the script (in most cases returning unaltered <exit_code> is desired).
 
 It does have access to _stdin_, _stdout_, _stderr_.
@@ -1094,7 +1094,7 @@ shmate_on_terminate <exit_code> <signal_name>
 
 Handler called just before <<user-content-src_lib_shmate_base-shmate_cleanup>> after receiving terminating signal (e.g. HUP, TERM, USR2). It should never be called manually, but can be implemented in caller's script.
 The non-zero return value is passed to <<user-content-src_lib_shmate_base-shmate_cleanup>> and is the final exit code of the script (in most cases returning unaltered <exit_code> is desired).
-The zero return value means the signal has been handled. To exit program with zero 'exit 0' must be called explicitly.
+The zero return value means the signal has been handled. To exit program with zero <<user-content-src_lib_shmate_base-shmate_exit>> must be called explicitly.
 
 It does have access to _stdin_, _stdout_, _stderr_.
 
