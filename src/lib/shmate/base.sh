@@ -685,6 +685,24 @@ ${output}"
     return 0
 }
 
+#> >>>>> shmate_shell_var <string>
+#>
+#> Converts <string> to valid shell variable name.
+#>
+shmate_shell_var() {
+    local value="$1"
+
+    case "${value}" in
+        [0-9]*)
+            value="_${value}"
+            ;;
+    esac
+
+    echo -n "${value}" | tr -Cs '[:alnum:]' '_'
+
+    return $?
+}
+
 #> >>>>> shmate_iso_day <date> [<days>]
 #>
 #> Converts <date> to ISO 8601 date. If given, adds <days> to the date, e.g., '+1' '-23'.

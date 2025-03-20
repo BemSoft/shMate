@@ -1113,6 +1113,15 @@ Reads every line of input and prints only lines NOT equal to all the given <stri
 Reads all lines of input and prints them in inverse order.
 
 '''
+[#user-content-src_lib_shmate_base-shmate_shell_var,reftext='shmate_shell_var']
+===== shmate_shell_var
+----
+shmate_shell_var <string>
+----
+
+Converts <string> to valid shell variable name.
+
+'''
 [#user-content-src_lib_shmate_base-shmate_iso_day,reftext='shmate_iso_day']
 ===== shmate_iso_day
 ----

@@ -1,4 +1,4 @@
-version := 0.0.2
+version := 0.0.3
 package := build/shMate-${version}.tar.gz
 testPackage := build/shMate-${version}-test.tar.gz
 testResult := build/shMate-${version}-test.xml
@@ -7,10 +7,10 @@ testResult := build/shMate-${version}-test.xml
 all: test docs ${package} ${testPackage}
 
 ${package}: src/*
-	tar --owner 0 --group 0 -C src -czvf ${package} .
+	find -H src -mindepth 1 -maxdepth 1 | sed 's|src/||' | env GZIP=-9 tar -C src --owner 0 --group 0 -T - -czvf ${package}
 
 ${testPackage}: test/*
-	tar --owner 0 --group 0 -C test -czvf ${testPackage} .
+	find -H test -mindepth 1 -maxdepth 1 | sed 's|test/||' | env GZIP=-9 tar -C test --owner 0 --group 0 -T - -czvf ${testPackage}
 
 .PHONY: test
 test:
