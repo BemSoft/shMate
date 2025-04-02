@@ -266,6 +266,12 @@ Timestamp format accepted by _date_ command. Defaults to '%H:%M:%S'.
 Path to log file. If set, console log will be duplicated to the log file.
 
 '''
+[#user-content-src_lib_shmate_assert-SHMATE_LOG_PERMS,reftext='SHMATE_LOG_PERMS']
+===== SHMATE_LOG_PERMS
+
+Log file permissions.
+
+'''
 [#user-content-src_lib_shmate_assert-SHMATE_LOG_ANSI_ESCAPE,reftext='SHMATE_LOG_ANSI_ESCAPE']
 ===== SHMATE_LOG_ANSI_ESCAPE
 

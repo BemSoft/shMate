@@ -49,6 +49,10 @@ if [ -z "${_SHMATE_INCLUDE_LIB_ASSERT}" ]; then
 #>
 #> Path to log file. If set, console log will be duplicated to the log file.
 #>
+#> >>>>> SHMATE_LOG_PERMS
+#>
+#> Log file permissions.
+#>
 #> >>>>> SHMATE_LOG_ANSI_ESCAPE
 #>
 #> Setting this to positive integer indicates the log message contains link:https://en.wikipedia.org/wiki/ANSI_escape_code[_ANSI escape sequences_]
@@ -285,11 +289,16 @@ _shmate_create_log_file() {
     if [ -n "${SHMATE_LOG}" ]; then
         SHMATE_LOG=$(realpath "${SHMATE_LOG}")
 
-        touch "${SHMATE_LOG}" || {
+        mkdir -p "${SHMATE_LOG%/*}" && touch "${SHMATE_LOG}" && export SHMATE_LOG || {
             local log_file="${SHMATE_LOG}"
             unset SHMATE_LOG
             shmate_log_error "Could not open log file \"${log_file}\""
         }
+
+        if [ -n "${SHMATE_LOG}" ] && [ -n "${SHMATE_LOG_PERMS}" ]; then
+            shmate_audit chmod "${SHMATE_LOG_PERMS}" "${SHMATE_LOG}"
+            shmate_assert "Setting log file permissions to \"${SHMATE_LOG_PERMS}\"" # Proceed anyway
+        fi
     fi
 
     return 0
