@@ -1,11 +1,11 @@
 83af0027e5b21e3bed5e58099c4791b8cdb6386b	0755	doc/docgen
 54c27423497852f69f78e22e62afd70e0c904c59	0644	doc/features.adoc
-af0706c9e8bc0bd5ad2f80fb87681e2bea12d3ea	0644	doc/html/index.html
+5473f41a7d2a20f58a72ff084c70022e8cbedb9a	0644	doc/html/index.html
 b383927c284dfa231c5858df66d43efca6c31e8a	0644	doc/index.adoc
 78ef961c8847f514354fe97ef4ece3c9f07801d5	0644	doc/intro.adoc
 b4eeeb2df3acc504d45a3b439102c4219cd7b24d	0644	doc/reference.adoc
 a06f6b529b9fc4f540380185e35a37e2d1193e4a	0644	LICENSE
-33eaa1a0c0452beaf9d3df8e05ed3565e476f270	0644	Makefile
+4f3709fda41504fe1a20f91d5e49cce3a56b093b	0644	Makefile
 fda17f59a8ea385e75d371a162993a92a9e44542	0644	README.adoc
 2ed4df4c9b0ceaca670123e7593ec01d404f5aa8	0755	src/bin/shmate-adoc
 0dc140ac78feaa4ef79ae36bdf1a00e85be88da6	0755	src/bin/shmate-artifact
