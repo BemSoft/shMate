@@ -503,7 +503,7 @@ not set::: auto detect
 [#user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_FORMAT,reftext='SHMATE_TIMESTAMP_FORMAT']
 ===== SHMATE_TIMESTAMP_FORMAT
 
-Timestamp format accepted by _date_ command. Defaults to '%H:%M:%S'.
+Timestamp format accepted by _date_ command. Defaults to '%Y-%m-%dT%H:%M:%SZ'.
 
 '''
 [#user-content-src_lib_shmate_assert-SHMATE_LOG,reftext='SHMATE_LOG']

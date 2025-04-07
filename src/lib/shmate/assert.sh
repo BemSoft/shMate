@@ -43,7 +43,7 @@ if [ -z "${_SHMATE_INCLUDE_LIB_ASSERT}" ]; then
 #>
 #> >>>>> SHMATE_TIMESTAMP_FORMAT
 #>
-#> Timestamp format accepted by _date_ command. Defaults to '%H:%M:%S'.
+#> Timestamp format accepted by _date_ command. Defaults to '%Y-%m-%dT%H:%M:%SZ'.
 #>
 #> >>>>> SHMATE_LOG
 #>
@@ -545,7 +545,7 @@ readonly shmate_console_format="${SHMATE_CONSOLE_FORMAT:-${shmate_log_format}}"
 #>
 #> Timestamp format accepted by _date_ command.
 #>
-readonly shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%H:%M:%S}"
+readonly shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%Y-%m-%dT%H:%M:%SZ}"
 
 #> >>>> Functions
 #>
