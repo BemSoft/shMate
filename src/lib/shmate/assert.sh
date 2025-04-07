@@ -43,7 +43,12 @@ if [ -z "${_SHMATE_INCLUDE_LIB_ASSERT}" ]; then
 #>
 #> >>>>> SHMATE_TIMESTAMP_FORMAT
 #>
-#> Timestamp format accepted by _date_ command. Defaults to '%Y-%m-%dT%H:%M:%SZ'.
+#> Timestamp format accepted by _date_ command. Defaults to `%Y-%m-%dT%H:%M:%SZ` or `%Y-%m-%dT%H:%M:%S` if <<lib_shmate_assert:SHMATE_TIMESTAMP_LOCAL>> is a positive integer.
+#>
+#> >>>>> SHMATE_TIMESTAMP_LOCAL
+#>
+#> Setting this to positive integer makes all timestamps in local time zone instead of UTC.
+SHMATE_TIMESTAMP_LOCAL=${SHMATE_TIMESTAMP_LOCAL:-0}
 #>
 #> >>>>> SHMATE_LOG
 #>
@@ -430,9 +435,15 @@ _shmate_log_message() {
 }
 
 #> * _shmate_log_timestamp
+if [ ${SHMATE_TIMESTAMP_LOCAL} -gt 0 ]; then
+_shmate_log_timestamp() {
+    date "+${shmate_timestamp_format}"
+}
+else
 _shmate_log_timestamp() {
     date -u "+${shmate_timestamp_format}"
 }
+fi
 
 #> * _shmate_lib_assert_cleanup
 _shmate_lib_assert_cleanup() {
@@ -545,7 +556,12 @@ readonly shmate_console_format="${SHMATE_CONSOLE_FORMAT:-${shmate_log_format}}"
 #>
 #> Timestamp format accepted by _date_ command.
 #>
-readonly shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%Y-%m-%dT%H:%M:%SZ}"
+if [ ${SHMATE_TIMESTAMP_LOCAL} -gt 0 ]; then
+    shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%Y-%m-%dT%H:%M:%S}"
+else
+    shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%Y-%m-%dT%H:%M:%SZ}"
+fi
+readonly shmate_timestamp_format
 
 #> >>>> Functions
 #>

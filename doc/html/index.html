@@ -1093,7 +1093,14 @@ Log messages are always printed to <em>stderr</em>.
 <div class="sect4">
 <h5 id="user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_FORMAT">SHMATE_TIMESTAMP_FORMAT</h5>
 <div class="paragraph">
-<p>Timestamp format accepted by <em>date</em> command. Defaults to '%Y-%m-%dT%H:%M:%SZ'.</p>
+<p>Timestamp format accepted by <em>date</em> command. Defaults to <code>%Y-%m-%dT%H:%M:%SZ</code> or <code>%Y-%m-%dT%H:%M:%S</code> if <a href="#user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_LOCAL">SHMATE_TIMESTAMP_LOCAL</a> is a positive integer.</p>
+</div>
+<hr>
+</div>
+<div class="sect4">
+<h5 id="user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_LOCAL">SHMATE_TIMESTAMP_LOCAL</h5>
+<div class="paragraph">
+<p>Setting this to positive integer makes all timestamps in local time zone instead of UTC.</p>
 </div>
 <hr>
 </div>
@@ -3466,7 +3473,7 @@ processes upon exit including termination caused by signal.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-04-07 18:50:54 +0200
+Last updated 2025-04-07 21:10:55 +0200
 </div>
 </div>
 </body>

@@ -257,7 +257,13 @@ not set::: auto detect
 [#user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_FORMAT,reftext='SHMATE_TIMESTAMP_FORMAT']
 ===== SHMATE_TIMESTAMP_FORMAT
 
-Timestamp format accepted by _date_ command. Defaults to '%Y-%m-%dT%H:%M:%SZ'.
+Timestamp format accepted by _date_ command. Defaults to `%Y-%m-%dT%H:%M:%SZ` or `%Y-%m-%dT%H:%M:%S` if <<user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_LOCAL>> is a positive integer.
+
+'''
+[#user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_LOCAL,reftext='SHMATE_TIMESTAMP_LOCAL']
+===== SHMATE_TIMESTAMP_LOCAL
+
+Setting this to positive integer makes all timestamps in local time zone instead of UTC.
 
 '''
 [#user-content-src_lib_shmate_assert-SHMATE_LOG,reftext='SHMATE_LOG']
