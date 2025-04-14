@@ -292,17 +292,19 @@ _shmate_colors() {
 #> * _shmate_create_log_file
 _shmate_create_log_file() {
     if [ -n "${SHMATE_LOG}" ]; then
-        SHMATE_LOG=$(realpath "${SHMATE_LOG}")
-
-        mkdir -p "${SHMATE_LOG%/*}" && touch "${SHMATE_LOG}" && export SHMATE_LOG || {
+        mkdir -p "$(dirname "${SHMATE_LOG}")" && touch "${SHMATE_LOG}" || {
             local log_file="${SHMATE_LOG}"
             unset SHMATE_LOG
             shmate_log_error "Could not open log file \"${log_file}\""
         }
 
-        if [ -n "${SHMATE_LOG}" ] && [ -n "${SHMATE_LOG_PERMS}" ]; then
-            shmate_audit chmod "${SHMATE_LOG_PERMS}" "${SHMATE_LOG}"
-            shmate_assert "Setting log file permissions to \"${SHMATE_LOG_PERMS}\"" # Proceed anyway
+        if [ -n "${SHMATE_LOG}" ]; then
+            export SHMATE_LOG="$(realpath "${SHMATE_LOG}")"
+
+            if [ -n "${SHMATE_LOG_PERMS}" ]; then
+                shmate_audit chmod "${SHMATE_LOG_PERMS}" "${SHMATE_LOG}"
+                shmate_assert "Setting log file permissions to \"${SHMATE_LOG_PERMS}\"" # Proceed anyway
+            fi
         fi
     fi
 
