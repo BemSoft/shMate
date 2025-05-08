@@ -505,109 +505,53 @@ if shmate_check_tools setsid; then
     }
 fi
 
-#> >>>>> shmate_write_job <fifo_path> [<command> [<command_arg> ...]]
-#>
-shmate_write_job() {
-    local path="$1"
-    shift
-
-    local run_dir="${shmate_work_dir}/.run/pid"
-    shmate_audit mkdir -p "${run_dir}"
-
-    if [ $# -gt 0 ]; then
-        shmate_log_audit_begin && \
-            shmate_log_audit_command "$@" && \
-            shmate_log_audit_operator '>' && \
-            shmate_log_audit_file "${path}" && \
-            shmate_log_audit_end
-        "$@" > "${path}" 0<&0 &
-    else
-        shmate_log_audit_begin && \
-            shmate_log_audit_command cat && \
-            shmate_log_audit_operator '>' && \
-            shmate_log_audit_file "${path}" && \
-            shmate_log_audit_end
-        cat > "${path}" 0<&0 &
-    fi
-    shmate_assert "Running asynchronous write to file \"${path}\"" || return $?
-
-    shmate_log_debug "Running asynchronous write to file \"${path}\" - job \"$1\" with PID $! and pidfile \"${run_dir}/$!.pid\""
-
-    shmate_log_audit_begin && \
-        shmate_log_audit_command echo "$!" && \
-        shmate_log_audit_operator '>' && \
-        shmate_log_audit_file "${run_dir}/$!.pid" && \
-        shmate_log_audit_end
-    echo "$!" > "${run_dir}/$!.pid"
-    shmate_assert "Creating pidfile \"${run_dir}/$!.pid\"" || return $?
-
-    return 0
-}
-
-#> >>>>> shmate_read_job <fifo_path> [<command> [<command_arg> ...]]
+#> >>>>> shmate_read_job <fifo_path>
 #>
 shmate_read_job() {
-    local path="$1"
+    local fifo_path="$1"
     shift
 
-    local run_dir="${shmate_work_dir}/.run/pid"
-    shmate_audit mkdir -p "${run_dir}"
+    set -- cat "${fifo_path}"
 
-    if [ $# -gt 0 ]; then
-        shmate_log_audit_begin && \
-            shmate_log_audit_command "$@" && \
-            shmate_log_audit_operator '<' && \
-            shmate_log_audit_file "${path}" && \
-            shmate_log_audit_end
-        "$@" < "${path}" &
-    else
-        shmate_audit cat "${path}" &
-    fi
-    shmate_assert "Running asynchronous read from file \"${path}\"" || return $?
+    local job_type='async read'
 
-    shmate_log_debug "Running asynchronous read from file \"${path}\" - job \"$1\" with PID $! and pidfile \"${run_dir}/$!.pid\""
-
-    shmate_log_audit_begin && \
-        shmate_log_audit_command echo "$!" && \
-        shmate_log_audit_operator '>' && \
-        shmate_log_audit_file "${run_dir}/$!.pid" && \
-        shmate_log_audit_end
-    echo "$!" > "${run_dir}/$!.pid"
-    shmate_assert "Creating pidfile \"${run_dir}/$!.pid\"" || return $?
+    _shmate_job_prepare "${job_type}" '' "$@" || return $?
+    "$@" &
+    _shmate_job_confirm "${job_type}" '' "$@" || return $?
 
     return 0
 }
 
-#> >>>>> shmate_read_stderr_job <fifo_path> [<command> [<command_arg> ...]]
+#> >>>>> shmate_read_job_stdout <fifo_path>
 #>
-shmate_read_stderr_job() {
-    local path="$1"
+shmate_read_job_stdout() {
+    local fifo_path="$1"
     shift
 
-    local run_dir="${shmate_work_dir}/.run/pid"
-    shmate_audit mkdir -p "${run_dir}"
+    set -- cat "${fifo_path}"
 
-    if [ $# -gt 0 ]; then
-        shmate_log_audit_begin && \
-            shmate_log_audit_command "$@" && \
-            shmate_log_audit_operator '<' && \
-            shmate_log_audit_file "${path}" && \
-            shmate_log_audit_end
-        "$@" < "${path}" 1>&2 &
-    else
-        shmate_audit cat "${path}" 1>&2 &
-    fi
-    shmate_assert "Running asynchronous read from log \"${path}\"" || return $?
+    local job_type='async read to stdout'
 
-    shmate_log_debug "Running asynchronous read from log \"${path}\" - job \"$1\" with PID $! and pidfile \"${run_dir}/$!.pid\""
+    _shmate_job_prepare "${job_type}" '' "$@" || return $?
+    "$@" 2>&1 &
+    _shmate_job_confirm "${job_type}" '' "$@" || return $?
 
-    shmate_log_audit_begin && \
-        shmate_log_audit_command echo "$!" && \
-        shmate_log_audit_operator '>' && \
-        shmate_log_audit_file "${run_dir}/$!.pid" && \
-        shmate_log_audit_end
-    echo "$!" > "${run_dir}/$!.pid"
-    shmate_assert "Creating pidfile \"${run_dir}/$!.pid\"" || return $?
+    return 0
+}
+
+#> >>>>> shmate_read_job_stderr <fifo_path>
+#>
+shmate_read_job_stderr() {
+    local fifo_path="$1"
+    shift
+
+    set -- cat "${fifo_path}"
+
+    local job_type='async read to stderr'
+
+    _shmate_job_prepare "${job_type}" '' "$@" || return $?
+    "$@" 1>&2 &
+    _shmate_job_confirm "${job_type}" '' "$@" || return $?
 
     return 0
 }

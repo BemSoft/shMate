@@ -1449,24 +1449,24 @@ shmate_run_detached_job [<command> [<command_arg> ...]]
 ----
 
 '''
-[#user-content-src_lib_shmate_job-shmate_write_job,reftext='shmate_write_job']
-===== shmate_write_job
-----
-shmate_write_job <fifo_path> [<command> [<command_arg> ...]]
-----
-
-'''
 [#user-content-src_lib_shmate_job-shmate_read_job,reftext='shmate_read_job']
 ===== shmate_read_job
 ----
-shmate_read_job <fifo_path> [<command> [<command_arg> ...]]
+shmate_read_job <fifo_path>
 ----
 
 '''
-[#user-content-src_lib_shmate_job-shmate_read_stderr_job,reftext='shmate_read_stderr_job']
-===== shmate_read_stderr_job
+[#user-content-src_lib_shmate_job-shmate_read_job_stdout,reftext='shmate_read_job_stdout']
+===== shmate_read_job_stdout
 ----
-shmate_read_stderr_job <fifo_path> [<command> [<command_arg> ...]]
+shmate_read_job_stdout <fifo_path>
+----
+
+'''
+[#user-content-src_lib_shmate_job-shmate_read_job_stderr,reftext='shmate_read_job_stderr']
+===== shmate_read_job_stderr
+----
+shmate_read_job_stderr <fifo_path>
 ----
 
 '''
