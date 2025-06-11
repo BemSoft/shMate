@@ -446,7 +446,7 @@ shmate_kill_job_group() {
 #> ----
 #> shmate_run_job 'JOB' create-and-write-to-named-sockets-as-stdout-and-stderr.bin || return $?
 #>
-#> shmate_assert_file_readable "${stdout_socket}" "${stderr_socket} || return $?
+#> shmate_assert_file_readable "${stdout_socket}" "${stderr_socket}" || return $?
 #>
 #> shmate_run_job 'JOB-IO' cat "${stderr_socket}" || return $?
 #> shmate_run_foreground_job 'JOB-IO' cat "${stdout_socket}" || return $?
@@ -501,7 +501,7 @@ shmate_run_job() {
 #> local progress_pipe=
 #> progress_pipe=$(shmate_create_tmp_fifo 'progress') || return $?
 #>
-#> shmate_assert_file_readable "${output_pipe}" "${progress_pipe} || return $?
+#> shmate_assert_file_readable "${output_pipe}" "${progress_pipe}" || return $?
 #>
 #> shmate_run_job 'SEWAGE-IO' cat "${progress_pipe}" || return $?
 #> shmate_run_foreground_job 'SEWAGE-IO' job_treat_sewage "${output_pipe}" || return $?
