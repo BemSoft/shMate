@@ -430,7 +430,31 @@ shmate_kill_job_group() {
     done
 }
 
-#> >>>>> shmate_run_job <job_group_name> [<command> [<command_arg> ...]]
+#> >>>>> shmate_run_job <job_group_name> <command> [<command_arg> ...]
+#>
+#> Runs <command> with <command_args> as background job and prints its output to _stderr_.
+#>
+#> The result of the <command> should be obtained with <<lib_shmate_job:shmate_wait_job>> or with <<lib_shmate_job:shmate_wait_job_group>>
+#> by passing the same <job_group_name> (only possible if <job_group_name> is not empty).
+#>
+#> TIP: Can be combined with <<lib_shmate_assert:shmate_assert_file_readable>> and <<lib_shmate_job:shmate_run_foreground_job>> to read from named sockets or pipes.
+#>
+#> .Example: Read from named sockets
+#> [%collapsible]
+#> ====
+#> [,sh]
+#> ----
+#> shmate_run_job 'JOB' create-and-write-to-named-sockets-as-stdout-and-stderr.bin || return $?
+#>
+#> shmate_assert_file_readable "${stdout_socket}" "${stderr_socket} || return $?
+#>
+#> shmate_run_job 'JOB-IO' cat "${stderr_socket}" || return $?
+#> shmate_run_foreground_job 'JOB-IO' cat "${stdout_socket}" || return $?
+#>
+#> shmate_wait_job_group 'JOB' || return $?
+#> shmate_wait_job_group 'JOB-IO' || return $?
+#> ----
+#> ====
 #>
 shmate_run_job() {
     local job_group_name="$1"
@@ -448,7 +472,66 @@ shmate_run_job() {
     return 0
 }
 
-#> >>>>> shmate_run_muted_job <job_group_name> [<command> [<command_arg> ...]]
+#> >>>>> shmate_run_foreground_job <job_group_name> <command> [<command_arg> ...]
+#>
+#> Same as <<lib_shmate_job:shmate_run_job>>, but prints output of the <command> to _stdout_.
+#>
+#> TIP: Can be combined with <<lib_shmate_assert:shmate_assert_file_readable>> and <<lib_shmate_job:shmate_run_job>> to read from named sockets or pipes.
+#>
+#> .Example: Read from named pipes
+#> [%collapsible]
+#> ====
+#> [,sh]
+#> ----
+#> job_treat_sewage() {
+#>    local input_file="$1"
+#>
+#>    shmate_pending_assert 'Processing sewage'
+#>    while read -r line; do
+#>        echo "Treated: ${line}"
+#>    done < "${input_file}"
+#>    shmate_loud_assert || return $?
+#>
+#>    return 0
+#> }
+#>
+#> local output_pipe=
+#> output_pipe=$(shmate_create_tmp_fifo 'output') || return $?
+#>
+#> local progress_pipe=
+#> progress_pipe=$(shmate_create_tmp_fifo 'progress') || return $?
+#>
+#> shmate_assert_file_readable "${output_pipe}" "${progress_pipe} || return $?
+#>
+#> shmate_run_job 'SEWAGE-IO' cat "${progress_pipe}" || return $?
+#> shmate_run_foreground_job 'SEWAGE-IO' job_treat_sewage "${output_pipe}" || return $?
+#>
+#> shmate_run_muted_job '' crappy.bin --output="${output_pipe}" --progress="${progress_pipe}" || return $?
+#> shmate_wait_job || return $?
+#>
+#> shmate_wait_job_group 'SEWAGE-IO' || return $?
+#> ----
+#> ====
+#>
+shmate_run_foreground_job() {
+    local job_group_name="$1"
+    shift
+
+    local job_type='unqualified foreground'
+    if [ -n "${job_group_name}" ]; then
+        job_type='qualified foreground'
+    fi
+
+    _shmate_job_prepare "${job_type}" "${job_group_name}" "$@" || return $?
+    _shmate_job_run "$@" 0<&0 &
+    _shmate_job_confirm "${job_type}" "${job_group_name}" "$@" || return $?
+
+    return 0
+}
+
+#> >>>>> shmate_run_muted_job <job_group_name> <command> [<command_arg> ...]
+#>
+#> Same as <<lib_shmate_job:shmate_run_job>>, but ignores both _stdout_ and _stderr_ of the <command>.
 #>
 shmate_run_muted_job() {
     local job_group_name="$1"
@@ -466,21 +549,11 @@ shmate_run_muted_job() {
     return 0
 }
 
-#> >>>>> shmate_run_foreground_job [<command> [<command_arg> ...]]
+#> >>>>> shmate_run_unaware_job <job_group_name> <command> [<command_arg> ...]
 #>
-shmate_run_foreground_job() {
-    local job_type='foreground'
-
-    _shmate_job_prepare "${job_type}" '' "$@" || return $?
-    _shmate_job_run "$@" 0<&0 &
-    _shmate_job_confirm "${job_type}" '' "$@" || return $?
-
-    return 0
-}
-
-#> >>>>> shmate_run_session_job <job_group_name> [<command> [<command_arg> ...]]
+#> Same as <<lib_shmate_job:shmate_run_job>>, but clears all of _shMate_ variables from the <command> environment.
 #>
-shmate_run_session_job() {
+shmate_run_unaware_job() {
     local job_group_name="$1"
     shift
 
@@ -496,7 +569,10 @@ shmate_run_session_job() {
     return 0
 }
 
-#> >>>>> shmate_run_detached_job [<command> [<command_arg> ...]]
+#> >>>>> shmate_run_detached_job <command> [<command_arg> ...]
+#>
+#> Same as <<lib_shmate_job:shmate_run_muted_job>>, but detaches the <command> process from the caller completely,
+#> i.e. it will continue to run after calling process exits.
 #>
 if shmate_check_tools setsid; then
     shmate_run_detached_job() {
@@ -504,57 +580,6 @@ if shmate_check_tools setsid; then
         shmate_log_audit_begin && shmate_log_audit_text "Running detached job \"$1\" with PID $!" && shmate_log_audit_end
     }
 fi
-
-#> >>>>> shmate_read_job <fifo_path>
-#>
-shmate_read_job() {
-    local fifo_path="$1"
-    shift
-
-    set -- cat "${fifo_path}"
-
-    local job_type='async read'
-
-    _shmate_job_prepare "${job_type}" '' "$@" || return $?
-    "$@" &
-    _shmate_job_confirm "${job_type}" '' "$@" || return $?
-
-    return 0
-}
-
-#> >>>>> shmate_read_job_stdout <fifo_path>
-#>
-shmate_read_job_stdout() {
-    local fifo_path="$1"
-    shift
-
-    set -- cat "${fifo_path}"
-
-    local job_type='async read to stdout'
-
-    _shmate_job_prepare "${job_type}" '' "$@" || return $?
-    "$@" 2>&1 &
-    _shmate_job_confirm "${job_type}" '' "$@" || return $?
-
-    return 0
-}
-
-#> >>>>> shmate_read_job_stderr <fifo_path>
-#>
-shmate_read_job_stderr() {
-    local fifo_path="$1"
-    shift
-
-    set -- cat "${fifo_path}"
-
-    local job_type='async read to stderr'
-
-    _shmate_job_prepare "${job_type}" '' "$@" || return $?
-    "$@" 1>&2 &
-    _shmate_job_confirm "${job_type}" '' "$@" || return $?
-
-    return 0
-}
 
 #> >>>>> shmate_wait_job [<pid>]
 #>
@@ -615,7 +640,7 @@ shmate_wait_job_group() {
         done
     fi
 
-    shmate_log_debug "Waiting for multiple PIDs${pids}"
+    shmate_log_debug "Waiting for multiple PIDs ${pids}"
 
     if [ -n "${pids}" ]; then
         while true; do
@@ -625,7 +650,7 @@ shmate_wait_job_group() {
                 _shmate_is_termination_ignored=false
                 continue
             fi
-            shmate_log_debug "Waiting for PIDs${pids} finished with status ${exit_code}"
+            shmate_log_debug "Waiting for PIDs ${pids} finished with status ${exit_code}"
             break
         done
 
@@ -671,7 +696,7 @@ shmate_run_guardian() {
     if ! ${shmate_os_windows} && [ -z "${_SHMATE_JOB_NAME}" ]; then
         _shmate_get_pid
         _SHMATE_GUARDIAN_PID=${_SHMATE_PID}
-        shmate_run_foreground_job "$@" || return $?
+        shmate_run_foreground_job '' "$@" || return $?
         shmate_wait_job
     else
         "$@"

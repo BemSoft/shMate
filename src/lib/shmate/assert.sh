@@ -24,6 +24,7 @@ if [ -z "${_SHMATE_INCLUDE_LIB_ASSERT}" ]; then
 
 #> >>>> Environment
 #>
+
 #> >>>>> SHMATE_DEBUG_LEVEL
 #>
 #> Integer value of current debug level. Defaults to 0.
@@ -41,23 +42,22 @@ if [ -z "${_SHMATE_INCLUDE_LIB_ASSERT}" ]; then
 #> greater than 0::: enabled
 #> not set::: auto detect
 #>
-#> >>>>> SHMATE_TIMESTAMP_FORMAT
-#>
-#> Timestamp format accepted by _date_ command. Defaults to `%Y-%m-%dT%H:%M:%SZ` or `%Y-%m-%dT%H:%M:%S` if <<lib_shmate_assert:SHMATE_TIMESTAMP_LOCAL>> is a positive integer.
-#>
-#> >>>>> SHMATE_TIMESTAMP_LOCAL
-#>
-#> Setting this to positive integer makes all timestamps in local time zone instead of UTC.
-SHMATE_TIMESTAMP_LOCAL=${SHMATE_TIMESTAMP_LOCAL:-0}
-#>
+
 #> >>>>> SHMATE_LOG
 #>
 #> Path to log file. If set, console log will be duplicated to the log file.
 #>
+
+#> >>>>> SHMATE_LOG_TIMESTAMP
+#>
+#> Setting this to nonempty string makes logging print this value instead of actual timestamp.
+#>
+
 #> >>>>> SHMATE_LOG_PERMS
 #>
 #> Log file permissions.
 #>
+
 #> >>>>> SHMATE_LOG_ANSI_ESCAPE
 #>
 #> Setting this to positive integer indicates the log message contains link:https://en.wikipedia.org/wiki/ANSI_escape_code[_ANSI escape sequences_]
@@ -69,8 +69,8 @@ SHMATE_LOG_ANSI_ESCAPE=${SHMATE_LOG_ANSI_ESCAPE:-0}
 #>
 #> Setting this to positive integer disables logging to file and final _CRLF_ sequence in console log is replaced with single carriage return.
 #> Useful for logging progress messages. The message should be one-liner. Should be used on demand as `local` variable.
-SHMATE_LOG_IN_PLACE=${SHMATE_LOG_IN_PLACE:-0}
 #>
+SHMATE_LOG_IN_PLACE=${SHMATE_LOG_IN_PLACE:-0}
 
 #> >>>> Debugging log levels
 #>
@@ -95,6 +95,8 @@ SHMATE_LOG_IN_PLACE=${SHMATE_LOG_IN_PLACE:-0}
 #> ====
 #> * _SHMATE_PID
 #> * _SHMATE_PID_FILE
+#> * _shmate_log_timestamp_value
+readonly _shmate_log_timestamp_value="${SHMATE_LOG_TIMESTAMP}"
 #> * _shmate_log_label_assert
 _shmate_log_label_assert=
 #> * _shmate_log_label_debug
@@ -437,14 +439,18 @@ _shmate_log_message() {
 }
 
 #> * _shmate_log_timestamp
-if [ ${SHMATE_TIMESTAMP_LOCAL} -gt 0 ]; then
-_shmate_log_timestamp() {
-    date "+${shmate_timestamp_format}"
-}
+if [ -n "${_shmate_log_timestamp_value}" ]; then
+    _shmate_log_timestamp() {
+        echo "${_shmate_log_timestamp_value}"
+    }
+elif [ ${SHMATE_TIMESTAMP_LOCAL:-0} -gt 0 ]; then
+    _shmate_log_timestamp() {
+        date "+${shmate_timestamp_format}"
+    }
 else
-_shmate_log_timestamp() {
-    date -u "+${shmate_timestamp_format}"
-}
+    _shmate_log_timestamp() {
+        date -u "+${shmate_timestamp_format}"
+    }
 fi
 
 #> * _shmate_lib_assert_cleanup
@@ -554,17 +560,6 @@ readonly shmate_console_crlf
 #>
 readonly shmate_console_format="${SHMATE_CONSOLE_FORMAT:-${shmate_log_format}}"
 
-#> >>>>> shmate_timestamp_format
-#>
-#> Timestamp format accepted by _date_ command.
-#>
-if [ ${SHMATE_TIMESTAMP_LOCAL} -gt 0 ]; then
-    shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%Y-%m-%dT%H:%M:%S}"
-else
-    shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%Y-%m-%dT%H:%M:%SZ}"
-fi
-readonly shmate_timestamp_format
-
 #> >>>> Functions
 #>
 
@@ -587,6 +582,42 @@ shmate_colors_grayout() {
 #>
 shmate_colors_disable() {
     _shmate_colors 0
+}
+
+#> >>>>> shmate_assert_file_readable <file_path> ...
+#>
+#> Asserts all <file_paths> are a readable files.
+#>
+shmate_assert_file_readable() {
+    local file_path=
+
+    for file_path in "$@"; do
+        test -r "${file_path}"
+        shmate_assert "File \"${file_path}\" must exist and be readable" || return $?
+
+        test ! -d "${file_path}"
+        shmate_assert "File \"${file_path}\" must not be a directory" || return $?
+    done
+
+    return 0
+}
+
+#> >>>>> shmate_assert_file_writable <file_path> ...
+#>
+#> Asserts all <file_paths> are a writable files.
+#>
+shmate_assert_file_writable() {
+    local file_path=
+
+    for file_path in "$@"; do
+        test -w "${file_path}"
+        shmate_assert "File \"${file_path}\" must exist and be writable" || return $?
+
+        test ! -d "${file_path}"
+        shmate_assert "File \"${file_path}\" must not be a directory" || return $?
+    done
+
+    return 0
 }
 
 #> >>>>> shmate_log_assert [<message> ...]

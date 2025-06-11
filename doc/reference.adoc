@@ -254,22 +254,16 @@ greater than 0::: enabled
 not set::: auto detect
 
 '''
-[#user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_FORMAT,reftext='SHMATE_TIMESTAMP_FORMAT']
-===== SHMATE_TIMESTAMP_FORMAT
-
-Timestamp format accepted by _date_ command. Defaults to `%Y-%m-%dT%H:%M:%SZ` or `%Y-%m-%dT%H:%M:%S` if <<user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_LOCAL>> is a positive integer.
-
-'''
-[#user-content-src_lib_shmate_assert-SHMATE_TIMESTAMP_LOCAL,reftext='SHMATE_TIMESTAMP_LOCAL']
-===== SHMATE_TIMESTAMP_LOCAL
-
-Setting this to positive integer makes all timestamps in local time zone instead of UTC.
-
-'''
 [#user-content-src_lib_shmate_assert-SHMATE_LOG,reftext='SHMATE_LOG']
 ===== SHMATE_LOG
 
 Path to log file. If set, console log will be duplicated to the log file.
+
+'''
+[#user-content-src_lib_shmate_assert-SHMATE_LOG_TIMESTAMP,reftext='SHMATE_LOG_TIMESTAMP']
+===== SHMATE_LOG_TIMESTAMP
+
+Setting this to nonempty string makes logging print this value instead of actual timestamp.
 
 '''
 [#user-content-src_lib_shmate_assert-SHMATE_LOG_PERMS,reftext='SHMATE_LOG_PERMS']
@@ -319,6 +313,7 @@ FAILURE:: TODO
 ====
 * _SHMATE_PID
 * _SHMATE_PID_FILE
+* _shmate_log_timestamp_value
 * _shmate_log_label_assert
 * _shmate_log_label_debug
 * _shmate_log_label_audit
@@ -430,12 +425,6 @@ Console log line ending character sequence accepted by _printf_ command.
 Console log line format accepted by _printf_ command.
 
 '''
-[#user-content-src_lib_shmate_assert-shmate_timestamp_format,reftext='shmate_timestamp_format']
-===== shmate_timestamp_format
-
-Timestamp format accepted by _date_ command.
-
-'''
 [#user-content-src_lib_shmate_assert-Functions]
 ==== Functions
 
@@ -450,6 +439,24 @@ Changes terminal color scheme to grayed out.
 ===== shmate_colors_disable
 
 Disables terminal colors.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_assert_file_readable,reftext='shmate_assert_file_readable']
+===== shmate_assert_file_readable
+----
+shmate_assert_file_readable <file_path> ...
+----
+
+Asserts all <file_paths> are a readable files.
+
+'''
+[#user-content-src_lib_shmate_assert-shmate_assert_file_writable,reftext='shmate_assert_file_writable']
+===== shmate_assert_file_writable
+----
+shmate_assert_file_writable <file_path> ...
+----
+
+Asserts all <file_paths> are a writable files.
 
 '''
 [#user-content-src_lib_shmate_assert-shmate_log_assert,reftext='shmate_log_assert']
@@ -730,16 +737,28 @@ Path to directory containing _shMate_ configuration files. Defaults to `${SHMATE
 Path to directory containing _shMate_ library files. Defaults to `${SHMATE_INSTALL_DIR}/lib/shmate`.
 
 '''
-[#user-content-src_lib_shmate_base-SHMATE_CURRENT_TIMESTAMP,reftext='SHMATE_CURRENT_TIMESTAMP']
-===== SHMATE_CURRENT_TIMESTAMP
-
-Setting this to nonempty string makes <<user-content-src_lib_shmate_base-shmate_current_timestamp>> print this value instead of actual timestamp.
-
-'''
 [#user-content-src_lib_shmate_base-SHMATE_SUPPRESS_FAILURE_EXIT,reftext='SHMATE_SUPPRESS_FAILURE_EXIT']
 ===== SHMATE_SUPPRESS_FAILURE_EXIT
 
 Setting this to positive integer disables printing of failure message upon non-zero exit code.
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_TIMESTAMP_FORMAT,reftext='SHMATE_TIMESTAMP_FORMAT']
+===== SHMATE_TIMESTAMP_FORMAT
+
+Timestamp format accepted by _date_ command. Defaults to `%Y-%m-%dT%H:%M:%SZ` or `%Y-%m-%dT%H:%M:%S` if <<user-content-src_lib_shmate_base-SHMATE_TIMESTAMP_LOCAL>> is a positive integer.
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_TIMESTAMP_LOCAL,reftext='SHMATE_TIMESTAMP_LOCAL']
+===== SHMATE_TIMESTAMP_LOCAL
+
+Setting this to positive integer makes all timestamps in local time zone instead of UTC.
+
+'''
+[#user-content-src_lib_shmate_base-SHMATE_CURRENT_TIMESTAMP,reftext='SHMATE_CURRENT_TIMESTAMP']
+===== SHMATE_CURRENT_TIMESTAMP
+
+Setting this to nonempty string makes <<user-content-src_lib_shmate_base-shmate_current_timestamp>> print this value instead of actual timestamp.
 
 '''
 [#user-content-src_lib_shmate_base-Internal-symbols]
@@ -823,6 +842,12 @@ Variable set by <<user-content-src_lib_shmate_base-shmate_getopts>> function. Co
 ===== shmate_getopts_task
 
 Variable set by <<user-content-src_lib_shmate_base-shmate_task>> function. Contains name of the task currently being processed.
+
+'''
+[#user-content-src_lib_shmate_base-shmate_timestamp_format,reftext='shmate_timestamp_format']
+===== shmate_timestamp_format
+
+Timestamp format accepted by _date_ command.
 
 '''
 [#user-content-src_lib_shmate_base-Functions]
@@ -1188,7 +1213,7 @@ Checks if <string> has at most one line of text.
 [#user-content-src_lib_shmate_base-shmate_current_timestamp,reftext='shmate_current_timestamp']
 ===== shmate_current_timestamp
 
-Prints current UTC timestamp in ISO 8601 format. Output can be fixed with `SHMATE_CURRENT_TIMESTAMP`.
+Prints current timestamp in format specified with `SHMATE_TIMESTAMP_FORMAT`. Output can be fixed with `SHMATE_CURRENT_TIMESTAMP`.
 
 '''
 [#user-content-src_lib_shmate_base-shmate_is_unsigned_integer,reftext='shmate_is_unsigned_integer']
@@ -1417,57 +1442,106 @@ shmate_kill_job_group <signal_name> [<job_group_name> ...]
 [#user-content-src_lib_shmate_job-shmate_run_job,reftext='shmate_run_job']
 ===== shmate_run_job
 ----
-shmate_run_job <job_group_name> [<command> [<command_arg> ...]]
+shmate_run_job <job_group_name> <command> [<command_arg> ...]
 ----
 
-'''
-[#user-content-src_lib_shmate_job-shmate_run_muted_job,reftext='shmate_run_muted_job']
-===== shmate_run_muted_job
+Runs <command> with <command_args> as background job and prints its output to _stderr_.
+
+The result of the <command> should be obtained with <<user-content-src_lib_shmate_job-shmate_wait_job>> or with <<user-content-src_lib_shmate_job-shmate_wait_job_group>>
+by passing the same <job_group_name> (only possible if <job_group_name> is not empty).
+
+TIP: Can be combined with <<user-content-src_lib_shmate_assert-shmate_assert_file_readable>> and <<user-content-src_lib_shmate_job-shmate_run_foreground_job>> to read from named sockets or pipes.
+
+.Example: Read from named sockets
+[%collapsible]
+====
+[,sh]
 ----
-shmate_run_muted_job <job_group_name> [<command> [<command_arg> ...]]
+shmate_run_job 'JOB' create-and-write-to-named-sockets-as-stdout-and-stderr.bin || return $?
+
+shmate_assert_file_readable "${stdout_socket}" "${stderr_socket} || return $?
+
+shmate_run_job 'JOB-IO' cat "${stderr_socket}" || return $?
+shmate_run_foreground_job 'JOB-IO' cat "${stdout_socket}" || return $?
+
+shmate_wait_job_group 'JOB' || return $?
+shmate_wait_job_group 'JOB-IO' || return $?
 ----
+====
 
 '''
 [#user-content-src_lib_shmate_job-shmate_run_foreground_job,reftext='shmate_run_foreground_job']
 ===== shmate_run_foreground_job
 ----
-shmate_run_foreground_job [<command> [<command_arg> ...]]
+shmate_run_foreground_job <job_group_name> <command> [<command_arg> ...]
 ----
 
+Same as <<user-content-src_lib_shmate_job-shmate_run_job>>, but prints output of the <command> to _stdout_.
+
+TIP: Can be combined with <<user-content-src_lib_shmate_assert-shmate_assert_file_readable>> and <<user-content-src_lib_shmate_job-shmate_run_job>> to read from named sockets or pipes.
+
+.Example: Read from named pipes
+[%collapsible]
+====
+[,sh]
+----
+job_treat_sewage() {
+   local input_file="$1"
+
+   shmate_pending_assert 'Processing sewage'
+   while read -r line; do
+       echo "Treated: ${line}"
+   done < "${input_file}"
+   shmate_loud_assert || return $?
+
+   return 0
+}
+
+local output_pipe=
+output_pipe=$(shmate_create_tmp_fifo 'output') || return $?
+
+local progress_pipe=
+progress_pipe=$(shmate_create_tmp_fifo 'progress') || return $?
+
+shmate_assert_file_readable "${output_pipe}" "${progress_pipe} || return $?
+
+shmate_run_job 'SEWAGE-IO' cat "${progress_pipe}" || return $?
+shmate_run_foreground_job 'SEWAGE-IO' job_treat_sewage "${output_pipe}" || return $?
+
+shmate_run_muted_job '' crappy.bin --output="${output_pipe}" --progress="${progress_pipe}" || return $?
+shmate_wait_job || return $?
+
+shmate_wait_job_group 'SEWAGE-IO' || return $?
+----
+====
+
 '''
-[#user-content-src_lib_shmate_job-shmate_run_session_job,reftext='shmate_run_session_job']
-===== shmate_run_session_job
+[#user-content-src_lib_shmate_job-shmate_run_muted_job,reftext='shmate_run_muted_job']
+===== shmate_run_muted_job
 ----
-shmate_run_session_job <job_group_name> [<command> [<command_arg> ...]]
+shmate_run_muted_job <job_group_name> <command> [<command_arg> ...]
 ----
+
+Same as <<user-content-src_lib_shmate_job-shmate_run_job>>, but ignores both _stdout_ and _stderr_ of the <command>.
+
+'''
+[#user-content-src_lib_shmate_job-shmate_run_unaware_job,reftext='shmate_run_unaware_job']
+===== shmate_run_unaware_job
+----
+shmate_run_unaware_job <job_group_name> <command> [<command_arg> ...]
+----
+
+Same as <<user-content-src_lib_shmate_job-shmate_run_job>>, but clears all of _shMate_ variables from the <command> environment.
 
 '''
 [#user-content-src_lib_shmate_job-shmate_run_detached_job,reftext='shmate_run_detached_job']
 ===== shmate_run_detached_job
 ----
-shmate_run_detached_job [<command> [<command_arg> ...]]
+shmate_run_detached_job <command> [<command_arg> ...]
 ----
 
-'''
-[#user-content-src_lib_shmate_job-shmate_read_job,reftext='shmate_read_job']
-===== shmate_read_job
-----
-shmate_read_job <fifo_path>
-----
-
-'''
-[#user-content-src_lib_shmate_job-shmate_read_job_stdout,reftext='shmate_read_job_stdout']
-===== shmate_read_job_stdout
-----
-shmate_read_job_stdout <fifo_path>
-----
-
-'''
-[#user-content-src_lib_shmate_job-shmate_read_job_stderr,reftext='shmate_read_job_stderr']
-===== shmate_read_job_stderr
-----
-shmate_read_job_stderr <fifo_path>
-----
+Same as <<user-content-src_lib_shmate_job-shmate_run_muted_job>>, but detaches the <command> process from the caller completely,
+i.e. it will continue to run after calling process exits.
 
 '''
 [#user-content-src_lib_shmate_job-shmate_wait_job,reftext='shmate_wait_job']

@@ -50,7 +50,7 @@ _test_qualified_job() {
     return 0
 }
 
-_test_session_job() {
+_test_unaware_job() {
     local shmate_env=
     shmate_env=$(env | shmate_filter_grep -E '^_*SHMATE_' | sort)
     shmate_assert 'Reading shMate environment' || return $?
@@ -144,16 +144,16 @@ test_foreground_job() {
     local parent_job_id=${_SHMATE_JOB_NAME}
     local parent_pidfile="${_SHMATE_PID_FILE}"
 
-    shmate_run_foreground_job _test_unqualified_job "$@"
+    shmate_run_foreground_job '' _test_unqualified_job "$@"
     shmate_wait_job
 }
 
-test_session_job() {
+test_unaware_job() {
     local parent_pid=$$
     local parent_job_id=${_SHMATE_JOB_NAME}
     local parent_pidfile="${_SHMATE_PID_FILE}"
 
-    shmate_run_session_job '' _test_session_job "$@"
+    shmate_run_unaware_job '' _test_unaware_job "$@"
     shmate_wait_job
 }
 

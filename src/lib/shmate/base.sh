@@ -49,15 +49,25 @@ if [ -z "${SHMATE_LIB_DIR}" ]; then
     export SHMATE_LIB_DIR="${SHMATE_INSTALL_DIR}/lib/shmate"
 fi
 
-#> >>>>> SHMATE_CURRENT_TIMESTAMP
-#>
-#> Setting this to nonempty string makes <<lib_shmate_base:shmate_current_timestamp>> print this value instead of actual timestamp.
-#>
-
 #> >>>>> SHMATE_SUPPRESS_FAILURE_EXIT
 #>
 #> Setting this to positive integer disables printing of failure message upon non-zero exit code.
+#>
 SHMATE_SUPPRESS_FAILURE_EXIT=${SHMATE_SUPPRESS_FAILURE_EXIT:-0}
+
+#> >>>>> SHMATE_TIMESTAMP_FORMAT
+#>
+#> Timestamp format accepted by _date_ command. Defaults to `%Y-%m-%dT%H:%M:%SZ` or `%Y-%m-%dT%H:%M:%S` if <<lib_shmate_base:SHMATE_TIMESTAMP_LOCAL>> is a positive integer.
+#>
+
+#> >>>>> SHMATE_TIMESTAMP_LOCAL
+#>
+#> Setting this to positive integer makes all timestamps in local time zone instead of UTC.
+#>
+
+#> >>>>> SHMATE_CURRENT_TIMESTAMP
+#>
+#> Setting this to nonempty string makes <<lib_shmate_base:shmate_current_timestamp>> print this value instead of actual timestamp.
 #>
 
 #> >>>> Internal symbols
@@ -198,6 +208,17 @@ readonly shmate_function_task="${shmate_function_task:-task}"
 #>
 #> Variable set by <<lib_shmate_base:shmate_task>> function. Contains name of the task currently being processed.
 #>
+
+#> >>>>> shmate_timestamp_format
+#>
+#> Timestamp format accepted by _date_ command.
+#>
+if [ ${SHMATE_TIMESTAMP_LOCAL:-0} -gt 0 ]; then
+    shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%Y-%m-%dT%H:%M:%S}"
+else
+    shmate_timestamp_format="${SHMATE_TIMESTAMP_FORMAT:-%Y-%m-%dT%H:%M:%SZ}"
+fi
+readonly shmate_timestamp_format
 
 #> >>>> Functions
 #>
@@ -789,17 +810,29 @@ shmate_has_one_line() {
 
 #> >>>>> shmate_current_timestamp
 #>
-#> Prints current UTC timestamp in ISO 8601 format. Output can be fixed with `SHMATE_CURRENT_TIMESTAMP`.
+#> Prints current timestamp in format specified with `SHMATE_TIMESTAMP_FORMAT`. Output can be fixed with `SHMATE_CURRENT_TIMESTAMP`.
 #>
-shmate_current_timestamp() {
-    if [ -n "${SHMATE_CURRENT_TIMESTAMP}" ]; then
-        echo "${SHMATE_CURRENT_TIMESTAMP}"
-    else
-        date -uIseconds
-    fi
+if [ ${SHMATE_TIMESTAMP_LOCAL:-0} -gt 0 ]; then
+    shmate_current_timestamp() {
+        if [ -n "${SHMATE_CURRENT_TIMESTAMP}" ]; then
+            echo "${SHMATE_CURRENT_TIMESTAMP}"
+        else
+            date "+${shmate_timestamp_format}"
+        fi
 
-    return $?
-}
+        return $?
+    }
+else
+    shmate_current_timestamp() {
+        if [ -n "${SHMATE_CURRENT_TIMESTAMP}" ]; then
+            echo "${SHMATE_CURRENT_TIMESTAMP}"
+        else
+            date -u "+${shmate_timestamp_format}"
+        fi
+
+        return $?
+    }
+fi
 
 #> >>>>> shmate_is_unsigned_integer <string>
 #>
