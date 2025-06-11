@@ -1,12 +1,12 @@
 83af0027e5b21e3bed5e58099c4791b8cdb6386b	0755	doc/docgen
 54c27423497852f69f78e22e62afd70e0c904c59	0644	doc/features.adoc
-8a79b650622249620ba3abae17ac4e8ca180a45b	0644	doc/html/index.html
+1cc7f7e83aaddf0790493d5ae0647d4d2ef52943	0644	doc/html/index.html
 b383927c284dfa231c5858df66d43efca6c31e8a	0644	doc/index.adoc
 78ef961c8847f514354fe97ef4ece3c9f07801d5	0644	doc/intro.adoc
-62f2e21a8240c8e531d6a937221c56c94674ebc6	0644	doc/reference.adoc
+a80e3fffd1b44e19ee26d1594bcbc2932cc36f76	0644	doc/reference.adoc
 a06f6b529b9fc4f540380185e35a37e2d1193e4a	0644	LICENSE
 7ea894acfcfd06b8e159a427345fe27de65f5d6d	0644	Makefile
-acb07682774b5142601b91171a82e818ed23a2ac	0644	README.adoc
+e477631730837bb3a90f81a023cfd30b01a2bc0c	0644	README.adoc
 2ed4df4c9b0ceaca670123e7593ec01d404f5aa8	0755	src/bin/shmate-adoc
 0dc140ac78feaa4ef79ae36bdf1a00e85be88da6	0755	src/bin/shmate-artifact
 222a270b1cbb3cec2c1904258cd511cbb4727b19	0755	src/bin/shmate-test
@@ -16,7 +16,7 @@ ccb72396e31019085a969c69cd58c3126195d880	0644	src/lib/shmate/assert.sh
 bca265557d6c521e1ce5ec95787d9d296bdf1f88	0644	src/lib/shmate/base.sh
 b30bc466d26946212a2ac0df02eca3b93f280e16	0644	src/lib/shmate/dependency.sh
 c21290b66d71daed2d31b5acc78af4c1908ca80e	0644	src/lib/shmate/_deprecated.sh
-2ea72a1be7ea86627c951ecd1ba9afc7e759b482	0644	src/lib/shmate/job.sh
+2e22ba2c86e47092ac1453dec122b02f3c528f26	0644	src/lib/shmate/job.sh
 ed420ded9c53222eecef2788dcf051d9356121c6	0644	src/lib/shmate/workdir.sh
 2796410dcc7576e5a017c6c279fd4c3c8c0ef120	0755	test/example/crude
 30f48a12e1dec2d3fce45de99097e181d00a110f	0755	test/example/greet
