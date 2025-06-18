@@ -1,4 +1,4 @@
-version := 0.0.9
+version := 0.0.10
 package := build/shMate-${version}.tar.gz
 testPackage := build/shMate-${version}-test.tar.gz
 testResult := build/shMate-${version}-test.xml

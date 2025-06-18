@@ -448,11 +448,10 @@ shmate_kill_job_group() {
 #>
 #> shmate_assert_file_readable "${stdout_socket}" "${stderr_socket}" || return $?
 #>
-#> shmate_run_job 'JOB-IO' cat "${stderr_socket}" || return $?
-#> shmate_run_foreground_job 'JOB-IO' cat "${stdout_socket}" || return $?
+#> shmate_run_job '' cat "${stderr_socket}" || return $?
+#> shmate_run_foreground_job '' cat "${stdout_socket}" || return $?
 #>
 #> shmate_wait_job_group 'JOB' || return $?
-#> shmate_wait_job_group 'JOB-IO' || return $?
 #> ----
 #> ====
 #>

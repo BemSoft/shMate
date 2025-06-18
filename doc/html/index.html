@@ -3309,11 +3309,10 @@ Can be combined with <a href="#user-content-src_lib_shmate_assert-shmate_assert_
 
 shmate_assert_file_readable "${stdout_socket}" "${stderr_socket}" || return $?
 
-shmate_run_job 'JOB-IO' cat "${stderr_socket}" || return $?
-shmate_run_foreground_job 'JOB-IO' cat "${stdout_socket}" || return $?
+shmate_run_job '' cat "${stderr_socket}" || return $?
+shmate_run_foreground_job '' cat "${stdout_socket}" || return $?
 
-shmate_wait_job_group 'JOB' || return $?
-shmate_wait_job_group 'JOB-IO' || return $?</code></pre>
+shmate_wait_job_group 'JOB' || return $?</code></pre>
 </div>
 </div>
 </div>
@@ -3578,7 +3577,7 @@ processes upon exit including termination caused by signal.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-06-11 07:52:27 +0200
+Last updated 2025-06-18 02:48:01 +0200
 </div>
 </div>
 </body>
