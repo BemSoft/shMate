@@ -55,7 +55,7 @@ if [ -z "${_SHMATE_INCLUDE_LIB_ASSERT}" ]; then
 
 #> >>>>> SHMATE_LOG_PERMS
 #>
-#> Log file permissions.
+#> Log file permissions. Ignored if the log file already exists.
 #>
 
 #> >>>>> SHMATE_LOG_ANSI_ESCAPE
@@ -294,11 +294,13 @@ _shmate_colors() {
 #> * _shmate_create_log_file
 _shmate_create_log_file() {
     if [ -n "${SHMATE_LOG}" ]; then
-        install -d "$(dirname "${SHMATE_LOG}")" && install -m "${SHMATE_LOG_PERMS:-0644}" /dev/null "${SHMATE_LOG}" || {
-            local log_file="${SHMATE_LOG}"
-            unset SHMATE_LOG
-            shmate_log_error "Could not open log file \"${log_file}\""
-        }
+        if ! [ -e "${SHMATE_LOG}" ]; then
+            install -d "$(dirname "${SHMATE_LOG}")" && install -m "${SHMATE_LOG_PERMS:-0644}" /dev/null "${SHMATE_LOG}" || {
+                local log_file="${SHMATE_LOG}"
+                unset SHMATE_LOG
+                shmate_log_error "Could not create log file \"${log_file}\""
+            }
+        fi
 
         if [ -n "${SHMATE_LOG}" ]; then
             export SHMATE_LOG

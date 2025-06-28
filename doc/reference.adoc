@@ -269,7 +269,7 @@ Setting this to nonempty string makes logging print this value instead of actual
 [#user-content-src_lib_shmate_assert-SHMATE_LOG_PERMS,reftext='SHMATE_LOG_PERMS']
 ===== SHMATE_LOG_PERMS
 
-Log file permissions.
+Log file permissions. Ignored if the log file already exists.
 
 '''
 [#user-content-src_lib_shmate_assert-SHMATE_LOG_ANSI_ESCAPE,reftext='SHMATE_LOG_ANSI_ESCAPE']
