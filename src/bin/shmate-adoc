@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC2039
+# shellcheck disable=SC2039,SC2320
 
 export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/..")}"
 export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
@@ -74,7 +74,7 @@ filter_asciidoc() {
 
     sed -En 's|^#>[[:space:]]?(.*)|\1|p' "${source_file}" | \
         sed -E \
-            -e "s|^>>>[[:space:]]+([^[:space:]]+)[[:space:]]*\$|'''\n\[#${id_prefix},reftext='${source_file#${source_dir}}'\]\n=== \1|" \
+            -e "s|^>>>[[:space:]]+([^[:space:]]+)[[:space:]]*\$|'''\n\[#${id_prefix},reftext='${source_file#"${source_dir}"}'\]\n=== \1|" \
             -e "s|^>>>>[[:space:]]+(.+)\$|'''\n[#${id_prefix}-\1]\n==== \1|" \
             -e ':Mark1' -e 's|(\[#.*)[[:space:]](.*\])|\1-\2|;tMark1' \
             -e "s|^>>>>>[[:space:]]+([^[:space:]]+)[[:space:]]*\$|'''\n\[#${id_prefix}-\1,reftext='\1'\]\n===== \1|" \
@@ -110,7 +110,7 @@ print_command_asciidoc() {
     local command="$*"
 
     local output=
-    output=$($@)
+    output=$("$@")
     shmate_warning_assert "Could not get output of '${command}'" || return 0
 
     test -n "${output}"

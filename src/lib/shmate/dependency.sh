@@ -28,7 +28,7 @@ if [ -z "${_SHMATE_INCLUDE_LIB_DEPENDENCY}" ]; then
 #> ....
 #> =====
 #>
-readonly _shmate_dep_regex="(([^']*)/)?([^':@]+):([^':@]+):([^':@]+)(:([^':@]+))?(@([^':@]+))?"
+readonly _shmate_dep_regex="^(([^']*)/)?([^':@]+):([^':@]+):([^':@]+)(:([^':@]+))?(@([^':@]+))?$"
 #> ====
 #>
 
@@ -78,13 +78,23 @@ shmate_dep_parse() {
     local var_classifier="${4:-ignored}"
     local var_packaging="${5:-ignored}"
     local var_module_path="${6:-ignored}"
-    local ignored=
+    # shellcheck disable=SC2034,SC1007
+    local ignored= parsed_group_id= parsed_artifact_id= parsed_version=
 
     local vars=
-    vars=$(shmate_input_run "${artifact}" sed -En "s|${_shmate_dep_regex}|${var_group_id}='\\3' ${var_artifact_id}='\\4' ${var_version}='\\5' ${var_classifier}='\\7' ${var_packaging}='\\9' ${var_module_path}='\\2'|p")
+    vars=$(shmate_input_run "${artifact}" sed -En "s|${_shmate_dep_regex}|parsed_group_id='\\3' parsed_artifact_id='\\4' parsed_version='\\5' ${var_group_id}='\\3' ${var_artifact_id}='\\4' ${var_version}='\\5' ${var_classifier}='\\7' ${var_packaging}='\\9' ${var_module_path}='\\2'|p")
     shmate_assert "Extracting variables from artifact descriptor \"${artifact}\"" || return $?
 
     eval "${vars}"
+
+    test -n "${parsed_group_id}"
+    shmate_assert 'Group id must not be empty' || return $?
+
+    test -n "${parsed_artifact_id}"
+    shmate_assert 'Artifact id must not be empty' || return $?
+
+    test -n "${parsed_version}"
+    shmate_assert 'Version must not be empty' || return $?
 
     if [ "${var_packaging}" != 'ignored' ]; then
         local packaging=
@@ -150,6 +160,7 @@ shmate_dep_module_path() {
 shmate_dep_file_name() {
     local artifact="$1"
 
+    # shellcheck disable=SC1007
     local artifact_id= version= classifier= packaging=
     shmate_dep_parse "${artifact}" '' artifact_id version classifier packaging || return $?
 
@@ -165,6 +176,7 @@ shmate_dep_file_name() {
 shmate_dep_lib_name() {
     local artifact="$1"
 
+    # shellcheck disable=SC1007
     local artifact_id= classifier=
     shmate_dep_parse "${artifact}" '' artifact_id '' classifier || return $?
 
@@ -201,6 +213,7 @@ shmate_dep_lib_name() {
 shmate_dep_repo_path() {
     local artifact="$1"
 
+    # shellcheck disable=SC1007
     local group_id= artifact_id= version= classifier= packaging=
     shmate_dep_parse "${artifact}" group_id artifact_id version classifier packaging || return $?
 
@@ -219,6 +232,7 @@ shmate_dep_repo_path() {
 shmate_dep_build_path() {
     local artifact="$1"
 
+    # shellcheck disable=SC1007
     local artifact_id= version= classifier= packaging= module_path=
     shmate_dep_parse "${artifact}" '' artifact_id version classifier packaging module_path || return $?
 
@@ -239,6 +253,7 @@ shmate_dep_build_path() {
 shmate_dep_deploy_opts() {
     local artifact="$1"
 
+    # shellcheck disable=SC1007
     local group_id= artifact_id= version= classifier= packaging=
     shmate_dep_parse "${artifact}" group_id artifact_id version classifier packaging || return $?
 

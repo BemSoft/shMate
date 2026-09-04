@@ -148,6 +148,7 @@ _shmate_console_audit_format=
 #> * _shmate_console_audit_args
 _shmate_console_audit_args=
 #> * _shmate_log_audit_separator
+# shellcheck disable=SC2155
 readonly _shmate_log_audit_separator=$(printf '\022')
 #> ====
 #>
@@ -295,6 +296,7 @@ _shmate_colors() {
 _shmate_create_log_file() {
     if [ -n "${SHMATE_LOG}" ]; then
         if ! [ -e "${SHMATE_LOG}" ]; then
+            # shellcheck disable=SC2015
             install -d "$(dirname "${SHMATE_LOG}")" && install -m "${SHMATE_LOG_PERMS:-0644}" /dev/null "${SHMATE_LOG}" || {
                 local log_file="${SHMATE_LOG}"
                 unset SHMATE_LOG
@@ -341,6 +343,7 @@ _shmate_get_pid() {
 
 #> * _shmate_ignore_sigpipe
 _shmate_ignore_sigpipe() {
+    # shellcheck disable=SC2319
     local status=$?
     if [ ${status} -eq 141 ]; then
         shmate_log_debug 'Ignoring SIGPIPE'
@@ -385,14 +388,14 @@ _shmate_log_audit_myself() {
     if [ ${shmate_debug_level} -ge ${shmate_debug_level_audit} ]; then
         # Warning! Obtaining parent command name is highly platform dependent
         local parent_command=
-        if $shmate_os_linux; then
+        if ${shmate_os_linux}; then
             if [ ${PPID} -le 0 ]; then
                 # kubectl exec sets PPID to illegal value 0
                 parent_command='[kernel]'
             else
                 parent_command=$(ps -p ${PPID} -o comm=) || shmate_log_warning "Could not get parent command name using \"ps -p ${PPID} -o comm=\""
             fi
-        elif $shmate_os_windows; then
+        elif ${shmate_os_windows}; then
             parent_command=$(ps -s -p ${PPID} | tail -n +2 | cut -b 27-) || shmate_log_warning 'Could not get parent command name'
         else
             shmate_log_warning "Unsupported kernel \"${shmate_os_kernel}\""
@@ -423,14 +426,16 @@ _shmate_log_message() {
     if [ ${SHMATE_LOG_IN_PLACE} -gt 0  ]; then
         crlf='\r'
     fi
+    # shellcheck disable=SC2059
     printf "${shmate_console_format}${crlf}" "${timestamp}" "${_shmate_console_label}" "${pid}" "${message}" 1>&2
 
-    if [ -n "${SHMATE_LOG}" -a ${SHMATE_LOG_IN_PLACE} -le 0 ]; then
+    if [ -n "${SHMATE_LOG}" ] && [ ${SHMATE_LOG_IN_PLACE} -le 0 ]; then
         message="$*"
         if [ ${SHMATE_LOG_ANSI_ESCAPE} -gt 0 ]; then
             message="$(echo -n "${message}x" | sed -E "s/${shmate_ansi_escape_sequence_regex}//g")"
             message="${message%x}"
         fi
+        # shellcheck disable=SC2059
         printf "${shmate_log_format}${shmate_log_crlf}" "${timestamp}" "${_shmate_log_label}" "${pid}" "${message}" >> "${SHMATE_LOG}"
     fi
 }
@@ -489,6 +494,7 @@ _shmate_on_terminate() {
 #>
 #> Regular expression to match link:https://en.wikipedia.org/wiki/ANSI_escape_code[_ANSI escape sequence_].
 #>
+# shellcheck disable=SC2155
 readonly shmate_ansi_escape_sequence_regex="($(echo -ne '\e')|\\\\e)[^m]*m"
 
 #> >>>>> shmate_hostname
@@ -541,6 +547,7 @@ readonly shmate_log_format="${SHMATE_LOG_FORMAT:-[%s] [%b] [%7d] %s}"
 #>
 #> Console log line ending character sequence accepted by _printf_ command.
 #>
+# shellcheck disable=SC2153
 shmate_console_crlf="${SHMATE_CONSOLE_CRLF}"
 if [ -z "${shmate_console_crlf}" ]; then
     if ${shmate_os_windows}; then
@@ -862,6 +869,7 @@ shmate_log_audit_end() {
         for arg in ${_shmate_log_audit_args}; do
             set "$@" "${arg}"
         done
+        # shellcheck disable=SC2059
         printf "${_shmate_log_audit_format}${shmate_log_crlf}" "$@" >> "${SHMATE_LOG}"
     fi
 
@@ -869,6 +877,7 @@ shmate_log_audit_end() {
     for arg in ${_shmate_console_audit_args}; do
         set "$@" "${arg}"
     done
+    # shellcheck disable=SC2059
     printf "${_shmate_console_audit_format}${shmate_console_crlf}" "$@" 1>&2
 
     return 0

@@ -175,6 +175,7 @@ _shmate_job_run_without_internal_env() {
 
 #> * _shmate_job_unset_env
 _shmate_job_unset_env() {
+    # shellcheck disable=SC2046
     unset $(env | sed -En 's|^(_*SHMATE_[^=]+)=.*$|\1|p')
 
     return 0
@@ -200,19 +201,22 @@ _shmate_lib_job_cleanup() {
     test -z "${_SHMATE_JOB_RUN_DIR}"
     shmate_assert 'Ordinary cleanup handler must not be called by job process'
 
+    local job_pidlist=
+
     if [ -n "${_SHMATE_GUARDIAN_PID}" ]; then
         if [ -z "${_SHMATE_JOB_NAME}" ]; then
-            local job_pidlist=$(shmate_collect_job_group_pids)
+            job_pidlist=$(shmate_collect_job_group_pids)
 
             if ! ${shmate_os_windows}; then
-                local descendants_pidlist=$(shmate_collect_descendant_pids $$)
+                local descendants_pidlist=
+                descendants_pidlist=$(shmate_collect_descendant_pids $$)
                 shmate_kill_job TERM ${job_pidlist} ${descendants_pidlist}
             else
                 shmate_kill_job TERM ${job_pidlist}
             fi
         fi
     else
-        local job_pidlist=$(shmate_collect_job_group_pids)
+        job_pidlist=$(shmate_collect_job_group_pids)
         shmate_kill_job TERM ${job_pidlist}
     fi
 
@@ -224,7 +228,7 @@ _shmate_lib_job_cleanup_job() {
     test -n "${_SHMATE_JOB_RUN_DIR}"
     shmate_assert 'Job cleanup handler must not be called by ordinary process'
 
-    if [ -n "${_SHMATE_JOB_RUN_DIR}" -a -d "${_SHMATE_JOB_RUN_DIR}" ]; then
+    if [ -n "${_SHMATE_JOB_RUN_DIR}" ] && [ -d "${_SHMATE_JOB_RUN_DIR}" ]; then
         shmate_log_audit_begin && \
             shmate_log_audit_command echo "$1" && \
             shmate_log_audit_operator '>' && \
@@ -296,7 +300,7 @@ shmate_collect_descendant_pids() {
     fi
 
     if [ -n "${child_pidlist}" ]; then
-        shmate_collect_descendant_pids ${child_pidlist} || return ?
+        shmate_collect_descendant_pids ${child_pidlist} || return $?
         echo ${child_pidlist}
     fi
 
@@ -317,11 +321,11 @@ shmate_collect_job_group_pids() {
 
     for job_group_name in "$@"; do
         run_dir="${shmate_work_dir}/.run/pid/${job_group_name}"
-        if [ -n "${shmate_work_dir}" -a -d "${run_dir}" ]; then
-            parent_pidlist=`find -L "${run_dir}" -mindepth 1 -type f -name '*.pid' | while read -r pid_file; do
+        if [ -n "${shmate_work_dir}" ] && [ -d "${run_dir}" ]; then
+            parent_pidlist=$(find -L "${run_dir}" -mindepth 1 -type f -name '*.pid' | while read -r pid_file; do
                 cat "${pid_file}"
                 shmate_silent_assert "Reading PID file \"${pid_file}\"" || continue
-            done`
+            done)
             shmate_assert 'Collecting jobs' || continue
 
             shmate_collect_descendant_pids ${parent_pidlist} || return $?
@@ -358,12 +362,14 @@ shmate_kill_job() {
         if ${shmate_os_windows}; then
             local pid=
             local winpid=
+            local status=
             for pid in "$@"; do
                 winpid=$(ps -l -p ${pid} | tail -n +2 | tr -s '[:space:]' '\t' | cut -f 5)
                 if [ -n "${winpid}" ]; then
                     shmate_log_debug "Terminating job with PID ${pid} (WINPID ${winpid}) and its children"
                     shmate_audit taskkill /T /PID ${winpid}
-                    if [ $? -ne 0 -o $? -ne 128 ]; then
+                    status=$?
+                    if [ ${status} -ne 0 ] && [ ${status} -ne 128 ]; then
                         shmate_log_debug "Killing job with PID ${pid} (WINPID ${winpid}) and its children"
                         shmate_audit taskkill /F /T /PID ${winpid}
                     fi
@@ -372,15 +378,15 @@ shmate_kill_job() {
                 fi
             done
         else
-            shmate_log_debug "Sending KILL to PIDs $@"
+            shmate_log_debug "Sending KILL to PIDs $*"
 
             kill -s KILL "$@" > /dev/null 2>&1
-            shmate_silent_assert "Sending KILL to PIDs $@"
+            shmate_silent_assert "Sending KILL to PIDs $*"
 
-            shmate_log_debug "Killed PIDs $@"
+            shmate_log_debug "Killed PIDs $*"
         fi
     else
-        shmate_log_debug "Terminated PIDs $@ with ${signal_name}"
+        shmate_log_debug "Terminated PIDs $* with ${signal_name}"
     fi
 
     return 0
@@ -406,14 +412,14 @@ shmate_kill_job_group() {
 
     for job_group_name in "$@"; do
         run_dir="${shmate_work_dir}/.run/pid/${job_group_name}"
-        if [ -n "${shmate_work_dir}" -a -d "${run_dir}" ]; then
-            parent_pidlist=`find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' | while read -r pid_file; do
+        if [ -n "${shmate_work_dir}" ] && [ -d "${run_dir}" ]; then
+            parent_pidlist=$(find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' | while read -r pid_file; do
                 cat "${pid_file}"
                 shmate_silent_assert "Reading PID file \"${pid_file}\"" || continue
 
                 shmate_audit rm -f "${pid_file}"
                 shmate_silent_assert "Removing PID file \"${pid_file}\""
-            done`
+            done)
             shmate_assert 'Collecting jobs' || continue
 
             child_pidlist=$(shmate_collect_descendant_pids ${parent_pidlist})
@@ -582,6 +588,7 @@ fi
 
 #> >>>>> shmate_wait_job [<pid>]
 #>
+# shellcheck disable=SC2120
 shmate_wait_job() {
     local pid=$1 # Optional
     local exit_code=
@@ -604,8 +611,9 @@ shmate_wait_job() {
     done
 
     local run_dir="${shmate_work_dir}/.run/pid"
-    if [ -n "${shmate_work_dir}" -a -d "${run_dir}" ]; then
+    if [ -n "${shmate_work_dir}" ] && [ -d "${run_dir}" ]; then
         find -L "${run_dir}" -mindepth 1 -type f -name "${pid}.pid" | while read -r pid_file; do
+            # shellcheck disable=SC2015
             shmate_audit rm "${pid_file}" && shmate_log_debug "Removed pidfile \"${pid_file}\"" || shmate_log_warning "Cannot remove pidfile \"${pid_file}\""
         done
     fi
@@ -631,7 +639,7 @@ shmate_wait_job_group() {
         for job_group_name in "$@"; do
             run_dir="${shmate_work_dir}/.run/pid/${job_group_name}"
             if [ -d "${run_dir}" ]; then
-                pids="${pids} $(find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' -exec cat {} \; | xargs)"
+                pids="${pids} $(find -L "${run_dir}" -mindepth ${mindepth} -type f -name '*.pid' -exec cat {} \+ | tr '\n' ' ')"
                 shmate_assert 'Reading job PIDs' || return $?
 
                 pids="${pids# }"
@@ -663,12 +671,12 @@ shmate_wait_job_group() {
             done
         fi
 
-        if [ ${exit_code} -eq 0 -a -n "${shmate_work_dir}" -a -d "${shmate_work_dir}/.run/job" ]; then
+        if [ ${exit_code} -eq 0 ] && [ -n "${shmate_work_dir}" ] && [ -d "${shmate_work_dir}/.run/job" ]; then
             for job_group_name in "$@"; do
                 run_dir="${shmate_work_dir}/.run/job/${job_group_name}"
                 if [ -d "${run_dir}" ]; then
                     local job_exit_code=
-                    job_exit_code=`find -L "${run_dir}" -mindepth ${mindepth} -type f -name '.exit-code' -exec cat {} \; | sort -un | tail -n 1`
+                    job_exit_code=$(find -L "${run_dir}" -mindepth ${mindepth} -type f -name '.exit-code' -exec cat {} \; | sort -un | tail -n 1)
                     shmate_warning_assert "Cannot retrieve exit codes from directory \"${run_dir}\""
 
                     if [ -n "${job_exit_code}" ]; then

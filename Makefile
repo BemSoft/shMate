@@ -1,4 +1,4 @@
-version := 0.0.11
+version := 0.0.12
 package := build/shMate-${version}.tar.gz
 testPackage := build/shMate-${version}-test.tar.gz
 testResult := build/shMate-${version}-test.xml
@@ -15,7 +15,7 @@ ${testPackage}: test/*
 .PHONY: test
 test:
 	mkdir -p build
-	src/bin/shmate-test -C test > ${testResult}
+	env CI_SERVER_HOST=localhost src/bin/shmate-test -C test > ${testResult}
 
 .PHONY: docs
 docs:

@@ -155,6 +155,7 @@ ${PATH}"
         test_suite_out="${test_suite_dir}/.out"
         test_suite_err="${test_suite_dir}/.err"
 
+        # shellcheck disable=SC2155
         export SHMATE_TEST_DIR="$(realpath "${file_path%/*}")"
         export SHMATE_WORK_DIR="${test_suite_dir}/work"
 
@@ -175,6 +176,7 @@ ${PATH}"
 
         is_test_suite_error=false
 
+        # shellcheck disable=SC1090
         . "${file_path}" >> "${test_suite_out}" 2> "${test_suite_err}"
         shmate_assert "Error sourcing test suite from \"${file_path}\"" || {
             is_test_suite_error=true
@@ -197,6 +199,7 @@ ${PATH}"
                 shmate_log_debug "Skipping test case \"${test_suite}:${test_case}\""
 
                 test_case_err=
+                # shellcheck disable=SC2030
                 test_case_exit_code=
                 test_case_seconds=0
             else
@@ -313,6 +316,7 @@ collect_test_report_junit() {
 <testsuites>'
 
     while read -r test_suite_env; do
+        # shellcheck disable=SC1090
         . "${test_suite_env}"
         shmate_assert "Sourcing test suite environment file \"${test_suite_env}\"" || return $?
 
@@ -322,7 +326,7 @@ collect_test_report_junit() {
         total_failures=$((total_failures + TEST_FAILURES))
         total_skips=$((total_skips + TEST_SKIPS))
 
-        echo "    <testsuite id=\"${ID}\" hostname=\"${local_host}\" package=\"${SOURCE}\" name=\"${NAME}\" tests=\"${TEST_CASES}\" errors=\"${TEST_ERRORS}\" failures=\"${TEST_FAILURES}\" skipped=\"${TEST_SKIPS}\" time=\"${TIME}\" timestamp=\"${TIMESTAMP}\">"
+        echo "    <testsuite id=\"${ID}\" hostname=\"${shmate_hostname}\" package=\"${SOURCE}\" name=\"${NAME}\" tests=\"${TEST_CASES}\" errors=\"${TEST_ERRORS}\" failures=\"${TEST_FAILURES}\" skipped=\"${TEST_SKIPS}\" time=\"${TIME}\" timestamp=\"${TIMESTAMP}\">"
 
         for test_case_id in $(seq 1 ${TEST_CASES}); do
             eval test_case_name='$'TEST_CASE_${test_case_id}_NAME
@@ -339,6 +343,7 @@ collect_test_report_junit() {
 
             echo "        <testcase classname=\"${NAME}\" name=\"${test_case_name}\" time=\"${test_case_time}\">"
 
+            # shellcheck disable=SC2031
             if [ ${TEST_ERRORS} -gt 0 ]; then
                 # Errors are only possible if the test suite script returns an error resulting in all test cases being marked as error
                 echo "            <error message=\"Test suite script error\"/>"
@@ -396,7 +401,7 @@ collect_test_report() {
 
     collect_test_report_junit || return $?
 
-    if [ ${total_errors} -gt 0 -o ${total_failures} -gt 0 ]; then
+    if [ ${total_errors} -gt 0 ] || [ ${total_failures} -gt 0 ]; then
         shmate_log_failure "Totally ${total_passes}/${total_tests} test cases passed, ${total_failures} failed, ${total_skips} skipped, ${total_errors} errors"
         return 1
     elif [ ${total_tests} -gt 0 ]; then
@@ -435,12 +440,15 @@ main() {
     if [ -z "${arg_source_dir}" ]; then
         shmate_assert_tools git || return $?
 
-        export SHMATE_SOURCE_DIR=$(shmate_audit git -C "${arg_test_dir}" rev-parse --show-toplevel)
+        SHMATE_SOURCE_DIR=$(shmate_audit git -C "${arg_test_dir}" rev-parse --show-toplevel)
         shmate_assert "Detecting Git repository containing \"${arg_test_dir}\"" || return $?
+
+        export SHMATE_SOURCE_DIR
     else
         export SHMATE_SOURCE_DIR="${arg_source_dir}"
     fi
 
+    # shellcheck disable=SC2317
     job_main() {
         run_test "${arg_test_dir}" "${arg_output_dir}" "${arg_test_case_function_prefix}" | collect_test_report | shmate_string_cat_buf '-'
         shmate_silent_assert 'Running main job' || return $?

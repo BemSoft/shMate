@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC2039
+# shellcheck disable=SC2039,SC2320
 
 if [ -z "${_SHMATE_INCLUDE_LIB_BASE}" ]; then
     readonly _SHMATE_INCLUDE_LIB_BASE='included'
@@ -123,6 +123,7 @@ _shmate_trap_signal() {
 
     local signal=
     for signal in "$@"; do
+        # shellcheck disable=SC2064
         trap "${handler} ${signal}" "${signal}"
     done
 
@@ -436,6 +437,7 @@ shmate_getopts() {
 #> ====
 #>
 shmate_main() {
+    # shellcheck disable=SC1007
     local OPTARG= OPTIND=1 shmate_getopts_option= shmate_getopts_task=
     "${shmate_function_main}" "$@" || shmate_fail $?
     shmate_exit 0

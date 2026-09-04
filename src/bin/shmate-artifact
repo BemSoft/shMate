@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC2039
+# shellcheck disable=SC2039,SC2320
 
 export SHMATE_INSTALL_DIR="${SHMATE_INSTALL_DIR:-$(realpath "$(dirname "$(realpath "$0")")/..")}"
 export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
@@ -10,6 +10,7 @@ export SHMATE_LIB_DIR="${SHMATE_LIB_DIR:-"${SHMATE_INSTALL_DIR}/lib/shmate"}"
 #> Artifact repository client. Can be used to integrate with various Maven 2 style repositories.
 #>
 
+# shellcheck source=src/lib/shmate/dependency.sh
 . "${SHMATE_LIB_DIR}/dependency.sh"
 
 help() {
@@ -107,7 +108,7 @@ Usage: ${0##*/} [<global_arg> ...] fetch [-C <directory>] [-t <target_path>] [<a
 }
 
 find_curl_conf() {
-    local curl_conf="${1:-curl.conf}"
+    local curl_conf="$1"
     local artifact_source="${2:-default}"
 
     if [ -z "${curl_conf}" ]; then
@@ -118,6 +119,7 @@ find_curl_conf() {
                 artifact_source=$(echo -n "${artifact_source}" | tr -Cs '[:alnum:]' '_')
                 local config_file="${SHMATE_CONF_DIR}/artifact.conf"
                 if [ -s "${config_file}" ]; then
+                    # shellcheck source=src/etc/shmate/curl.conf
                     . "${config_file}" || return $?
                 fi
 
@@ -134,6 +136,9 @@ find_curl_conf() {
     case "${curl_conf}" in
         /*)
             ;;
+        '')
+            curl_conf="${SHMATE_CONF_DIR}/curl.conf"
+            ;;
         *)
             curl_conf="${SHMATE_CONF_DIR}/${curl_conf}"
             ;;
@@ -144,7 +149,7 @@ find_curl_conf() {
 
     echo "${curl_conf}"
 
-    return 0
+    return $?
 }
 
 find_artifact_source() {
@@ -157,6 +162,7 @@ find_artifact_source() {
             artifact_source=$(echo -n "${artifact_source}" | tr -Cs '[:alnum:]' '_')
             local config_file="${SHMATE_CONF_DIR}/artifact.conf"
             if [ -s "${config_file}" ]; then
+                # shellcheck source=src/etc/shmate/curl.conf
                 . "${config_file}" || return $?
             fi
 
@@ -181,7 +187,7 @@ find_artifact_source() {
 
     echo "${artifact_source}"
 
-    return 0
+    return $?
 }
 
 check_artifact() {
@@ -191,9 +197,9 @@ check_artifact() {
     local artifact_repo_path=
     local artifact_dir=
 
-    artifact_dir=`shmate_input_run "${artifact_descriptor}" sed -En 's|.*@[^/]+(.*)|\1|p'` || return $?
+    artifact_dir=$(shmate_input_run "${artifact_descriptor}" sed -En 's|.*@[^/]+(.*)|\1|p') || return $?
     if [ -n "${artifact_dir}" ]; then
-        artifact_descriptor="${artifact_descriptor%${artifact_dir}}"
+        artifact_descriptor="${artifact_descriptor%"${artifact_dir}"}"
     fi
 
     shmate_log_debug "Using artifact descriptor \"${artifact_descriptor}\""
@@ -229,9 +235,9 @@ fetch_artifact() {
     local artifact_repo_path=
     local artifact_dir=
 
-    artifact_dir=`shmate_input_run "${artifact_descriptor}" sed -En 's|.*@[^/]+(.*)|\1|p'` || return $?
+    artifact_dir=$(shmate_input_run "${artifact_descriptor}" sed -En 's|.*@[^/]+(.*)|\1|p') || return $?
     if [ -n "${artifact_dir}" ]; then
-        artifact_descriptor="${artifact_descriptor%${artifact_dir}}"
+        artifact_descriptor="${artifact_descriptor%"${artifact_dir}"}"
         shmate_log_debug "Using artifact descriptor \"${artifact_descriptor}\" and artifact contents from \"${artifact_dir}\""
     else
         shmate_log_debug "Using artifact descriptor \"${artifact_descriptor}\""
@@ -315,7 +321,7 @@ fetch_artifact() {
                     shmate_assert "Extracting artifact \"${artifact_file}\" to temporary directory \"${tmp_dir}\"" || return $?
 
                     local target_dir="${target_path%/*}"
-                    if [ -n "${target_dir}" -a "${target_dir}" != "${target_path}" ]; then
+                    if [ -n "${target_dir}" ] && [ "${target_dir}" != "${target_path}" ]; then
                         shmate_audit mkdir -p "${target_dir}"
                         shmate_assert "Creating target directory \"${target_dir}\"" || return $?
                     fi
