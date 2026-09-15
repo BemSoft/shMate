@@ -349,6 +349,7 @@ test_shmate_work_dir() {
 
 test_shmate_create_tmp_dir() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_dir_1= tmp_dir_2=
 
     tmp_dir_1=$(shmate_create_tmp_dir "${name}")
@@ -369,6 +370,7 @@ test_shmate_create_tmp_dir() {
 
 test_shmate_create_tmp_file() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_file_1= tmp_file_2=
 
     tmp_file_1=$(shmate_create_tmp_file "${name}")
@@ -389,6 +391,7 @@ test_shmate_create_tmp_file() {
 
 test_shmate_create_tmp_fifo() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_fifo_1= tmp_fifo_2=
 
     tmp_fifo_1=$(shmate_create_tmp_fifo "${name}")
@@ -472,7 +475,6 @@ NOTE: Log messages are always printed to _stderr_.
 [#user-content-src_lib_shmate_assert-Dependencies]
 ==== Dependencies
 * <<user-content-src_lib_shmate_base>>
-* <<user-content-src_lib_shmate_-deprecated>>
 
 '''
 [#user-content-src_lib_shmate_assert-Environment]
@@ -947,6 +949,11 @@ Base library for every other _shMate_ based library or executable.
 Sets required global settings and adds most common functions, particularly cleanup on exit.
 
 '''
+[#user-content-src_lib_shmate_base-Dependencies]
+==== Dependencies
+* <<user-content-src_lib_shmate_-deprecated>>
+
+'''
 [#user-content-src_lib_shmate_base-Shell-options]
 ==== Shell options
 * posix
@@ -1275,7 +1282,6 @@ Usage: ${0##*/} -h
 }
 
 job_greet() {
-    local suffix=
     local name=
 
     for name in "$@"; do
@@ -1380,7 +1386,6 @@ Usage: ${0##*/} -h
 }
 
 job_greet() {
-    local suffix=
     local name=
 
     for name in "$@"; do
@@ -2048,6 +2053,25 @@ shmate_dep_deploy_opts <artifact_descriptor>
 === _deprecated.sh
 
 Library defining all deprecated symbols in _shMate_.
+
+'''
+[#user-content-src_lib_shmate_-deprecated-Internal-symbols]
+==== Internal symbols
+
+.Variables
+[%collapsible]
+====
+* _shmate_deprecated_vars
+* _shmate_deprecated_functions
+* _shmate_deprecated_vars_declared
+====
+
+.Functions
+[%collapsible]
+====
+* _shmate_deprecated_vars_collect
+* _shmate_deprecated_symbols_check
+====
 
 '''
 [#user-content-src_lib_shmate_job,reftext='lib/shmate/job.sh']

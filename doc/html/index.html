@@ -471,11 +471,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#user-content-src_lib_shmate_base">4.2. base.sh</a>
 <ul class="sectlevel3">
-<li><a href="#user-content-src_lib_shmate_base-Shell-options">4.2.1. Shell options</a></li>
-<li><a href="#user-content-src_lib_shmate_base-Environment">4.2.2. Environment</a></li>
-<li><a href="#user-content-src_lib_shmate_base-Internal-symbols">4.2.3. Internal symbols</a></li>
-<li><a href="#user-content-src_lib_shmate_base-Variables">4.2.4. Variables</a></li>
-<li><a href="#user-content-src_lib_shmate_base-Functions">4.2.5. Functions</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Dependencies">4.2.1. Dependencies</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Shell-options">4.2.2. Shell options</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Environment">4.2.3. Environment</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Internal-symbols">4.2.4. Internal symbols</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Variables">4.2.5. Variables</a></li>
+<li><a href="#user-content-src_lib_shmate_base-Functions">4.2.6. Functions</a></li>
 </ul>
 </li>
 <li><a href="#user-content-src_lib_shmate_dependency">4.3. dependency.sh</a>
@@ -484,7 +485,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#user-content-src_lib_shmate_dependency-Functions">4.3.2. Functions</a></li>
 </ul>
 </li>
-<li><a href="#user-content-src_lib_shmate_-deprecated">4.4. _deprecated.sh</a></li>
+<li><a href="#user-content-src_lib_shmate_-deprecated">4.4. _deprecated.sh</a>
+<ul class="sectlevel3">
+<li><a href="#user-content-src_lib_shmate_-deprecated-Internal-symbols">4.4.1. Internal symbols</a></li>
+</ul>
+</li>
 <li><a href="#user-content-src_lib_shmate_job">4.5. job.sh</a>
 <ul class="sectlevel3">
 <li><a href="#user-content-src_lib_shmate_job-Dependencies">4.5.1. Dependencies</a></li>
@@ -888,6 +893,7 @@ test_shmate_work_dir() {
 
 test_shmate_create_tmp_dir() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_dir_1= tmp_dir_2=
 
     tmp_dir_1=$(shmate_create_tmp_dir "${name}")
@@ -908,6 +914,7 @@ test_shmate_create_tmp_dir() {
 
 test_shmate_create_tmp_file() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_file_1= tmp_file_2=
 
     tmp_file_1=$(shmate_create_tmp_file "${name}")
@@ -928,6 +935,7 @@ test_shmate_create_tmp_file() {
 
 test_shmate_create_tmp_fifo() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_fifo_1= tmp_fifo_2=
 
     tmp_fifo_1=$(shmate_create_tmp_fifo "${name}")
@@ -1029,9 +1037,6 @@ Log messages are always printed to <em>stderr</em>.
 <ul>
 <li>
 <p><a href="#user-content-src_lib_shmate_base">lib/shmate/base.sh</a></p>
-</li>
-<li>
-<p><a href="#user-content-src_lib_shmate_-deprecated">lib/shmate/_deprecated.sh</a></p>
 </li>
 </ul>
 </div>
@@ -1796,7 +1801,18 @@ Sets required global settings and adds most common functions, particularly clean
 </div>
 <hr>
 <div class="sect3">
-<h4 id="user-content-src_lib_shmate_base-Shell-options">4.2.1. Shell options</h4>
+<h4 id="user-content-src_lib_shmate_base-Dependencies">4.2.1. Dependencies</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#user-content-src_lib_shmate_-deprecated">lib/shmate/_deprecated.sh</a></p>
+</li>
+</ul>
+</div>
+<hr>
+</div>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_base-Shell-options">4.2.2. Shell options</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1813,7 +1829,7 @@ Sets required global settings and adds most common functions, particularly clean
 <hr>
 </div>
 <div class="sect3">
-<h4 id="user-content-src_lib_shmate_base-Environment">4.2.2. Environment</h4>
+<h4 id="user-content-src_lib_shmate_base-Environment">4.2.3. Environment</h4>
 <hr>
 <div class="sect4">
 <h5 id="user-content-src_lib_shmate_base-SHMATE_INSTALL_DIR">SHMATE_INSTALL_DIR</h5>
@@ -1874,7 +1890,7 @@ Must be set, unless all of <code>SHMATE_BIN_DIR</code>, <code>SHMATE_CONF_DIR</c
 </div>
 </div>
 <div class="sect3">
-<h4 id="user-content-src_lib_shmate_base-Internal-symbols">4.2.3. Internal symbols</h4>
+<h4 id="user-content-src_lib_shmate_base-Internal-symbols">4.2.4. Internal symbols</h4>
 <details>
 <summary class="title">Variables</summary>
 <div class="content">
@@ -1920,7 +1936,7 @@ Must be set, unless all of <code>SHMATE_BIN_DIR</code>, <code>SHMATE_CONF_DIR</c
 <hr>
 </div>
 <div class="sect3">
-<h4 id="user-content-src_lib_shmate_base-Variables">4.2.4. Variables</h4>
+<h4 id="user-content-src_lib_shmate_base-Variables">4.2.5. Variables</h4>
 <hr>
 <div class="sect4">
 <h5 id="user-content-src_lib_shmate_base-shmate_os_kernel">shmate_os_kernel</h5>
@@ -1997,7 +2013,7 @@ It is highly recommended to use the default whenever possible.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="user-content-src_lib_shmate_base-Functions">4.2.5. Functions</h4>
+<h4 id="user-content-src_lib_shmate_base-Functions">4.2.6. Functions</h4>
 <hr>
 <div class="sect4">
 <h5 id="user-content-src_lib_shmate_base-shmate_cleanup">shmate_cleanup</h5>
@@ -2238,7 +2254,6 @@ Usage: ${0##*/} -h
 }
 
 job_greet() {
-    local suffix=
     local name=
 
     for name in "$@"; do
@@ -2348,7 +2363,6 @@ Usage: ${0##*/} -h
 }
 
 job_greet() {
-    local suffix=
     local name=
 
     for name in "$@"; do
@@ -3130,6 +3144,43 @@ To export all variables from not empty trusted '.env' dotenv file call:</p>
 <p>Library defining all deprecated symbols in <em>shMate</em>.</p>
 </div>
 <hr>
+<div class="sect3">
+<h4 id="user-content-src_lib_shmate_-deprecated-Internal-symbols">4.4.1. Internal symbols</h4>
+<details>
+<summary class="title">Variables</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_shmate_deprecated_vars</p>
+</li>
+<li>
+<p>_shmate_deprecated_functions</p>
+</li>
+<li>
+<p>_shmate_deprecated_vars_declared</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<details>
+<summary class="title">Functions</summary>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_shmate_deprecated_vars_collect</p>
+</li>
+<li>
+<p>_shmate_deprecated_symbols_check</p>
+</li>
+</ul>
+</div>
+</div>
+</details>
+<hr>
+</div>
 </div>
 <div class="sect2">
 <h3 id="user-content-src_lib_shmate_job">4.5. job.sh</h3>
@@ -3577,7 +3628,7 @@ processes upon exit including termination caused by signal.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-04 18:55:50 +0200
+Last updated 2026-09-15 10:06:14 +0200
 </div>
 </div>
 </body>

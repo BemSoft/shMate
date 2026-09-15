@@ -34,7 +34,6 @@ Usage: ${0##*/} -h
 }
 
 job_greet() {
-    local suffix=
     local name=
 
     for name in "$@"; do

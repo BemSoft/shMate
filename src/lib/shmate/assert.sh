@@ -14,13 +14,9 @@ if [ -z "${_SHMATE_INCLUDE_LIB_ASSERT}" ]; then
 #>
 #> >>>> Dependencies
 #> * <<lib_shmate_base>>
-#> * <<lib_shmate_-deprecated>>
 #>
-
 # shellcheck source=src/lib/shmate/base.sh
 . "${SHMATE_LIB_DIR}/base.sh"
-# shellcheck source=src/lib/shmate/_deprecated.sh
-. "${SHMATE_LIB_DIR}/_deprecated.sh"
 
 #> >>>> Environment
 #>

@@ -226,7 +226,6 @@ NOTE: Log messages are always printed to _stderr_.
 [#user-content-src_lib_shmate_assert-Dependencies]
 ==== Dependencies
 * <<user-content-src_lib_shmate_base>>
-* <<user-content-src_lib_shmate_-deprecated>>
 
 '''
 [#user-content-src_lib_shmate_assert-Environment]
@@ -699,6 +698,11 @@ If <exit_code> is given, it overrides the returned exit code.
 
 Base library for every other _shMate_ based library or executable.
 Sets required global settings and adds most common functions, particularly cleanup on exit.
+
+'''
+[#user-content-src_lib_shmate_base-Dependencies]
+==== Dependencies
+* <<user-content-src_lib_shmate_-deprecated>>
 
 '''
 [#user-content-src_lib_shmate_base-Shell-options]
@@ -1348,6 +1352,25 @@ shmate_dep_deploy_opts <artifact_descriptor>
 === _deprecated.sh
 
 Library defining all deprecated symbols in _shMate_.
+
+'''
+[#user-content-src_lib_shmate_-deprecated-Internal-symbols]
+==== Internal symbols
+
+.Variables
+[%collapsible]
+====
+* _shmate_deprecated_vars
+* _shmate_deprecated_functions
+* _shmate_deprecated_vars_declared
+====
+
+.Functions
+[%collapsible]
+====
+* _shmate_deprecated_vars_collect
+* _shmate_deprecated_symbols_check
+====
 
 '''
 [#user-content-src_lib_shmate_job,reftext='lib/shmate/job.sh']

@@ -2,9 +2,18 @@ name: CI
 
 on:
   push:
+    branches:
+      - main
+      - devel
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -16,4 +25,23 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: build/
+          path: build
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: build-artifacts
+          path: build
+      - name: Publish release
+        uses: softprops/action-gh-release@v3
+        with:
+          working_directory: build
+          files: |
+            *.tar.gz
+            *.sh
+          generate_release_notes: true

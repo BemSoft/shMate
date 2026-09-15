@@ -10,6 +10,12 @@ if [ -z "${_SHMATE_INCLUDE_LIB_BASE}" ]; then
 #> Base library for every other _shMate_ based library or executable.
 #> Sets required global settings and adds most common functions, particularly cleanup on exit.
 #>
+#> >>>> Dependencies
+#> * <<lib_shmate_-deprecated>>
+#>
+# shellcheck source=src/lib/shmate/_deprecated.sh
+. "${SHMATE_LIB_DIR}/_deprecated.sh"
+
 #> >>>> Shell options
 #> * posix
 #> * pipefail
@@ -437,6 +443,8 @@ shmate_getopts() {
 #> ====
 #>
 shmate_main() {
+    _shmate_deprecated_symbols_check || shmate_fail $?
+
     # shellcheck disable=SC1007
     local OPTARG= OPTIND=1 shmate_getopts_option= shmate_getopts_task=
     "${shmate_function_main}" "$@" || shmate_fail $?

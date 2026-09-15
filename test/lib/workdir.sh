@@ -110,6 +110,7 @@ test_shmate_work_dir() {
 
 test_shmate_create_tmp_dir() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_dir_1= tmp_dir_2=
 
     tmp_dir_1=$(shmate_create_tmp_dir "${name}")
@@ -130,6 +131,7 @@ test_shmate_create_tmp_dir() {
 
 test_shmate_create_tmp_file() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_file_1= tmp_file_2=
 
     tmp_file_1=$(shmate_create_tmp_file "${name}")
@@ -150,6 +152,7 @@ test_shmate_create_tmp_file() {
 
 test_shmate_create_tmp_fifo() {
     local name='foobar'
+    # shellcheck disable=SC1007
     local tmp_fifo_1= tmp_fifo_2=
 
     tmp_fifo_1=$(shmate_create_tmp_fifo "${name}")
