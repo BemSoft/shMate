@@ -167,7 +167,7 @@ create_asciidoc() {
         sed -En 's|^[[:space:]]*help_(.*)\(\).*$|\1|p' "${file_path}" | while read -r task; do
             task="$(echo -n "${task}" | tr '_' '-')"
 
-            print_command_asciidoc "${source_dir}" "${task}" "${file_path}" -h "${task}"
+            print_command_asciidoc "${source_dir}" "${task}" "${file_path}" "${task}" -h
             shmate_assert "Printing help AsciiDoc of task \"${task}\" from \"${file_path}\"" || return $?
         done || return $?
     done || return $?

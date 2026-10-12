@@ -1,4 +1,4 @@
-version := 0.0.12
+version := 0.0.13
 buildDir := build
 uberLib := ${buildDir}/shMate-${version}-lib.sh
 package := ${buildDir}/shMate-${version}.tar.gz

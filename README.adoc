@@ -152,77 +152,66 @@ Usage: shmate-artifact -h
 
         Prints this help message.
 ....
-[#user-content-src_src_bin_shmate-artifact_-h_check]
+[#user-content-src_src_bin_shmate-artifact_check_-h]
 ==== check
 .Usage
 ....
 
-Usage: shmate-artifact [-k <curl_conf>] [-r <artifact_repo>] <task> [<task_arg> ...]
+Usage: shmate-artifact [<global_arg> ...] check [-q] [<artifact_descriptor>[</path/inside/archive>] ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
+        Checks if artifacts described with <artifact_descriptor> exist in remote Maven repository <artifact_repo>.
+        Returns zero if all the artifacts are found and non-zero otherwise.
+        Does not require Maven or Java.
 
-        Uses Gradle style <artifact_descriptor>, i.e.
-            <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
-        e.g.
-            org.slf4j:slf4j-api:2.0.12@jar
+        The </path/inside/archive> is ignored and is present only for compatibility with 'fetch' task.
 
         Options:
-            -k <curl_conf>
-                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
-                "${SHMATE_CONF_DIR}/curl.conf", but can also be configured per repository alias in
-                "${SHMATE_CONF_DIR}/artifact.conf" as variable with 'curlconf_' prefix.
-            -r <artifact_repo>
-                Maven repository base URL or one of the configured aliases in "${SHMATE_CONF_DIR}/artifact.conf".
-                The aliases are just variables with 'repository_' prefix, i.e. 'repository_<artifact_repo>'.
-                Defaults to 'default'.
+            -q
+                Does not print log messages stating if the artifact is found or not.
 
-        Tasks:
-            check [-q] [<artifact_descriptor>[</path/inside/archive>] ...]
-            fetch [-C <directory>] [-t <target_path>] [<artifact_descriptor>[</path/inside/archive>] ...]
+        Examples:
+            To check if 'org.slf4j:slf4j-api:2.0.12@jar' artifact exists in default repository:
 
-Usage: shmate-artifact <task> -h
-
-        Prints <task> related help message.
-
-Usage: shmate-artifact -h
-
-        Prints this help message.
+                $ shmate-artifact check 'org.slf4j:slf4j-api:2.0.12@jar'
 ....
-[#user-content-src_src_bin_shmate-artifact_-h_fetch]
+[#user-content-src_src_bin_shmate-artifact_fetch_-h]
 ==== fetch
 .Usage
 ....
 
-Usage: shmate-artifact [-k <curl_conf>] [-r <artifact_repo>] <task> [<task_arg> ...]
+Usage: shmate-artifact [<global_arg> ...] fetch [-C <directory>] [-t <target_path>] [<artifact_descriptor>[</path/inside/archive>] ...]
 
-        Artifact repository client. Can be used to integrate with various Maven 2 style artifact repositories.
+        Fetches artifacts described with <artifact_descriptor> from remote Maven repository <artifact_repo>
+        and possibly extracts their contents to <target_path> in current directory.
+        Does not require Maven or Java.
 
-        Uses Gradle style <artifact_descriptor>, i.e.
-            <group_id>:<artifact_id>:<version>[:<classifier>]@<packaging>
-        e.g.
-            org.slf4j:slf4j-api:2.0.12@jar
+        If </path/inside/archive> is given and <packaging> is recognized as known archive format (i.e. .tar.gz, .tgz,
+        .zip, .jar), the </path/inside/archive> is extracted from the artifact and placed under <target_path>. Without
+        </path/inside/archive> the artifact is just downloaded and renamed to <target_path> unless <target_path> denotes
+        a directory (i.e. ends with '/' or is '.') resulting artifact being placed in it.
 
         Options:
-            -k <curl_conf>
-                Path of 'curl' configuration file. Useful if repository requires authentication. Defaults to
-                "${SHMATE_CONF_DIR}/curl.conf", but can also be configured per repository alias in
-                "${SHMATE_CONF_DIR}/artifact.conf" as variable with 'curlconf_' prefix.
-            -r <artifact_repo>
-                Maven repository base URL or one of the configured aliases in "${SHMATE_CONF_DIR}/artifact.conf".
-                The aliases are just variables with 'repository_' prefix, i.e. 'repository_<artifact_repo>'.
-                Defaults to 'default'.
+            -C <directory>
+                Changes current directory to <directory> before execution.
+            -t <target_path>
+                Path where the artifact will be downloaded/extracted. The <target_path> will be created if it does not
+                exist. If it ends with '/' or is '.', it denotes a directory affecting artifact processing.
+                Defaults to current directory.
 
-        Tasks:
-            check [-q] [<artifact_descriptor>[</path/inside/archive>] ...]
-            fetch [-C <directory>] [-t <target_path>] [<artifact_descriptor>[</path/inside/archive>] ...]
+        Examples:
+            To download 'org.slf4j:slf4j-api:2.0.12@jar' artifact from default repository and:
 
-Usage: shmate-artifact <task> -h
+            extract 'META-INF/MANIFEST.MF' from the JAR to 'manifest.txt' file:
 
-        Prints <task> related help message.
+                $ shmate-artifact fetch -t 'manifest.txt' 'org.slf4j:slf4j-api:2.0.12@jar/META-INF/MANIFEST.MF'
 
-Usage: shmate-artifact -h
+            extract 'META-INF/MANIFEST.MF' from the JAR to 'manifest' directory:
 
-        Prints this help message.
+                $ shmate-artifact fetch -t 'manifest/' 'org.slf4j:slf4j-api:2.0.12@jar/META-INF/MANIFEST.MF'
+
+            extract contents of the JAR to 'slf4j' directory:
+
+                $ shmate-artifact fetch -t 'slf4j/' 'org.slf4j:slf4j-api:2.0.12@jar/'
 ....
 '''
 [#user-content-src_bin_shmate-test,reftext='bin/shmate-test']
